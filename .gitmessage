@@ -1,0 +1,27 @@
+# Type of change (uncomment one)
+# feat: New feature
+# fix: Bug fix
+# docs: Documentation changes
+# style: Code style changes (formatting, etc.)
+# refactor: Code refactoring
+# perf: Performance improvements
+# test: Adding or updating tests
+# chore: Maintenance tasks
+# ci: CI/CD changes
+
+# Short description (50 chars max)
+
+
+# Detailed description (wrap at 72 chars)
+
+
+# Why is this change necessary?
+
+
+# How does it address the issue?
+
+
+# What side effects does this change have?
+
+
+# References (issues, PRs, etc.)
