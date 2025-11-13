@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "toolsets": [
+    {
+      "id": "nextjs-calendar-app",
+      "name": "Next.js Calendar Workspace",
+      "description": "Guidance and reusable commands for the Notion Calendar Next.js 16 project.",
+      "languages": ["typescript", "javascript", "css", "json"],
+      "scopes": ["workspace"],
+      "activation": {
+        "filePatterns": ["app/**/*.tsx", "components/**/*.tsx", "hooks/**/*.ts", "styles/**/*.css"],
+        "commands": ["pnpm", "next"]
+      },
+      "guidelines": [
+        "Use TypeScript with strict typing and avoid any.",
+        "Prefer Next.js App Router server components unless client-only APIs are needed.",
+        "Use Tailwind CSS utilities plus shadcn/ui primitives from @/components/ui.",
+        "Import the cn helper from @/lib/utils for className composition.",
+        "Use react-hook-form with zod for forms and date-fns for date math.",
+        "Run pnpm lint and pnpm type-check before opening a PR.",
+        "Keep components focused and extract shared UI into components/ui." 
+      ],
+      "commands": [
+        {
+          "name": "Install dependencies",
+          "command": "pnpm install",
+          "description": "Install project dependencies using pnpm with the lockfile."
+        },
+        {
+          "name": "Run dev server",
+          "command": "pnpm dev",
+          "description": "Start the Next.js development server on port 3000."
+        },
+        {
+          "name": "Run lint",
+          "command": "pnpm lint",
+          "description": "Execute ESLint with project rules." 
+        },
+        {
+          "name": "Run type check",
+          "command": "pnpm type-check",
+          "description": "Run the TypeScript compiler in noEmit mode." 
+        },
+        {
+          "name": "Build production bundle",
+          "command": "pnpm build",
+          "description": "Create an optimized production build." 
+        }
+      ],
+      "fileGroups": [
+        {
+          "name": "App Routes",
+          "paths": ["app/**"],
+          "description": "Next.js App Router layouts, pages, and server components."
+        },
+        {
+          "name": "Feature Components",
+          "paths": ["components/**"],
+          "description": "Client/server components and shadcn/ui wrappers."
+        },
+        {
+          "name": "Hooks",
+          "paths": ["hooks/**"],
+          "description": "Reusable React hooks and shared logic."
+        },
+        {
+          "name": "Utilities",
+          "paths": ["lib/**"],
+          "description": "Helper utilities such as cn()."
+        },
+        {
+          "name": "Styles",
+          "paths": ["app/globals.css", "styles/**"],
+          "description": "Tailwind CSS entry points and tokens."
+        }
+      ],
+      "workflows": [
+        {
+          "name": "Add a calendar component",
+          "steps": [
+            "Create or update a component under components/ using strict TypeScript.",
+            "Import UI primitives from @/components/ui and reuse cn().",
+            "Write tests or stories if applicable and ensure accessibility.",
+            "Run pnpm lint and pnpm type-check to validate changes."
+          ]
+        },
+        {
+          "name": "Ship a feature",
+          "steps": [
+            "Synchronize with main (git pull --rebase origin main).",
+            "Implement the feature with small, focused components.",
+            "Update documentation or README if behavior changes.",
+            "Run pnpm lint, pnpm type-check, and pnpm build before opening a PR."
+          ]
+        }
+      ]
+    }
+  ]
+}

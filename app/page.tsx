@@ -1535,8 +1535,8 @@ export default function CalendarPage() {
                         className={cn(
                           "aspect-square flex items-center justify-center rounded text-xs hover:bg-[#2a2a2a] transition-colors",
                           !day.isCurrentMonth && "text-[#4a4a4a]",
-                          isToday && "bg-today text-today-foreground font-semibold",
-                          isSelected && !isToday && "bg-[#3a3a3a] text-white",
+                          isToday && "bg-today font-semibold text-today-foreground",
+                          isSelected && !isToday && "bg-[#3a3a3a]",
                         )}
                       >
                         {day.day}

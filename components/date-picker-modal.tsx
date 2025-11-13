@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { X, CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { CalendarIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { useState } from "react"
 
 interface DatePickerModalProps {
   isOpen: boolean
@@ -65,12 +65,10 @@ export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: 
     }
 
     // specific date formats (mm/dd/yyyy, dec 25, december 25 2025, etc.)
-    try {
-      const parsedDate = new Date(text)
-      if (!isNaN(parsedDate.getTime())) {
-        return parsedDate
-      }
-    } catch {}
+    const parsedDate = new Date(text)
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return parsedDate
+    }
 
     return null
   }
