@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react"
 import { Edit2, Trash2, Copy, Palette, Calendar, Clock, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { Event } from "@/types/calendar"
 
 interface EventContextMenuProps {
-  event: any
+  event: Event
   position: { x: number; y: number }
   onClose: () => void
-  onEdit: (event: any) => void
+  onEdit: (event: Event) => void
   onDelete: (eventId: string) => void
-  onDuplicate: (event: any) => void
-  onChangeColor: (event: any, color: string) => void
-  onMoveToCalendar: (event: any, calendar: string) => void
+  onDuplicate: (event: Event) => void
+  onChangeColor: (event: Event, color: string) => void
+  onMoveToCalendar: (event: Event, calendar: string) => void
 }
 
 const COLORS = [

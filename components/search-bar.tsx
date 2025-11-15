@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import { Search, X, Calendar, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { Event } from "@/types/calendar"
 
 interface SearchBarProps {
-  events: any[]
-  onEventSelect: (event: any) => void
+  events: Event[]
+  onEventSelect: (event: Event) => void
 }
 
 export function SearchBar({ events, onEventSelect }: SearchBarProps) {

@@ -3,6 +3,77 @@
 import type React from "react"
 
 import { AgendaView } from "@/components/agenda-view"
+
+// Type definitions
+interface Event {
+  id: string
+  date: string
+  title: string
+  type?: string
+  time?: string
+  startTime?: string
+  endTime?: string
+  seriesId?: string
+  recurrence?: RecurrenceRule
+  [key: string]: unknown
+}
+
+interface Toast {
+  id: string
+  type: "success" | "error" | "warning" | "info"
+  title: string
+  message: string
+}
+
+interface SchedulingLink {
+  id: string
+  name: string
+  duration: number
+  description?: string
+  link?: string
+  [key: string]: unknown
+}
+
+interface Filter {
+  property: string
+  operator: string
+  value: unknown
+}
+
+interface CalendarShare {
+  id: string
+  email: string
+  permission: "view" | "edit"
+  [key: string]: unknown
+}
+
+interface TimeSlot {
+  start: string
+  end: string
+}
+
+interface DayAvailability {
+  enabled: boolean
+  slots: TimeSlot[]
+}
+
+interface WeeklyAvailability {
+  Monday: DayAvailability
+  Tuesday: DayAvailability
+  Wednesday: DayAvailability
+  Thursday: DayAvailability
+  Friday: DayAvailability
+  Saturday: DayAvailability
+  Sunday: DayAvailability
+}
+
+interface DatabaseItem {
+  id: string
+  name: string
+  time?: string
+  properties?: Record<string, unknown>
+  [key: string]: unknown
+}
 import { BulkActionModal } from "@/components/bulk-action-modal"
 import { CalendarContextMenu } from "@/components/calendar-context-menu"
 import { CalendarImportExport } from "@/components/calendar-import-export"
@@ -322,7 +393,7 @@ export default function CalendarPage() {
   const [showEventCreateModal, setShowEventCreateModal] = useState(false)
   const [showEventDetailModal, setShowEventDetailModal] = useState(false)
   const [showCommandPalette, setShowCommandPalette] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<any>(null)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<"month" | "week" | "day" | "agenda">("month")
@@ -332,16 +403,16 @@ export default function CalendarPage() {
     "Michael Foster": false,
   })
   const [selectedPerson, setSelectedPerson] = useState<string | null>("Michael Foster")
-  const [selectedDatabase, setSelectedDatabase] = useState<string | null>("Personnel Roster")
-  const [showDatabaseDropdown, setShowDatabaseDropdown] = useState(false)
-  const [databaseFilter, setDatabaseFilter] = useState<"Personnel Roster" | "All Properties">("Personnel Roster")
-  const [draggedEvent, setDraggedEvent] = useState<any>(null)
-  const [filters, setFilters] = useState<any[]>([])
+  const [_selectedDatabase, _setSelectedDatabase] = useState<string | null>("Personnel Roster")
+  const [_showDatabaseDropdown, _setShowDatabaseDropdown] = useState(false)
+  const [_databaseFilter, _setDatabaseFilter] = useState<"Personnel Roster" | "All Properties">("Personnel Roster")
+  const [draggedEvent, setDraggedEvent] = useState<Event | null>(null)
+  const [filters, setFilters] = useState<Filter[]>([])
   const [sort, setSort] = useState<{ property: string; direction: "asc" | "desc" } | null>(null)
-  const [showRecurrenceEditor, setShowRecurrenceEditor] = useState(false)
+  const [_showRecurrenceEditor, _setShowRecurrenceEditor] = useState(false)
   const [showEventSeriesModal, setShowEventSeriesModal] = useState(false)
   const [eventSeriesAction, setEventSeriesAction] = useState<"edit" | "delete">("edit")
-  const [editingRecurrence, setEditingRecurrence] = useState<RecurrenceRule | null>(null)
+  const [_editingRecurrence, _setEditingRecurrence] = useState<RecurrenceRule | null>(null)
 
   const [currentDate, setCurrentDate] = useState(new Date(2025, 10, 13)) // November 13, 2025
   const [displayYear, setDisplayYear] = useState(2025)
@@ -377,7 +448,7 @@ export default function CalendarPage() {
     },
   ])
   const [showNotificationCenter, setShowNotificationCenter] = useState(false)
-  const [toasts, setToasts] = useState<any[]>([])
+  const [toasts, setToasts] = useState<Toast[]>([])
 
   const [showSettings, setShowSettings] = useState(false)
   const [settings, setSettings] = useState<Settings>({
@@ -414,11 +485,11 @@ export default function CalendarPage() {
   // Add scheduling links state
   const [showSchedulingLinks, setShowSchedulingLinks] = useState(false)
   const [showSchedulingLinkModal, setShowSchedulingLinkModal] = useState(false)
-  const [editingSchedulingLink, setEditingSchedulingLink] = useState<any>(null)
-  const [schedulingLinks, setSchedulingLinks] = useState<any[]>([])
+  const [editingSchedulingLink, setEditingSchedulingLink] = useState<SchedulingLink | null>(null)
+  const [schedulingLinks, setSchedulingLinks] = useState<SchedulingLink[]>([])
 
   const [showAvailabilitySettings, setShowAvailabilitySettings] = useState(false)
-  const [weeklyAvailability, setWeeklyAvailability] = useState<any>({
+  const [weeklyAvailability, setWeeklyAvailability] = useState<WeeklyAvailability>({
     Monday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
     Tuesday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
     Wednesday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
@@ -429,7 +500,7 @@ export default function CalendarPage() {
   })
 
   const [contextMenu, setContextMenu] = useState<{
-    event: any
+    event: Event
     position: { x: number; y: number }
   } | null>(null)
 
@@ -438,7 +509,7 @@ export default function CalendarPage() {
   const [bulkAction, setBulkAction] = useState<"color" | "calendar">("color")
 
   const [hoverPreview, setHoverPreview] = useState<{
-    event: any
+    event: Event
     position: { x: number; y: number }
   } | null>(null)
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -485,15 +556,15 @@ export default function CalendarPage() {
   const [showImportExport, setShowImportExport] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [selectedCalendarForShare, setSelectedCalendarForShare] = useState<Calendar | null>(null)
-  const [calendarShares, setCalendarShares] = useState<any[]>([])
+  const [calendarShares, setCalendarShares] = useState<CalendarShare[]>([])
 
   const [calendarContextMenu, setCalendarContextMenu] = useState<{
-    calendar: any
+    calendar: Calendar
     position: { x: number; y: number }
   } | null>(null)
 
   const [databaseItemContextMenu, setDatabaseItemContextMenu] = useState<{
-    item: any
+    item: DatabaseItem
     position: { x: number; y: number }
   } | null>(null)
 
@@ -506,7 +577,7 @@ export default function CalendarPage() {
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
   const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false)
 
-  const handleCalendarRightClick = (e: React.MouseEvent, calendar: any) => {
+  const handleCalendarRightClick = (e: React.MouseEvent, calendar: Calendar) => {
     e.preventDefault()
     e.stopPropagation()
     setCalendarContextMenu({
@@ -515,7 +586,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleEditCalendar = (calendar: any) => {
+  const handleEditCalendar = (calendar: Calendar) => {
     // Open edit calendar modal
     addToast({
       type: "info",
@@ -542,7 +613,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleExportCalendarInitial = (calendar: any) => {
+  const handleExportCalendarInitial = (calendar: Calendar) => {
     setShowImportExport(true)
     addToast({
       type: "info",
@@ -551,7 +622,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleChangeCalendarColor = (calendar: any, color: string) => {
+  const handleChangeCalendarColor = (calendar: Calendar, color: string) => {
     setCalendars(calendars.map((c) => (c.id === calendar.id ? { ...c, color } : c)))
     addToast({
       type: "success",
@@ -561,7 +632,7 @@ export default function CalendarPage() {
   }
 
   // Add scheduling link handlers
-  const handleSaveSchedulingLink = (link: any) => {
+  const handleSaveSchedulingLink = (link: SchedulingLink) => {
     if (editingSchedulingLink) {
       setSchedulingLinks(schedulingLinks.map((l) => (l.id === link.id ? link : l)))
       addToast({
@@ -581,7 +652,7 @@ export default function CalendarPage() {
     setShowSchedulingLinkModal(false) // Close modal after saving
   }
 
-  const handleEditSchedulingLink = (link: any) => {
+  const handleEditSchedulingLink = (link: SchedulingLink) => {
     setEditingSchedulingLink(link)
     setShowSchedulingLinkModal(true)
   }
@@ -596,7 +667,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleViewBookings = (link: any) => {
+  const handleViewBookings = (link: SchedulingLink) => {
     // Navigate to bookings view
     addToast({
       type: "info",
@@ -605,7 +676,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleDatabaseItemRightClick = (e: React.MouseEvent, item: any) => {
+  const handleDatabaseItemRightClick = (e: React.MouseEvent, item: DatabaseItem) => {
     e.preventDefault()
     e.stopPropagation()
     setDatabaseItemContextMenu({
@@ -614,7 +685,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleEditDatabaseItem = (item: any) => {
+  const handleEditDatabaseItem = (item: DatabaseItem) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
     addToast({
       type: "info",
@@ -632,7 +703,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleDuplicateDatabaseItem = (item: any) => {
+  const handleDuplicateDatabaseItem = (item: DatabaseItem) => {
     const newItem = {
       ...item,
       id: Date.now().toString(),
@@ -646,7 +717,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleOpenDatabaseItemInFull = (item: any) => {
+  const handleOpenDatabaseItemInFull = (item: DatabaseItem) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
     setLeftSidebarView("database") // Assuming 'person' is a valid view for the left sidebar, though 'database' is used here
     setShowWelcome(false) // Hide welcome screen when viewing details
@@ -796,7 +867,7 @@ export default function CalendarPage() {
       }
       // Add right-click handler for selection
       if (e.type === "contextmenu" && selectedEvents.length > 0) {
-        handleSelectionRightClick(e as any)
+        handleSelectionRightClick(e as React.MouseEvent)
       }
     }
 
@@ -813,6 +884,12 @@ export default function CalendarPage() {
     selectedEvents,
     leftSidebarCollapsed,
     rightSidebarCollapsed,
+    events,
+    handleDeleteEvent,
+    handleDuplicateEvent,
+    handleSelectionRightClick,
+    navigateNext,
+    navigatePrevious,
   ])
 
   const navigateToToday = () => {
@@ -954,7 +1031,7 @@ export default function CalendarPage() {
     return events.filter((event) => event.date === dateStr)
   }
 
-  const formatDateForGrid = (date: Date) => {
+  const _formatDateForGrid = (date: Date) => {
     return date.toISOString().split("T")[0]
   }
 
@@ -970,7 +1047,7 @@ export default function CalendarPage() {
     if (week.length > 0) weeks.push(week)
   }
 
-  const togglePersonnel = (name: string) => {
+  const _togglePersonnel = (name: string) => {
     setExpandedPersonnel((prev) => ({ ...prev, [name]: !prev[name] }))
   }
 
@@ -1078,9 +1155,9 @@ export default function CalendarPage() {
     checkReminders() // Check immediately
 
     return () => clearInterval(interval)
-  }, [events])
+  }, [events, addNotification, notifications])
 
-  const handleCreateEvent = (eventData: any) => {
+  const handleCreateEvent = (eventData: Event) => {
     if (eventData.recurrence) {
       // Generate recurring events
       const dates = generateRecurringDates(eventData.date, eventData.recurrence)
@@ -1113,7 +1190,7 @@ export default function CalendarPage() {
     }
   }
 
-  const handleEditEvent = (eventData: any) => {
+  const handleEditEvent = (eventData: Event) => {
     if (eventData.seriesId && eventData.recurrence) {
       // This is a recurring event - show modal to ask which events to edit
       setSelectedEvent(eventData)
@@ -1129,7 +1206,7 @@ export default function CalendarPage() {
     }
   }
 
-  const handleEditEventChoice = (choice: "this" | "all" | "future", eventData: any) => {
+  const handleEditEventChoice = (choice: "this" | "all" | "future", eventData: Event) => {
     if (choice === "this") {
       // Edit only this instance
       setEvents(events.map((e) => (e.id === eventData.id ? { ...eventData, seriesId: undefined } : e)))
@@ -1205,7 +1282,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleDuplicateEvent = (event: any) => {
+  const handleDuplicateEvent = (event: Event) => {
     const newEvent = {
       ...event,
       id: Date.now().toString(),
@@ -1219,12 +1296,12 @@ export default function CalendarPage() {
     })
   }
 
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: Event) => {
     setSelectedEvent(event)
     setShowEventDetailModal(true)
   }
 
-  const handleEventRightClick = (e: React.MouseEvent, event: any) => {
+  const handleEventRightClick = (e: React.MouseEvent, event: Event) => {
     e.preventDefault()
     e.stopPropagation()
     setContextMenu({
@@ -1237,7 +1314,7 @@ export default function CalendarPage() {
     setContextMenu(null)
   }
 
-  const handleChangeEventColor = (event: any, color: string) => {
+  const handleChangeEventColor = (event: Event, color: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, color } : e)))
     addToast({
       type: "success",
@@ -1246,7 +1323,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleMoveToCalendar = (event: any, calendar: string) => {
+  const handleMoveToCalendar = (event: Event, calendar: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar } : e)))
     addToast({
       type: "success",
@@ -1267,7 +1344,7 @@ export default function CalendarPage() {
     setShowEventCreateModal(true)
   }
 
-  const handleEventResize = (event: any, newStartTime: string, newEndTime: string) => {
+  const handleEventResize = (event: Event, newStartTime: string, newEndTime: string) => {
     setEvents(
       events.map((e) =>
         e.id === event.id ? { ...e, startTime: newStartTime, endTime: newEndTime, time: newStartTime } : e,
@@ -1309,11 +1386,11 @@ export default function CalendarPage() {
     }
   }
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: Event) => {
     setDraggedEvent(event)
   }
 
-  const handleDragEnd = (event: any, newDate: string) => {
+  const handleDragEnd = (event: Event, newDate: string) => {
     if (draggedEvent && newDate !== draggedEvent.date) {
       const updatedEvent = { ...draggedEvent, date: newDate }
       setEvents(events.map((e) => (e.id === draggedEvent.id ? updatedEvent : e)))
@@ -1358,7 +1435,7 @@ export default function CalendarPage() {
     setDraggedEvent(null) // Ensure draggedEvent is cleared regardless of operation
   }
 
-  const handleEventClickWithSelection = (e: React.MouseEvent, event: any) => {
+  const handleEventClickWithSelection = (e: React.MouseEvent, event: Event) => {
     if (e.metaKey || e.ctrlKey) {
       // Cmd/Ctrl+Click to toggle selection
       e.stopPropagation()
@@ -1444,7 +1521,7 @@ export default function CalendarPage() {
   const allProperties = personnelData[0].items.length > 0 ? Object.keys(personnelData[0].items[0].properties) : []
 
   // Event hover handlers
-  const handleEventMouseEnter = (e: React.MouseEvent, event: any) => {
+  const handleEventMouseEnter = (e: React.MouseEvent, event: Event) => {
     setHoverTimeout(
       setTimeout(() => {
         setHoverPreview({ event, position: { x: e.clientX, y: e.clientY } })
@@ -1502,7 +1579,7 @@ export default function CalendarPage() {
     // Parse ICS/CSV file and import events
     const reader = new FileReader()
     reader.onload = (e) => {
-      const content = e.target?.result as string
+      const _content = e.target?.result as string
       // TODO: Parse ICS format and add events
       addToast({
         type: "success",
@@ -1632,7 +1709,7 @@ export default function CalendarPage() {
   }
 
   // New handler for dragging event to a calendar
-  const handleDragEventToCalendar = (event: any, calendarId: string) => {
+  const _handleDragEventToCalendar = (event: Event, calendarId: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar: calendarId } : e)))
     const calendar = calendars.find((c) => c.id === calendarId)
     addToast({

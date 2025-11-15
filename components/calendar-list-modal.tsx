@@ -42,13 +42,13 @@ export function CalendarListModal({
   onClose,
   calendars,
   groups,
-  onUpdateCalendar,
+  onUpdateCalendar: _onUpdateCalendar,
   onDeleteCalendar,
   onReorderCalendars,
   onToggleVisibility,
   onSetDefault,
-  onCreateGroup,
-  onAddToGroup,
+  onCreateGroup: _onCreateGroup,
+  onAddToGroup: _onAddToGroup,
 }: CalendarListModalProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [draggedCalendar, setDraggedCalendar] = useState<Calendar | null>(null)
@@ -80,7 +80,7 @@ export function CalendarListModal({
     setDraggedCalendar(null)
   }
 
-  const toggleGroup = (groupId: string) => {
+  const _toggleGroup = (groupId: string) => {
     const newExpanded = new Set(expandedGroups)
     if (newExpanded.has(groupId)) {
       newExpanded.delete(groupId)

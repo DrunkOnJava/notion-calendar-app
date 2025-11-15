@@ -2,11 +2,12 @@
 
 import { cn } from "@/lib/utils"
 import { MapPin, Users, Video } from "lucide-react"
+import type { Event } from "@/types/calendar"
 
 interface AgendaViewProps {
   currentDate: Date
-  events: any[]
-  onEventClick: (event: any) => void
+  events: Event[]
+  onEventClick: (event: Event) => void
 }
 
 export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProps) {
@@ -15,7 +16,7 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
   endDate.setDate(endDate.getDate() + 30)
 
   // Group events by date
-  const groupedEvents: { [key: string]: any[] } = {}
+  const groupedEvents: { [key: string]: Event[] } = {}
   const dateRange: Date[] = []
 
   for (let d = new Date(currentDate); d <= endDate; d.setDate(d.getDate() + 1)) {

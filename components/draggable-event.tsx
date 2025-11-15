@@ -4,13 +4,14 @@ import type React from "react"
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import type { Event } from "@/types/calendar"
 
 interface DraggableEventProps {
-  event: any
-  onClick: (event: any) => void
-  onDragStart: (event: any) => void
-  onDragEnd: (event: any, newDate: string) => void
-  onDuplicate?: (event: any) => void
+  event: Event
+  onClick: (event: Event) => void
+  onDragStart: (event: Event) => void
+  onDragEnd?: (event: Event, newDate: string) => void
+  onDuplicate?: (event: Event) => void
   className?: string
   children: React.ReactNode
 }
@@ -19,8 +20,8 @@ export function DraggableEvent({
   event,
   onClick,
   onDragStart,
-  onDragEnd,
-  onDuplicate,
+  onDragEnd: _onDragEnd,
+  onDuplicate: _onDuplicate,
   className,
   children,
 }: DraggableEventProps) {
@@ -36,7 +37,7 @@ export function DraggableEvent({
     onDragStart(event)
   }
 
-  const handleDragEnd = (e: React.DragEvent) => {
+  const handleDragEnd = (_e: React.DragEvent) => {
     setIsDragging(false)
     setIsDuplicating(false)
   }

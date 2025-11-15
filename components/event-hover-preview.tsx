@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { MapPin, Video, Users, Clock, Tag, AlertCircle } from "lucide-react"
+import type { Event } from "@/types/calendar"
 
 interface EventHoverPreviewProps {
-  event: any
+  event: Event
   position: { x: number; y: number }
   onClose: () => void
 }

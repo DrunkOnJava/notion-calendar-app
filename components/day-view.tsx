@@ -4,14 +4,15 @@ import type React from "react"
 
 import { cn } from "@/lib/utils"
 import { ResizableEvent } from "@/components/resizable-event"
+import type { Event } from "@/types/calendar"
 
 interface DayViewProps {
   currentDate: Date
-  events: any[]
-  onEventClick: (event: any) => void
+  events: Event[]
+  onEventClick: (event: Event) => void
   onTimeSlotClick: (date: Date, time: string) => void
-  onEventResize?: (event: any, newStartTime: string, newEndTime: string) => void
-  onEventRightClick?: (e: React.MouseEvent, event: any) => void
+  onEventResize?: (event: Event, newStartTime: string, newEndTime: string) => void
+  onEventRightClick?: (e: React.MouseEvent, event: Event) => void
 }
 
 export function DayView({
@@ -34,7 +35,7 @@ export function DayView({
     })
   }
 
-  const getEventDuration = (event: any) => {
+  const getEventDuration = (event: Event) => {
     if (!event.startTime || !event.endTime) return 1
     const [startHour, startMin] = event.startTime.split(":").map(Number)
     const [endHour, endMin] = event.endTime.split(":").map(Number)
@@ -42,9 +43,9 @@ export function DayView({
     return durationMinutes / 60
   }
 
-  const getEventTopOffset = (event: any) => {
+  const getEventTopOffset = (event: Event) => {
     if (!event.startTime) return 0
-    const [hour, minutes] = event.startTime.split(":").map(Number)
+    const [_hour, minutes] = event.startTime.split(":").map(Number)
     return (minutes / 60) * 100
   }
 
@@ -90,8 +91,8 @@ export function DayView({
                   className="border-b border-[#2a2a2a] h-20 hover:bg-[#202020] cursor-pointer relative p-2"
                 >
                   {hourEvents.map((event, eventIdx) => {
-                    const duration = getEventDuration(event)
-                    const topOffset = getEventTopOffset(event)
+                    const _duration = getEventDuration(event)
+                    const _topOffset = getEventTopOffset(event)
 
                     return (
                       <ResizableEvent

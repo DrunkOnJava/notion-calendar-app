@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import { Check } from "lucide-react"
+import type { DatabaseItem } from "@/types/calendar"
 
 interface DatabaseTableViewProps {
-  items: any[]
-  onItemClick: (item: any) => void
+  items: DatabaseItem[]
+  onItemClick: (item: DatabaseItem) => void
 }
 
 export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps) {
