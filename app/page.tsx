@@ -2,56 +2,61 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
-import {
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Search,
-  Plus,
-  MoreHorizontal,
-  Table,
-  LayoutGrid,
-  CalendarIcon,
-  Clock,
-} from "lucide-react"
-import { Button } from "@/components/ui/button" // Added for scheduling links
-import { cn } from "@/lib/utils"
-import { DatabaseCard } from "@/components/database-card"
-import { EventCreateModal } from "@/components/event-create-modal"
-import { EventDetailModal } from "@/components/event-detail-modal"
-import { CommandPalette } from "@/components/command-palette"
-import { WeekView } from "@/components/week-view"
-import { DayView } from "@/components/day-view"
 import { AgendaView } from "@/components/agenda-view"
-import { ViewSwitcher } from "@/components/view-switcher"
-import { DraggableEvent } from "@/components/draggable-event"
-import { SearchBar } from "@/components/search-bar"
+import { BulkActionModal } from "@/components/bulk-action-modal"
+import { CalendarContextMenu } from "@/components/calendar-context-menu"
+import { CalendarImportExport } from "@/components/calendar-import-export"
+import { CalendarListModal, type Calendar, type CalendarGroup } from "@/components/calendar-list-modal"
+import { CalendarShareModal } from "@/components/calendar-share-modal"
+import { CommandPalette } from "@/components/command-palette"
+import { DatabaseBoardView } from "@/components/database-board-view"
+import { DatabaseCard } from "@/components/database-card"
 import { DatabaseFilter } from "@/components/database-filter"
+import { DatabaseItemContextMenu } from "@/components/database-item-context-menu"
 import { DatabaseSort } from "@/components/database-sort"
 import { DatabaseTableView } from "@/components/database-table-view"
-import { DatabaseBoardView } from "@/components/database-board-view"
-import { type RecurrenceRule, generateRecurringDates } from "@/components/recurrence-editor"
-import { EventSeriesModal } from "@/components/event-series-modal"
 import { DatePickerModal } from "@/components/date-picker-modal"
-import { NotificationCenter, type Notification } from "@/components/notification-center"
-import { ToastContainer } from "@/components/toast-notification"
-import { SettingsModal, type Settings } from "@/components/settings-modal"
-import { EventContextMenu } from "@/components/event-context-menu"
-import { MultiSelectToolbar } from "@/components/multi-select-toolbar"
-import { BulkActionModal } from "@/components/bulk-action-modal"
-import { EventHoverPreview } from "@/components/event-hover-preview"
-import { CalendarListModal, type Calendar, type CalendarGroup } from "@/components/calendar-list-modal"
-import { CalendarImportExport } from "@/components/calendar-import-export"
-import { CalendarShareModal } from "@/components/calendar-share-modal"
-import { CalendarContextMenu } from "@/components/calendar-context-menu"
-import { DatabaseItemContextMenu } from "@/components/database-item-context-menu"
-import { SelectionContextMenu } from "@/components/selection-context-menu"
+import { DayView } from "@/components/day-view"
 import { DraggableDatabaseItem } from "@/components/draggable-database-item"
+import { DraggableEvent } from "@/components/draggable-event"
+import { EventContextMenu } from "@/components/event-context-menu"
+import { EventCreateModal } from "@/components/event-create-modal"
+import { EventDetailModal } from "@/components/event-detail-modal"
+import { EventHoverPreview } from "@/components/event-hover-preview"
+import { EventSeriesModal } from "@/components/event-series-modal"
+import { MultiSelectToolbar } from "@/components/multi-select-toolbar"
+import { NotificationCenter, type Notification } from "@/components/notification-center"
+import { generateRecurringDates, type RecurrenceRule } from "@/components/recurrence-editor"
+import { SearchBar } from "@/components/search-bar"
+import { SelectionContextMenu } from "@/components/selection-context-menu"
+import { SettingsModal, type Settings } from "@/components/settings-modal"
+import { ToastContainer } from "@/components/toast-notification"
+import { Button } from "@/components/ui/button"; // Added for scheduling links
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
+import { ViewSwitcher } from "@/components/view-switcher"
+import { WeekView } from "@/components/week-view"
+import { cn } from "@/lib/utils"
+import {
+    CalendarIcon,
+    ChevronLeft,
+    ChevronRight,
+    Clock,
+    LayoutGrid,
+    MoreHorizontal,
+    PanelLeftClose,
+    PanelLeftOpen,
+    PanelRightClose,
+    PanelRightOpen,
+    Plus,
+    Search,
+    Table,
+    X,
+} from "lucide-react"
+import { useEffect, useState } from "react"
 // Add scheduling links imports
+import { AvailabilityEditor } from "@/components/availability-editor"
 import { SchedulingLinkModal } from "@/components/scheduling-link-modal"
 import { SchedulingLinksList } from "@/components/scheduling-links-list"
-import { AvailabilityEditor } from "@/components/availability-editor"
 
 const initialEvents = [
   { id: "1", date: "2025-10-31", title: "Halloween", type: "holiday" },
@@ -89,9 +94,10 @@ const personnelData = [
           "Certification Level": "EMT",
           Engine: true,
           FTO: true,
-          "Last Hold Date": null,
+          "Last Hold Date": "October 18, 2024",
           "Rescue Squad": true,
           Shift: "B",
+          Station: "Station 7",
           Tanker: true,
           Truck: true,
         },
@@ -112,6 +118,9 @@ const personnelData = [
           "Certification Level": "EMT",
           Engine: true,
           FTO: true,
+          "Last Hold Date": "September 22, 2024",
+          Shift: "A",
+          Station: "Station 3",
         },
       },
       {
@@ -130,7 +139,10 @@ const personnelData = [
           "Certification Level": "EMT",
           Engine: true,
           FTO: true,
+          "Last Hold Date": null,
           "Rescue Squad": true,
+          Shift: "C",
+          Station: "Station 5",
           Tanker: true,
           Truck: true,
         },
@@ -151,7 +163,10 @@ const personnelData = [
           "Certification Level": "EMT",
           Engine: true,
           FTO: true,
+          "Last Hold Date": "November 10, 2024",
           "Rescue Squad": true,
+          Shift: "B",
+          Station: "Station 2",
           Tanker: true,
         },
       },
@@ -161,6 +176,139 @@ const personnelData = [
         time: "October 18, 7:42-7:42PM",
         properties: {
           UTV: true,
+          "Last Hold Date": "October 5, 2024",
+          Shift: "A",
+          Station: "Station 1",
+        },
+      },
+      {
+        id: "p6",
+        name: "Sarah Martinez",
+        time: "October 19, 8:15-8:15AM",
+        properties: {
+          ALS: true,
+          "Certification Level": "Paramedic",
+          "Last Hold Date": "November 1, 2024",
+          Shift: "C",
+          Station: "Station 4",
+        },
+      },
+      {
+        id: "p7",
+        name: "James Thompson",
+        time: "October 19, 9:00-9:00AM",
+        properties: {
+          Engine: true,
+          Truck: true,
+          "Certification Level": "EMT",
+          "Last Hold Date": null,
+          Shift: "B",
+          Station: "Station 6",
+        },
+      },
+      {
+        id: "p8",
+        name: "Emily Chen",
+        time: "October 19, 10:30-10:30AM",
+        properties: {
+          ALS: true,
+          Ambulance: true,
+          "Certification Level": "Paramedic",
+          "Last Hold Date": "October 28, 2024",
+          Shift: "A",
+          Station: "Station 8",
+        },
+      },
+      {
+        id: "p9",
+        name: "David Rodriguez",
+        time: "October 20, 7:00-7:00AM",
+        properties: {
+          Engine: true,
+          "Rescue Squad": true,
+          "Certification Level": "EMT",
+          "Last Hold Date": "September 15, 2024",
+          Shift: "C",
+          Station: "Station 2",
+        },
+      },
+      {
+        id: "p10",
+        name: "Jessica Williams",
+        time: "October 20, 8:45-8:45AM",
+        properties: {
+          ALS: true,
+          Ambulance: true,
+          "Certification Level": "Paramedic",
+          "Last Hold Date": "November 5, 2024",
+          Shift: "B",
+          Station: "Station 3",
+        },
+      },
+      {
+        id: "p11",
+        name: "Robert Jackson",
+        time: "October 21, 6:30-6:30AM",
+        properties: {
+          Engine: true,
+          Truck: true,
+          Tanker: true,
+          "Certification Level": "EMT",
+          "Last Hold Date": "October 12, 2024",
+          Shift: "A",
+          Station: "Station 5",
+        },
+      },
+      {
+        id: "p12",
+        name: "Amanda Davis",
+        time: "October 21, 9:15-9:15AM",
+        properties: {
+          BLS: true,
+          Ambulance: true,
+          "Certification Level": "EMT",
+          "Last Hold Date": null,
+          Shift: "C",
+          Station: "Station 7",
+        },
+      },
+      {
+        id: "p13",
+        name: "Christopher Lee",
+        time: "October 22, 7:20-7:20AM",
+        properties: {
+          Engine: true,
+          "Rescue Squad": true,
+          "Certification Level": "EMT",
+          "Last Hold Date": "October 30, 2024",
+          Shift: "B",
+          Station: "Station 1",
+        },
+      },
+      {
+        id: "p14",
+        name: "Michelle Anderson",
+        time: "October 22, 10:00-10:00AM",
+        properties: {
+          ALS: true,
+          Ambulance: true,
+          "Certification Level": "Paramedic",
+          "Last Hold Date": "September 28, 2024",
+          Shift: "A",
+          Station: "Station 4",
+        },
+      },
+      {
+        id: "p15",
+        name: "Daniel Brown",
+        time: "October 23, 8:00-8:00AM",
+        properties: {
+          Engine: true,
+          Truck: true,
+          "Certification Level": "EMT",
+          "Last Hold Date": "November 8, 2024",
+          Shift: "C",
+          Station: "Station 6",
         },
       },
     ],
@@ -181,7 +329,7 @@ export default function CalendarPage() {
   const [leftSidebarView, setLeftSidebarView] = useState<"calendar" | "database">("database")
   const [databaseView, setDatabaseView] = useState<"list" | "table" | "board">("list")
   const [expandedPersonnel, setExpandedPersonnel] = useState<{ [key: string]: boolean }>({
-    "Michael Foster": true,
+    "Michael Foster": false,
   })
   const [selectedPerson, setSelectedPerson] = useState<string | null>("Michael Foster")
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>("Personnel Roster")
@@ -355,6 +503,8 @@ export default function CalendarPage() {
 
   // State for handling event files
   const [eventFiles, setEventFiles] = useState<{ [eventId: string]: File[] }>({})
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false)
 
   const handleCalendarRightClick = (e: React.MouseEvent, calendar: any) => {
     e.preventDefault()
@@ -571,6 +721,16 @@ export default function CalendarPage() {
         navigateToToday()
       }
 
+      // Toggle sidebars
+      if ((e.metaKey || e.ctrlKey) && e.key === "b" && !e.shiftKey) {
+        e.preventDefault()
+        setLeftSidebarCollapsed(prev => !prev)
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "B") {
+        e.preventDefault()
+        setRightSidebarCollapsed(prev => !prev)
+      }
+
       // Navigate between days/weeks with arrow keys
       if (!showCommandPalette && !showEventCreateModal && !showEventDetailModal && !showDatePicker) {
         if (e.key === "ArrowLeft") {
@@ -650,7 +810,9 @@ export default function CalendarPage() {
     showEventDetailModal,
     showDatePicker,
     selectedEvent,
-    selectedEvents, // Add selectedEvents dependency
+    selectedEvents,
+    leftSidebarCollapsed,
+    rightSidebarCollapsed,
   ])
 
   const navigateToToday = () => {
@@ -1486,10 +1648,13 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#1a1a1a] text-white dark">
+    <div className="h-screen bg-[#1a1a1a] text-white dark">
+    <ResizablePanelGroup direction="horizontal" className="h-screen">
       {/* Left Sidebar */}
-      <div className="w-[220px] bg-[#1c1c1c] border-r border-[#2a2a2a] flex flex-col">
-        {leftSidebarView === "calendar" ? (
+      {!leftSidebarCollapsed && (
+        <>
+          <ResizablePanel defaultSize={15} minSize={10} maxSize={30} className="relative">
+            <div className="h-full bg-[#1c1c1c] border-r border-[#2a2a2a] flex flex-col">{leftSidebarView === "calendar" ? (
           <>
             {/* Mini Calendar */}
             <div className="p-4">
@@ -1621,105 +1786,126 @@ export default function CalendarPage() {
                   <Plus className="w-3 h-3" />
                   Add calendar account
                 </button>
-                <button
-                  onClick={() => setShowImportExport(true)}
-                  className="w-full text-xs text-[#7a7a7a] hover:text-white flex items-center gap-1 py-1"
-                >
-                  <span className="text-xs">📥</span>
-                  Import/Export
-                </button>
               </div>
-            </div>
-
-            <div className="px-4 py-3 border-t border-[#2a2a2a]">
-              <button
-                onClick={() => setShowDatabaseModal(true)}
-                className="text-xs text-[#7a7a7a] hover:text-white flex items-center gap-2"
-              >
-                <span>📊</span>
-                Add Notion database
-              </button>
             </div>
           </>
         ) : (
-          <div className="flex-1 overflow-auto flex flex-col">
-            <div className="p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <button className="hover:bg-[#2a2a2a] p-1 rounded">
-                  <Search className="w-4 h-4 text-[#6b6b6b]" />
-                </button>
-                <span className="flex items-center gap-1 text-xs text-[#d0d0d0]">
-                  <span className="text-red-500">👥</span>
-                  <span>Personnel Roster</span>
-                </span>
-                <button className="hover:bg-[#2a2a2a] p-1 rounded ml-auto">
-                  <MoreHorizontal className="w-4 h-4 text-[#6b6b6b]" />
-                </button>
-                <button className="hover:bg-[#2a2a2a] p-1 rounded">
-                  <Plus className="w-4 h-4 text-[#6b6b6b]" />
-                </button>
-              </div>
+          <div className="flex-1 flex flex-col" style={{ containerType: 'inline-size' }}>
+            {/* Container Hierarchy: Level 1 - Main roster container with padding */}
+            <div className="flex flex-col h-full">
+              {/* Level 2 - Header controls section with consistent padding */}
+              <div className="px-3 pt-2 pb-1.5 border-b border-[#2a2a2a]/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <button className="hover:bg-[#2a2a2a] p-1.5 rounded transition-colors">
+                    <Search className="w-4 h-4 text-[#6b6b6b]" />
+                  </button>
+                  <span className="flex items-center gap-1.5 text-xs text-[#d0d0d0] font-medium">
+                    <span className="text-red-500 text-sm">👥</span>
+                    <span>Personnel Roster</span>
+                  </span>
+                  <button className="hover:bg-[#2a2a2a] p-1.5 rounded transition-colors ml-auto">
+                    <MoreHorizontal className="w-4 h-4 text-[#6b6b6b]" />
+                  </button>
+                  <button className="hover:bg-[#2a2a2a] p-1.5 rounded transition-colors">
+                    <Plus className="w-4 h-4 text-[#6b6b6b]" />
+                  </button>
+                </div>
 
-              <div className="flex items-center gap-2 mb-4">
-                <button
-                  onClick={() => setDatabaseView("list")}
-                  className={cn(
-                    "p-1 rounded",
-                    databaseView === "list" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
-                  )}
-                  title="List View"
-                >
-                  <span className="text-sm">☰</span>
-                </button>
-                <button
-                  onClick={() => setDatabaseView("table")}
-                  className={cn(
-                    "p-1 rounded",
-                    databaseView === "table" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
-                  )}
-                  title="Table View"
-                >
-                  <Table className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setDatabaseView("board")}
-                  className={cn(
-                    "p-1 rounded",
-                    databaseView === "board" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
-                  )}
-                  title="Board View"
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setDatabaseView("list")}
+                    className={cn(
+                      "p-1.5 rounded transition-colors",
+                      databaseView === "list" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
+                    )}
+                    title="List View"
+                  >
+                    <span className="text-sm">☰</span>
+                  </button>
+                  <button
+                    onClick={() => setDatabaseView("table")}
+                    className={cn(
+                      "p-1.5 rounded transition-colors",
+                      databaseView === "table" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
+                    )}
+                    title="Table View"
+                  >
+                    <Table className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setDatabaseView("board")}
+                    className={cn(
+                      "p-1.5 rounded transition-colors",
+                      databaseView === "board" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
+                    )}
+                    title="Board View"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
 
-                <div className="ml-auto flex items-center gap-1">
-                  <DatabaseFilter properties={allProperties} onFilterChange={setFilters} />
-                  <DatabaseSort properties={allProperties} onSortChange={setSort} />
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <DatabaseFilter properties={allProperties} onFilterChange={setFilters} />
+                    <DatabaseSort properties={allProperties} onSortChange={setSort} />
+                  </div>
                 </div>
               </div>
 
+              {/* Level 3 - Scalable content area with transform-based responsive scaling */}
               {selectedDatabase && leftSidebarView === "database" && (
-                <div className="flex-1 overflow-y-auto px-4 py-2 space-y-1">
-                  {personnel.map((person, index) => (
-                    <DraggableDatabaseItem
-                      key={person.id}
-                      item={person}
-                      index={index}
-                      onReorder={handleReorderDatabaseItems}
-                    >
-                      <div onContextMenu={(e) => handleDatabaseItemRightClick(e, person)}>
-                        {/* </CHANGE> Adding missing onToggle and isExpanded props to DatabaseCard */}
-                        <DatabaseCard
-                          person={person}
-                          isExpanded={!!expandedPersonnel[person.name]}
-                          onToggle={() =>
-                            setExpandedPersonnel((prev) => ({ ...prev, [person.name]: !prev[person.name] }))
-                          }
-                          onSelect={() => handleSelectPerson(person.name)}
-                        />
+                <div className="flex-1 overflow-hidden flex flex-col">
+                  {/* Scale wrapper - dynamically scales content to prevent overflow */}
+                  <div 
+                    className="flex-1 flex flex-col min-h-0"
+                    style={{
+                      transformOrigin: 'top left',
+                      width: '100%',
+                    }}
+                  >
+                    {/* Table Header - Fixed at top with responsive padding */}
+                    <div className="py-1.5 border-b border-[#2a2a2a] bg-[#1a1a1a] sticky top-0 z-10">
+                      <div 
+                        className="grid items-center pr-2"
+                        style={{
+                          gridTemplateColumns: 'auto 1fr',
+                          gap: 'clamp(8px, 1vw, 12px)',
+                          paddingLeft: '8px',
+                        }}
+                      >
+                        <div className="text-[#6b6b6b] font-semibold uppercase tracking-wide" style={{ fontSize: 'clamp(9px, 0.8vw, 12px)' }}>
+                          #
+                        </div>
+                        <div className="text-[#6b6b6b] font-semibold uppercase tracking-wide" style={{ fontSize: 'clamp(9px, 0.8vw, 12px)' }}>
+                          Name
+                        </div>
                       </div>
-                    </DraggableDatabaseItem>
-                  ))}
+                    </div>
+                    
+                    {/* Scrollable personnel list with proper spacing hierarchy */}
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                      <div>
+                        {personnel.map((person, index) => (
+                          <DraggableDatabaseItem
+                            key={person.id}
+                            item={person}
+                            index={index}
+                            onReorder={handleReorderDatabaseItems}
+                          >
+                            <div onContextMenu={(e) => handleDatabaseItemRightClick(e, person)}>
+                              <DatabaseCard
+                                person={person}
+                                position={index + 1}
+                                isExpanded={!!expandedPersonnel[person.name]}
+                                onToggle={() =>
+                                  setExpandedPersonnel((prev) => ({ ...prev, [person.name]: !prev[person.name] }))
+                                }
+                                onSelect={() => handleSelectPerson(person.name)}
+                              />
+                            </div>
+                          </DraggableDatabaseItem>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -1734,18 +1920,8 @@ export default function CalendarPage() {
                 <DatabaseBoardView items={sortedPersonnel} onItemClick={handleSelectPerson} />
               </div>
             )}
-
-            <button
-              onClick={() => setShowDatabaseModal(true)}
-              className="mt-4 w-full text-xs text-[#7a7a7a] hover:text-white flex items-center gap-2 p-2"
-            >
-              <Plus className="w-3 h-3" />
-              Add Notion database
-            </button>
           </div>
         )}
-
-        <div className="flex-1"></div>
 
         {/* Bottom icons */}
         <div className="p-3 border-t border-[#2a2a2a] flex items-center gap-3">
@@ -1764,10 +1940,34 @@ export default function CalendarPage() {
             )}
           </button>
         </div>
-      </div>
+            </div>
+            {/* Collapse button */}
+            <button
+              onClick={() => setLeftSidebarCollapsed(true)}
+              className="absolute top-1/2 -right-3 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-full p-1 border border-[#3a3a3a]"
+              title="Collapse sidebar"
+            >
+              <PanelLeftClose className="w-3 h-3" />
+            </button>
+          </ResizablePanel>
+          <ResizableHandle withHandle className="bg-[#2a2a2a] hover:bg-[#3a3a3a] w-0.5" />
+        </>
+      )}
+      
+      {/* Expand button when collapsed */}
+      {leftSidebarCollapsed && (
+        <button
+          onClick={() => setLeftSidebarCollapsed(false)}
+          className="fixed left-0 top-1/2 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-r-lg p-2 border border-l-0 border-[#3a3a3a]"
+          title="Expand sidebar"
+        >
+          <PanelLeftOpen className="w-4 h-4" />
+        </button>
+      )}
 
       {/* Main Calendar Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <ResizablePanel defaultSize={showWelcome || selectedPerson ? 60 : 85} minSize={40}>
+        <div className="flex-1 flex flex-col min-w-0 h-full">
         {/* Header */}
         <div className="h-14 border-b border-[#2a2a2a] flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-4">
@@ -1922,11 +2122,15 @@ export default function CalendarPage() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </ResizablePanel>
 
       {/* Right Sidebar */}
-      {(showWelcome || selectedPerson) && (
-        <div className="w-[320px] bg-[#1c1c1c] border-l border-[#2a2a2a] overflow-auto">
+      {(showWelcome || selectedPerson) && !rightSidebarCollapsed && (
+        <>
+          <ResizableHandle withHandle className="bg-[#2a2a2a] hover:bg-[#3a3a3a] w-0.5" />
+          <ResizablePanel defaultSize={25} minSize={15} maxSize={40} className="relative">
+            <div className="h-full bg-[#1c1c1c] border-l border-[#2a2a2a] overflow-auto">
           <div className="p-6">
             {showWelcome && !selectedPerson ? (
               <>
@@ -2112,8 +2316,30 @@ export default function CalendarPage() {
               </>
             )}
           </div>
-        </div>
+            </div>
+            {/* Collapse button */}
+            <button
+              onClick={() => setRightSidebarCollapsed(true)}
+              className="absolute top-1/2 -left-3 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-full p-1 border border-[#3a3a3a]"
+              title="Collapse sidebar"
+            >
+              <PanelRightClose className="w-3 h-3" />
+            </button>
+          </ResizablePanel>
+        </>
       )}
+      
+      {/* Expand button when collapsed */}
+      {(showWelcome || selectedPerson) && rightSidebarCollapsed && (
+        <button
+          onClick={() => setRightSidebarCollapsed(false)}
+          className="fixed right-0 top-1/2 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-l-lg p-2 border border-r-0 border-[#3a3a3a]"
+          title="Expand sidebar"
+        >
+          <PanelRightOpen className="w-4 h-4" />
+        </button>
+      )}
+    </ResizablePanelGroup>
 
       {/* Modals */}
       <EventCreateModal

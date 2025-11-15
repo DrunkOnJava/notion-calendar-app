@@ -7,7 +7,12 @@
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "copilot:chrome:screenshot": "pnpm dlx chrome-devtools-mcp@latest --channel stable --headless true --isolated true --viewport 1920x1080 --chromeArg=--hide-scrollbars",
+    "copilot:chrome:audit": "pnpm dlx chrome-devtools-mcp@latest --channel stable --headless true --isolated true --viewport 1280x720 --chromeArg=--enable-logging --chromeArg=--ignore-certificate-errors",
+    "copilot:chrome:inspect": "pnpm dlx chrome-devtools-mcp@latest --channel stable --viewport 1440x900",
+    "copilot:chrome:debug": "pnpm dlx chrome-devtools-mcp@latest --channel dev --chromeArg=--auto-open-devtools-for-tabs --chromeArg=--remote-debugging-port=9222",
+    "copilot:chrome:evaluate": "pnpm dlx chrome-devtools-mcp@latest --channel canary --headless true --isolated true --no-category-emulation --chromeArg=--disable-gpu"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

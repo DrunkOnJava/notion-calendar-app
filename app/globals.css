@@ -225,3 +225,205 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================
+   RESPONSIVE CONTAINER SYSTEM
+   ============================================
+   A comprehensive layout system implementing:
+   - CSS Container Queries for context-aware responsive design
+   - Dynamic scaling using clamp(), calc(), and viewport units
+   - Single-line constraint enforcement
+   - 8px grid system for consistent spacing
+   - Fluid typography with optimal readability
+   ============================================ */
+
+@layer components {
+  /* Container Query Breakpoints */
+  @container (inline-size > 320px) {
+    .responsive-row {
+      font-size: clamp(11px, 0.75vw, 13px);
+    }
+  }
+
+  @container (inline-size > 480px) {
+    .responsive-row {
+      font-size: clamp(12px, 0.8vw, 14px);
+    }
+  }
+
+  @container (inline-size > 768px) {
+    .responsive-row {
+      font-size: clamp(13px, 0.85vw, 15px);
+    }
+  }
+
+  /* Responsive Grid System - Maintains proportions across scales */
+  .responsive-grid-4col {
+    display: grid;
+    grid-template-columns: 
+      minmax(0, 2fr)    /* Name - Priority content */
+      minmax(0, 1fr)    /* Station - Secondary */
+      minmax(0, 1.5fr)  /* Date - Tertiary */
+      minmax(0, 0.8fr); /* Shift - Compact */
+    gap: clamp(4px, 1vw, 12px);
+    align-items: center;
+  }
+
+  /* Single-line enforcement with ellipsis fallback */
+  .single-line-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.2;
+  }
+
+  /* Responsive spacing system - 8px grid */
+  .spacing-xs { padding: clamp(2px, 0.25vh, 4px); }
+  .spacing-sm { padding: clamp(4px, 0.5vh, 8px); }
+  .spacing-md { padding: clamp(8px, 1vh, 16px); }
+  .spacing-lg { padding: clamp(12px, 1.5vh, 24px); }
+  .spacing-xl { padding: clamp(16px, 2vh, 32px); }
+
+  /* Gap variants */
+  .gap-xs { gap: clamp(2px, 0.25vw, 4px); }
+  .gap-sm { gap: clamp(4px, 0.5vw, 8px); }
+  .gap-md { gap: clamp(8px, 1vw, 16px); }
+  .gap-lg { gap: clamp(12px, 1.5vw, 24px); }
+
+  /* Fluid typography scale */
+  .text-fluid-xs { font-size: clamp(9px, 0.65vw, 11px); }
+  .text-fluid-sm { font-size: clamp(10px, 0.7vw, 12px); }
+  .text-fluid-base { font-size: clamp(11px, 0.75vw, 13px); }
+  .text-fluid-md { font-size: clamp(12px, 0.8vw, 14px); }
+  .text-fluid-lg { font-size: clamp(14px, 0.9vw, 16px); }
+
+  /* Responsive height constraints */
+  .row-height-sm { min-height: clamp(24px, 3vh, 32px); }
+  .row-height-md { min-height: clamp(32px, 4vh, 48px); }
+  .row-height-lg { min-height: clamp(40px, 5vh, 60px); }
+
+  /* Badge system with responsive sizing */
+  .badge-responsive {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2px, 0.3vh, 4px) clamp(4px, 0.5vw, 8px);
+    border-radius: 4px;
+    font-size: clamp(9px, 0.65vw, 11px);
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: clamp(20px, 2vw, 32px);
+  }
+
+  /* Icon sizing with viewport units */
+  .icon-sm { 
+    width: clamp(12px, 1vw, 16px); 
+    height: clamp(12px, 1vw, 16px); 
+  }
+  .icon-md { 
+    width: clamp(16px, 1.25vw, 20px); 
+    height: clamp(16px, 1.25vw, 20px); 
+  }
+  .icon-lg { 
+    width: clamp(20px, 1.5vw, 24px); 
+    height: clamp(20px, 1.5vw, 24px); 
+  }
+
+  /* Responsive container wrapper */
+  .container-responsive {
+    container-type: inline-size;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Scroll container with smooth scrolling */
+  .scroll-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Optimal line height for readability */
+  .optimal-line-height {
+    line-height: clamp(1.2, 1.5, 1.6);
+  }
+}
+
+/* Media queries for viewport-level responsive design */
+@media (max-width: 640px) {
+  :root {
+    --spacing-scale: 0.75;
+    --font-scale: 0.85;
+  }
+  
+  /* Ultra-compact mode for narrow viewports */
+  .responsive-grid-4col {
+    gap: clamp(4px, 1vw, 8px) !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --spacing-scale: 0.9;
+    --font-scale: 0.95;
+  }
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --spacing-scale: 1;
+    --font-scale: 1;
+  }
+}
+
+/* Extreme narrow viewport handling - prevent any overflow */
+@media (max-width: 400px) {
+  /* Allow extremely small fonts to prevent horizontal scroll */
+  .single-line-text,
+  [style*="whitespace-nowrap"] {
+    font-size: clamp(8px, 2.5vw, 12px) !important;
+  }
+}
+
+/* Container query support for dynamic grid adaptation */
+@supports (container-type: inline-size) {
+  @container (inline-size < 350px) {
+    .responsive-grid-4col {
+      grid-template-columns: 1.5fr 0.8fr 1fr 0.6fr !important;
+      gap: 4px !important;
+    }
+  }
+  
+  @container (inline-size >= 350px) and (inline-size < 450px) {
+    .responsive-grid-4col {
+      grid-template-columns: 2fr 0.9fr 1.2fr 0.7fr !important;
+    }
+  }
+}
+
+/* Fallback: Enable minimal horizontal scroll if content absolutely cannot fit */
+@media (max-width: 320px) {
+  [style*="overflow: visible"] {
+    min-width: max-content;
+  }
+}
+
+/* High DPI / Retina display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .single-line-text {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

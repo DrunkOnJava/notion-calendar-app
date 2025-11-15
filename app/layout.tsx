@@ -1,19 +1,10 @@
-import type { Metadata } from 'next'
-// Temporarily disabled Google Fonts due to build environment network restrictions
-// Uncomment below when deploying to production:
-// import { Geist, Geist_Mono } from 'next/font/google'
-// const geist = Geist({
-//   subsets: ["latin"],
-//   variable: "--font-sans",
-//   fallback: ['system-ui', 'arial']
-// });
-// const geistMono = Geist_Mono({
-//   subsets: ["latin"],
-//   variable: "--font-mono",
-//   fallback: ['ui-monospace', 'monospace']
-// });
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
+import { Analytics } from '@vercel/analytics/next';
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -44,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased m-0 p-0 overflow-hidden h-screen">
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased m-0 p-0 overflow-hidden" style={{ height: '100vh' }}>
         {children}
         <Analytics />
       </body>

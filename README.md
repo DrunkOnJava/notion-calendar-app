@@ -61,7 +61,24 @@ pnpm build      # Build for production
 pnpm start      # Start production server
 pnpm lint       # Run ESLint
 pnpm type-check # Run TypeScript type checking
+pnpm copilot:chrome:screenshot # Launch headless Chrome for Copilot screenshots
+pnpm copilot:chrome:audit      # Launch headless Chrome tuned for Lighthouse-style audits
+pnpm copilot:chrome:inspect    # Launch visible Chrome session for manual inspection
+pnpm copilot:chrome:debug      # Launch dev-channel Chrome with auto DevTools for debugging
+pnpm copilot:chrome:evaluate   # Launch canary Chrome for fast script evaluation
 ```
+
+### Copilot Chrome DevTools Helpers
+
+Each `copilot:chrome:*` script spins up `chrome-devtools-mcp` with opinionated flags so GitHub Copilot (or any MCP client) can immediately take screenshots, run audits, inspect elements, debug, or evaluate scripts against the running app:
+
+- `pnpm copilot:chrome:screenshot` – headless + isolated session with a 1920×1080 viewport and hidden scrollbars for full-page captures.
+- `pnpm copilot:chrome:audit` – headless session with logging and relaxed cert handling to keep long-running audits stable.
+- `pnpm copilot:chrome:inspect` – interactive Chrome window for visually verifying what Copilot is automating.
+- `pnpm copilot:chrome:debug` – dev-channel Chrome that opens DevTools automatically and exposes the remote debugging port.
+- `pnpm copilot:chrome:evaluate` – canary channel in headless mode, optimized for quick script evaluation with emulation tools turned off.
+
+All scripts default to launching their own isolated Chrome profile. If you need to attach to an existing browser, run the underlying `pnpm dlx chrome-devtools-mcp@latest` command manually with `--browserUrl` instead of `--channel`.
 
 ### Project Structure
 
