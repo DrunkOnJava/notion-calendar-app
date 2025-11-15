@@ -3,6 +3,7 @@
 Create proper error boundaries for the application following React 19 best practices.
 
 ## 1. Create Global Error Boundary
+
 Create `app/error.tsx`:
 
 ```typescript
@@ -40,6 +41,7 @@ export default function Error({
 ```
 
 ## 2. Create Global Not Found Page
+
 Create `app/not-found.tsx`:
 
 ```typescript
@@ -64,6 +66,7 @@ export default function NotFound() {
 ```
 
 ## 3. Create Loading Component
+
 Create `app/loading.tsx`:
 
 ```typescript
@@ -80,6 +83,7 @@ export default function Loading() {
 ```
 
 ## Verification
+
 - Test error boundary by throwing an error in a component
 - Test 404 page by navigating to non-existent route
 - Test loading state (if you have any async route segments)

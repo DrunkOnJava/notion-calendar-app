@@ -1,9 +1,20 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { X, Clock, MapPin, Users, Bell, Repeat, Video, FileText, Tag, AlertCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { RecurrenceEditor, type RecurrenceRule } from "@/components/recurrence-editor"
+import { useState } from 'react'
+import {
+  X,
+  Clock,
+  MapPin,
+  Users,
+  Bell,
+  Repeat,
+  Video,
+  FileText,
+  Tag,
+  AlertCircle,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { RecurrenceEditor, type RecurrenceRule } from '@/components/recurrence-editor'
 
 interface EventCreateModalProps {
   isOpen: boolean
@@ -13,36 +24,42 @@ interface EventCreateModalProps {
   initialTime?: string
 }
 
-export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initialTime }: EventCreateModalProps) {
-  const [title, setTitle] = useState("")
+export function EventCreateModal({
+  isOpen,
+  onClose,
+  onSave,
+  initialDate,
+  initialTime,
+}: EventCreateModalProps) {
+  const [title, setTitle] = useState('')
   const [date, setDate] = useState<Date | null>(initialDate || null)
-  const [startTime, setStartTime] = useState(initialTime || "09:00")
-  const [endTime, setEndTime] = useState("10:00")
+  const [startTime, setStartTime] = useState(initialTime || '09:00')
+  const [endTime, setEndTime] = useState('10:00')
   const [isAllDay, setIsAllDay] = useState(false)
-  const [location, setLocation] = useState("")
-  const [description, setDescription] = useState("")
-  const [calendar, setCalendar] = useState("default")
+  const [location, setLocation] = useState('')
+  const [description, setDescription] = useState('')
+  const [calendar, setCalendar] = useState('default')
   const [attendees, setAttendees] = useState<string[]>([])
-  const [attendeeInput, setAttendeeInput] = useState("")
-  const [reminders, setReminders] = useState<string[]>(["15min"])
-  const [videoLink, setVideoLink] = useState("")
+  const [attendeeInput, setAttendeeInput] = useState('')
+  const [reminders, setReminders] = useState<string[]>(['15min'])
+  const [videoLink, setVideoLink] = useState('')
   const [tags, setTags] = useState<string[]>([])
-  const [tagInput, setTagInput] = useState("")
-  const [status, setStatus] = useState<"confirmed" | "tentative" | "cancelled">("confirmed")
-  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium")
-  const [visibility, setVisibility] = useState<"public" | "private" | "confidential">("public")
+  const [tagInput, setTagInput] = useState('')
+  const [status, setStatus] = useState<'confirmed' | 'tentative' | 'cancelled'>('confirmed')
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
+  const [visibility, setVisibility] = useState<'public' | 'private' | 'confidential'>('public')
   const [attachments, setAttachments] = useState<string[]>([])
-  const [color, setColor] = useState("#3B82F6")
+  const [color, setColor] = useState('#3B82F6')
   const [showRecurrenceEditor, setShowRecurrenceEditor] = useState(false)
   const [recurrence, setRecurrence] = useState<RecurrenceRule | null>(null)
-  const [timezone, setTimezone] = useState("America/New_York")
+  const [timezone, setTimezone] = useState('America/New_York')
 
   if (!isOpen) return null
 
   const handleAddAttendee = () => {
     if (attendeeInput.trim() && !attendees.includes(attendeeInput.trim())) {
       setAttendees([...attendees, attendeeInput.trim()])
-      setAttendeeInput("")
+      setAttendeeInput('')
     }
   }
 
@@ -53,7 +70,7 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       setTags([...tags, tagInput.trim()])
-      setTagInput("")
+      setTagInput('')
     }
   }
 
@@ -62,8 +79,8 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
   }
 
   const handleAddReminder = () => {
-    if (!reminders.includes("1hour")) {
-      setReminders([...reminders, "1hour"])
+    if (!reminders.includes('1hour')) {
+      setReminders([...reminders, '1hour'])
     }
   }
 
@@ -76,7 +93,7 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
 
     onSave({
       title,
-      date: date.toISOString().split("T")[0],
+      date: date.toISOString().split('T')[0],
       startTime: isAllDay ? null : startTime,
       endTime: isAllDay ? null : endTime,
       isAllDay,
@@ -98,40 +115,40 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
     })
 
     // Reset form
-    setTitle("")
+    setTitle('')
     setDate(null)
-    setStartTime("09:00")
-    setEndTime("10:00")
+    setStartTime('09:00')
+    setEndTime('10:00')
     setIsAllDay(false)
-    setLocation("")
-    setDescription("")
+    setLocation('')
+    setDescription('')
     setAttendees([])
-    setReminders(["15min"])
-    setVideoLink("")
+    setReminders(['15min'])
+    setVideoLink('')
     setTags([])
-    setStatus("confirmed")
-    setPriority("medium")
-    setVisibility("public")
+    setStatus('confirmed')
+    setPriority('medium')
+    setVisibility('public')
     setAttachments([])
-    setColor("#3B82F6")
+    setColor('#3B82F6')
     setRecurrence(null)
     onClose()
   }
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-[#1c1c1c] rounded-lg w-[600px] max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="flex max-h-[90vh] w-[600px] flex-col overflow-hidden rounded-lg bg-[#1c1c1c]">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-[#2a2a2a]">
+          <div className="flex items-center justify-between border-b border-[#2a2a2a] p-4">
             <h2 className="text-lg font-semibold">Create Event</h2>
-            <button onClick={onClose} className="hover:bg-[#2a2a2a] p-1.5 rounded">
-              <X className="w-5 h-5 text-[#6b6b6b]" />
+            <button onClick={onClose} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+              <X className="h-5 w-5 text-[#6b6b6b]" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-auto p-4 space-y-4">
+          <div className="flex-1 space-y-4 overflow-auto p-4">
             {/* Title */}
             <div>
               <input
@@ -139,20 +156,20 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                 placeholder="Event title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-transparent text-xl font-semibold border-none outline-none placeholder:text-[#4a4a4a]"
+                className="w-full border-none bg-transparent text-xl font-semibold outline-none placeholder:text-[#4a4a4a]"
                 autoFocus
               />
             </div>
 
             {/* Date & Time */}
             <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <Clock className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <div className="flex-1 space-y-2">
                 <input
                   type="date"
-                  value={date ? date.toISOString().split("T")[0] : ""}
+                  value={date ? date.toISOString().split('T')[0] : ''}
                   onChange={(e) => setDate(e.target.value ? new Date(e.target.value) : null)}
-                  className="w-full bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                  className="w-full rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                 />
 
                 <div className="flex items-center gap-2">
@@ -161,7 +178,7 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                     id="allDay"
                     checked={isAllDay}
                     onChange={(e) => setIsAllDay(e.target.checked)}
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                   />
                   <label htmlFor="allDay" className="text-sm text-[#d0d0d0]">
                     All day
@@ -175,20 +192,20 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                         type="time"
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
-                        className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                        className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                       />
                       <span className="text-[#6b6b6b]">to</span>
                       <input
                         type="time"
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
-                        className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                        className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                       />
                     </div>
                     <select
                       value={timezone}
                       onChange={(e) => setTimezone(e.target.value)}
-                      className="w-full bg-[#2a2a2a] text-xs px-3 py-1.5 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                      className="w-full rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-1.5 text-xs outline-none focus:border-blue-500"
                     >
                       <option value="America/New_York">Eastern Time</option>
                       <option value="America/Chicago">Central Time</option>
@@ -203,42 +220,42 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
 
             {/* Recurrence */}
             <div className="flex items-start gap-3">
-              <Repeat className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <Repeat className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <button
                 onClick={() => setShowRecurrenceEditor(true)}
-                className="flex-1 text-left bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] hover:bg-[#3a3a3a]"
+                className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-left text-sm hover:bg-[#3a3a3a]"
               >
-                {recurrence ? getRecurrenceSummary(recurrence) : "Does not repeat"}
+                {recurrence ? getRecurrenceSummary(recurrence) : 'Does not repeat'}
               </button>
             </div>
 
             {/* Location */}
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <MapPin className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <input
                 type="text"
                 placeholder="Add location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500 placeholder:text-[#6b6b6b]"
+                className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
               />
             </div>
 
             {/* Video Conference */}
             <div className="flex items-start gap-3">
-              <Video className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <Video className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <input
                 type="text"
                 placeholder="Add video conference link (Zoom, Meet, Teams)"
                 value={videoLink}
                 onChange={(e) => setVideoLink(e.target.value)}
-                className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500 placeholder:text-[#6b6b6b]"
+                className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
               />
             </div>
 
             {/* Attendees */}
             <div className="flex items-start gap-3">
-              <Users className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <Users className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <div className="flex-1 space-y-2">
                 <div className="flex gap-2">
                   <input
@@ -246,12 +263,14 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                     placeholder="Add attendees (email)"
                     value={attendeeInput}
                     onChange={(e) => setAttendeeInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddAttendee())}
-                    className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500 placeholder:text-[#6b6b6b]"
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' && (e.preventDefault(), handleAddAttendee())
+                    }
+                    className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
                   />
                   <button
                     onClick={handleAddAttendee}
-                    className="bg-[#2a2a2a] hover:bg-[#3a3a3a] text-sm px-3 py-2 rounded"
+                    className="rounded bg-[#2a2a2a] px-3 py-2 text-sm hover:bg-[#3a3a3a]"
                   >
                     Add
                   </button>
@@ -259,10 +278,16 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                 {attendees.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {attendees.map((email) => (
-                      <span key={email} className="bg-[#2a2a2a] text-xs px-2 py-1 rounded flex items-center gap-1">
+                      <span
+                        key={email}
+                        className="flex items-center gap-1 rounded bg-[#2a2a2a] px-2 py-1 text-xs"
+                      >
                         {email}
-                        <button onClick={() => handleRemoveAttendee(email)} className="hover:text-destructive">
-                          <X className="w-3 h-3" />
+                        <button
+                          onClick={() => handleRemoveAttendee(email)}
+                          className="hover:text-destructive"
+                        >
+                          <X className="h-3 w-3" />
                         </button>
                       </span>
                     ))}
@@ -273,19 +298,19 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
 
             {/* Description */}
             <div className="flex items-start gap-3">
-              <FileText className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <FileText className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <textarea
                 placeholder="Add description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500 placeholder:text-[#6b6b6b] resize-none"
+                className="flex-1 resize-none rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
               />
             </div>
 
             {/* Tags */}
             <div className="flex items-start gap-3">
-              <Tag className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <Tag className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <div className="flex-1 space-y-2">
                 <div className="flex gap-2">
                   <input
@@ -293,10 +318,13 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                     placeholder="Add tags"
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
-                    className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500 placeholder:text-[#6b6b6b]"
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                    className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
                   />
-                  <button onClick={handleAddTag} className="bg-[#2a2a2a] hover:bg-[#3a3a3a] text-sm px-3 py-2 rounded">
+                  <button
+                    onClick={handleAddTag}
+                    className="rounded bg-[#2a2a2a] px-3 py-2 text-sm hover:bg-[#3a3a3a]"
+                  >
                     Add
                   </button>
                 </div>
@@ -305,11 +333,14 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="bg-badge-blue text-badge-blue-foreground text-xs px-2 py-1 rounded flex items-center gap-1"
+                        className="bg-badge-blue text-badge-blue-foreground flex items-center gap-1 rounded px-2 py-1 text-xs"
                       >
                         {tag}
-                        <button onClick={() => handleRemoveTag(tag)} className="hover:text-destructive">
-                          <X className="w-3 h-3" />
+                        <button
+                          onClick={() => handleRemoveTag(tag)}
+                          className="hover:text-destructive"
+                        >
+                          <X className="h-3 w-3" />
                         </button>
                       </span>
                     ))}
@@ -320,7 +351,7 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
 
             {/* Reminders */}
             <div className="flex items-start gap-3">
-              <Bell className="w-5 h-5 text-[#6b6b6b] mt-2" />
+              <Bell className="mt-2 h-5 w-5 text-[#6b6b6b]" />
               <div className="flex-1 space-y-2">
                 {reminders.map((reminder, idx) => (
                   <div key={idx} className="flex items-center gap-2">
@@ -331,7 +362,7 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                         newReminders[idx] = e.target.value
                         setReminders(newReminders)
                       }}
-                      className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                      className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                     >
                       <option value="0min">At time of event</option>
                       <option value="5min">5 minutes before</option>
@@ -343,13 +374,19 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                       <option value="1week">1 week before</option>
                     </select>
                     {reminders.length > 1 && (
-                      <button onClick={() => handleRemoveReminder(reminder)} className="hover:bg-[#2a2a2a] p-1 rounded">
-                        <X className="w-4 h-4 text-[#6b6b6b]" />
+                      <button
+                        onClick={() => handleRemoveReminder(reminder)}
+                        className="rounded p-1 hover:bg-[#2a2a2a]"
+                      >
+                        <X className="h-4 w-4 text-[#6b6b6b]" />
                       </button>
                     )}
                   </div>
                 ))}
-                <button onClick={handleAddReminder} className="text-sm text-info hover:text-info/80">
+                <button
+                  onClick={handleAddReminder}
+                  className="text-info hover:text-info/80 text-sm"
+                >
                   Add another reminder
                 </button>
               </div>
@@ -357,14 +394,14 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
 
             {/* Status & Priority */}
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-[#6b6b6b] mt-2" />
-              <div className="flex-1 grid grid-cols-2 gap-2">
+              <AlertCircle className="mt-2 h-5 w-5 text-[#6b6b6b]" />
+              <div className="grid flex-1 grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-[#9a9a9a] mb-1 block">Status</label>
+                  <label className="mb-1 block text-xs text-[#9a9a9a]">Status</label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as any)}
-                    className="w-full bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                    className="w-full rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                   >
                     <option value="confirmed">Confirmed</option>
                     <option value="tentative">Tentative</option>
@@ -372,11 +409,11 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-[#9a9a9a] mb-1 block">Priority</label>
+                  <label className="mb-1 block text-xs text-[#9a9a9a]">Priority</label>
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as any)}
-                    className="w-full bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                    className="w-full rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -387,23 +424,23 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
             </div>
 
             {/* Color & Visibility */}
-            <div className="border-t border-[#2a2a2a] pt-4 space-y-3">
+            <div className="space-y-3 border-t border-[#2a2a2a] pt-4">
               <div className="flex items-center gap-3">
-                <label className="text-sm text-[#9a9a9a] w-24">Color</label>
+                <label className="w-24 text-sm text-[#9a9a9a]">Color</label>
                 <input
                   type="color"
                   value={color}
                   onChange={(e) => setColor(e.target.value)}
-                  className="w-12 h-8 rounded cursor-pointer"
+                  className="h-8 w-12 cursor-pointer rounded"
                 />
               </div>
 
               <div className="flex items-center gap-3">
-                <label className="text-sm text-[#9a9a9a] w-24">Visibility</label>
+                <label className="w-24 text-sm text-[#9a9a9a]">Visibility</label>
                 <select
                   value={visibility}
                   onChange={(e) => setVisibility(e.target.value as any)}
-                  className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                  className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                 >
                   <option value="public">Public</option>
                   <option value="private">Private</option>
@@ -412,11 +449,11 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
               </div>
 
               <div className="flex items-center gap-3">
-                <label className="text-sm text-[#9a9a9a] w-24">Calendar</label>
+                <label className="w-24 text-sm text-[#9a9a9a]">Calendar</label>
                 <select
                   value={calendar}
                   onChange={(e) => setCalendar(e.target.value)}
-                  className="flex-1 bg-[#2a2a2a] text-sm px-3 py-2 rounded border border-[#3a3a3a] outline-none focus:border-blue-500"
+                  className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
                 >
                   <option value="default">Default Calendar</option>
                   <option value="personal">Personal</option>
@@ -428,18 +465,21 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-2 p-4 border-t border-[#2a2a2a]">
-            <button onClick={onClose} className="px-4 py-2 text-sm text-[#d0d0d0] hover:bg-[#2a2a2a] rounded">
+          <div className="flex items-center justify-end gap-2 border-t border-[#2a2a2a] p-4">
+            <button
+              onClick={onClose}
+              className="rounded px-4 py-2 text-sm text-[#d0d0d0] hover:bg-[#2a2a2a]"
+            >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!title || !date}
               className={cn(
-                "px-4 py-2 text-sm rounded font-medium",
+                'rounded px-4 py-2 text-sm font-medium',
                 title && date
-                  ? "bg-info hover:bg-info/90 text-info-foreground"
-                  : "bg-[#3a3a3a] text-[#6b6b6b] cursor-not-allowed",
+                  ? 'bg-info hover:bg-info/90 text-info-foreground'
+                  : 'cursor-not-allowed bg-[#3a3a3a] text-[#6b6b6b]'
               )}
             >
               Create Event
@@ -463,33 +503,33 @@ export function EventCreateModal({ isOpen, onClose, onSave, initialDate, initial
 }
 
 function getRecurrenceSummary(rule: RecurrenceRule): string {
-  let summary = `Every ${rule.interval > 1 ? rule.interval + " " : ""}`
+  let summary = `Every ${rule.interval > 1 ? rule.interval + ' ' : ''}`
 
   switch (rule.frequency) {
-    case "daily":
-      summary += rule.interval === 1 ? "day" : "days"
+    case 'daily':
+      summary += rule.interval === 1 ? 'day' : 'days'
       break
-    case "weekly":
-      summary += rule.interval === 1 ? "week" : "weeks"
+    case 'weekly':
+      summary += rule.interval === 1 ? 'week' : 'weeks'
       if (rule.byWeekday && rule.byWeekday.length > 0) {
-        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        summary += " on " + rule.byWeekday.map((d) => days[d]).join(", ")
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        summary += ' on ' + rule.byWeekday.map((d) => days[d]).join(', ')
       }
       break
-    case "monthly":
-      summary += rule.interval === 1 ? "month" : "months"
+    case 'monthly':
+      summary += rule.interval === 1 ? 'month' : 'months'
       if (rule.byMonthDay) {
         summary += ` on day ${rule.byMonthDay}`
       }
       break
-    case "yearly":
-      summary += rule.interval === 1 ? "year" : "years"
+    case 'yearly':
+      summary += rule.interval === 1 ? 'year' : 'years'
       break
   }
 
-  if (rule.endType === "count") {
+  if (rule.endType === 'count') {
     summary += `, ${rule.count} times`
-  } else if (rule.endType === "until") {
+  } else if (rule.endType === 'until') {
     summary += `, until ${rule.until}`
   }
 

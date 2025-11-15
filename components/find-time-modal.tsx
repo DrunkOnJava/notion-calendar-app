@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { X, Search, Clock, Users, Calendar } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from 'react'
+import { X, Search, Clock, Users, Calendar } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface FindTimeModalProps {
   isOpen: boolean
@@ -12,10 +12,16 @@ interface FindTimeModalProps {
   weeklyAvailability: any
 }
 
-export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAvailability }: FindTimeModalProps) {
+export function FindTimeModal({
+  isOpen,
+  onClose,
+  onSelectTime,
+  events,
+  weeklyAvailability,
+}: FindTimeModalProps) {
   const [duration, setDuration] = useState(30)
   const [attendees, setAttendees] = useState<string[]>([])
-  const [newAttendee, setNewAttendee] = useState("")
+  const [newAttendee, setNewAttendee] = useState('')
   const [dateRange, setDateRange] = useState(7) // Days to look ahead
   const [suggestedTimes, setSuggestedTimes] = useState<any[]>([])
 
@@ -27,15 +33,15 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
 
     // Iterate through each day in the range
     for (let d = new Date(now); d <= endDate; d.setDate(d.getDate() + 1)) {
-      const dayName = d.toLocaleDateString("en-US", { weekday: "long" })
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'long' })
       const dayAvailability = weeklyAvailability[dayName]
 
       if (!dayAvailability || !dayAvailability.enabled) continue
 
       // Check each availability slot for this day
       dayAvailability.slots.forEach((slot: { start: string; end: string }) => {
-        const [startHour, startMin] = slot.start.split(":").map(Number)
-        const [endHour, endMin] = slot.end.split(":").map(Number)
+        const [startHour, startMin] = slot.start.split(':').map(Number)
+        const [endHour, endMin] = slot.end.split(':').map(Number)
 
         // Generate time slots within availability window
         const currentTime = new Date(d)
@@ -50,7 +56,7 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
           if (proposedEnd > slotEnd) break
 
           // Check if this time conflicts with existing events
-          const dateStr = currentTime.toISOString().split("T")[0]
+          const dateStr = currentTime.toISOString().split('T')[0]
           const timeStr = currentTime.toTimeString().slice(0, 5)
           const endTimeStr = proposedEnd.toTimeString().slice(0, 5)
 
@@ -95,7 +101,7 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
   const handleAddAttendee = () => {
     if (newAttendee && !attendees.includes(newAttendee)) {
       setAttendees([...attendees, newAttendee])
-      setNewAttendee("")
+      setNewAttendee('')
     }
   }
 
@@ -111,33 +117,33 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-card border border-border rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-card border-border max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg border">
+        <div className="bg-card border-border sticky top-0 flex items-center justify-between border-b p-4">
           <div className="flex items-center gap-2">
-            <Search className="w-5 h-5 text-info" />
-            <h2 className="text-lg font-semibold text-foreground">Find Time</h2>
+            <Search className="text-info h-5 w-5" />
+            <h2 className="text-foreground text-lg font-semibold">Find Time</h2>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* Meeting Details */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Clock className="w-4 h-4" />
+            <h3 className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <Clock className="h-4 w-4" />
               Meeting Details
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Duration</label>
+                <label className="text-muted-foreground mb-2 block text-sm">Duration</label>
                 <select
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-info"
+                  className="bg-input border-border text-foreground focus:ring-info w-full rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                 >
                   <option value={15}>15 minutes</option>
                   <option value={30}>30 minutes</option>
@@ -149,11 +155,11 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Search Next</label>
+                <label className="text-muted-foreground mb-2 block text-sm">Search Next</label>
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-info"
+                  className="bg-input border-border text-foreground focus:ring-info w-full rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                 >
                   <option value={7}>7 days</option>
                   <option value={14}>14 days</option>
@@ -166,8 +172,8 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
 
           {/* Attendees */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Users className="w-4 h-4" />
+            <h3 className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <Users className="h-4 w-4" />
               Attendees (Optional)
             </h3>
 
@@ -176,9 +182,9 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
                 type="email"
                 value={newAttendee}
                 onChange={(e) => setNewAttendee(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAddAttendee()}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAttendee()}
                 placeholder="Add attendee email"
-                className="flex-1 px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-info"
+                className="bg-input border-border text-foreground placeholder-muted-foreground focus:ring-info flex-1 rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
               />
               <Button onClick={handleAddAttendee} variant="outline">
                 Add
@@ -188,13 +194,16 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
             {attendees.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {attendees.map((email) => (
-                  <div key={email} className="flex items-center gap-2 bg-surface px-3 py-1 rounded-full text-sm">
+                  <div
+                    key={email}
+                    className="bg-surface flex items-center gap-2 rounded-full px-3 py-1 text-sm"
+                  >
                     <span className="text-foreground">{email}</span>
                     <button
                       onClick={() => handleRemoveAttendee(email)}
                       className="text-muted-foreground hover:text-foreground"
                     >
-                      <X className="w-3 h-3" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 ))}
@@ -203,40 +212,42 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
           </div>
 
           {/* Find Times Button */}
-          <Button onClick={findAvailableTimes} className="w-full bg-info hover:bg-info/90">
-            <Search className="w-4 h-4 mr-2" />
+          <Button onClick={findAvailableTimes} className="bg-info hover:bg-info/90 w-full">
+            <Search className="mr-2 h-4 w-4" />
             Find Available Times
           </Button>
 
           {/* Suggested Times */}
           {suggestedTimes.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
+              <h3 className="text-foreground flex items-center gap-2 text-sm font-semibold">
+                <Calendar className="h-4 w-4" />
                 Suggested Times ({suggestedTimes.length})
               </h3>
 
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="max-h-96 space-y-2 overflow-y-auto">
                 {suggestedTimes.map((suggestion, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSelectTime(suggestion)}
-                    className="w-full flex items-center justify-between p-4 bg-surface hover:bg-surface-hover border border-border rounded-lg transition-colors"
+                    className="bg-surface hover:bg-surface-hover border-border flex w-full items-center justify-between rounded-lg border p-4 transition-colors"
                   >
                     <div className="text-left">
-                      <div className="text-sm font-medium text-foreground">
-                        {suggestion.date.toLocaleDateString("en-US", {
-                          weekday: "long",
-                          month: "long",
-                          day: "numeric",
+                      <div className="text-foreground text-sm font-medium">
+                        {suggestion.date.toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          month: 'long',
+                          day: 'numeric',
                         })}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         {suggestion.startTime} - {suggestion.endTime} ({duration} min)
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 bg-success/20 text-success text-xs rounded-full">Available</span>
+                      <span className="bg-success/20 text-success rounded-full px-3 py-1 text-xs">
+                        Available
+                      </span>
                       <span className="text-muted-foreground">→</span>
                     </div>
                   </button>
@@ -246,9 +257,11 @@ export function FindTimeModal({ isOpen, onClose, onSelectTime, events, weeklyAva
           )}
 
           {suggestedTimes.length === 0 && (
-            <div className="text-center py-8">
-              <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">Click "Find Available Times" to see suggestions</p>
+            <div className="py-8 text-center">
+              <Clock className="text-muted-foreground mx-auto mb-3 h-12 w-12" />
+              <p className="text-muted-foreground text-sm">
+                Click "Find Available Times" to see suggestions
+              </p>
             </div>
           )}
         </div>

@@ -3,11 +3,13 @@
 Setup Prettier for consistent code formatting across the project.
 
 ## 1. Install Prettier
+
 ```bash
 pnpm add -D prettier prettier-plugin-tailwindcss
 ```
 
 ## 2. Create .prettierrc.json
+
 ```json
 {
   "semi": false,
@@ -21,6 +23,7 @@ pnpm add -D prettier prettier-plugin-tailwindcss
 ```
 
 ## 3. Create .prettierignore
+
 ```
 # Dependencies
 node_modules/
@@ -48,7 +51,9 @@ yarn.lock
 ```
 
 ## 4. Update package.json Scripts
+
 Add these scripts to package.json:
+
 ```json
 {
   "scripts": {
@@ -59,7 +64,9 @@ Add these scripts to package.json:
 ```
 
 ## 5. Update ESLint Config
+
 Add Prettier to eslint.config.mjs to avoid conflicts:
+
 ```javascript
 // At the top with other imports
 import prettierPlugin from 'eslint-plugin-prettier';
@@ -73,6 +80,7 @@ rules: {
 ```
 
 ## Verification
+
 - Run `pnpm format` to format all files
 - Run `pnpm format:check` to verify formatting
 - Ensure no conflicts between ESLint and Prettier

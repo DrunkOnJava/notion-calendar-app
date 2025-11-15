@@ -5,6 +5,7 @@ Update the placeholder metadata in app/layout.tsx with proper project informatio
 ## Changes Required
 
 Replace the current metadata:
+
 ```typescript
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -15,10 +16,12 @@ export const metadata: Metadata = {
 ```
 
 With:
+
 ```typescript
 export const metadata: Metadata = {
   title: 'Notion Calendar - Modern Calendar & Event Management',
-  description: 'Feature-rich calendar application with multiple views, drag-and-drop events, recurring events, database views, scheduling links, and smart time finding',
+  description:
+    'Feature-rich calendar application with multiple views, drag-and-drop events, recurring events, database views, scheduling links, and smart time finding',
   keywords: ['calendar', 'scheduling', 'events', 'notion', 'productivity', 'time management'],
   authors: [{ name: 'Your Name' }],
   creator: 'Your Name',
@@ -44,6 +47,7 @@ export const metadata: Metadata = {
 ```
 
 ## Verification
+
 - Confirm metadata is properly typed
 - Build should complete successfully
 - Create commit: `docs: update application metadata with proper titles and descriptions`

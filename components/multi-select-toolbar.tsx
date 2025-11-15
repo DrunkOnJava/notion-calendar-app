@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { X, Trash2, Calendar, Palette } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { X, Trash2, Calendar, Palette } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface MultiSelectToolbarProps {
   selectedCount: number
@@ -21,17 +21,17 @@ export function MultiSelectToolbar({
   if (selectedCount === 0) return null
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg shadow-2xl px-4 py-3 flex items-center gap-4 z-50 animate-in slide-in-from-bottom-4">
-      <div className="text-sm text-white font-medium">{selectedCount} selected</div>
+    <div className="animate-in slide-in-from-bottom-4 fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-4 rounded-lg border border-[#3a3a3a] bg-[#2a2a2a] px-4 py-3 shadow-2xl">
+      <div className="text-sm font-medium text-white">{selectedCount} selected</div>
 
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={onChangeColor}
-          className="text-[#d0d0d0] hover:text-white hover:bg-[#3a3a3a]"
+          className="text-[#d0d0d0] hover:bg-[#3a3a3a] hover:text-white"
         >
-          <Palette className="w-4 h-4 mr-2" />
+          <Palette className="mr-2 h-4 w-4" />
           Change Color
         </Button>
 
@@ -39,9 +39,9 @@ export function MultiSelectToolbar({
           variant="ghost"
           size="sm"
           onClick={onMoveToCalendar}
-          className="text-[#d0d0d0] hover:text-white hover:bg-[#3a3a3a]"
+          className="text-[#d0d0d0] hover:bg-[#3a3a3a] hover:text-white"
         >
-          <Calendar className="w-4 h-4 mr-2" />
+          <Calendar className="mr-2 h-4 w-4" />
           Move to Calendar
         </Button>
 
@@ -51,17 +51,17 @@ export function MultiSelectToolbar({
           onClick={onDelete}
           className="text-destructive hover:text-destructive/80 hover:bg-destructive/20"
         >
-          <Trash2 className="w-4 h-4 mr-2" />
+          <Trash2 className="mr-2 h-4 w-4" />
           Delete
         </Button>
       </div>
 
       <button
         onClick={onClear}
-        className="ml-2 hover:bg-[#3a3a3a] p-1.5 rounded transition-colors"
+        className="ml-2 rounded p-1.5 transition-colors hover:bg-[#3a3a3a]"
         title="Clear selection"
       >
-        <X className="w-4 h-4 text-[#9a9a9a]" />
+        <X className="h-4 w-4 text-[#9a9a9a]" />
       </button>
     </div>
   )

@@ -1,87 +1,133 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { AgendaView } from "@/components/agenda-view"
-import { BulkActionModal } from "@/components/bulk-action-modal"
-import { CalendarContextMenu } from "@/components/calendar-context-menu"
-import { CalendarImportExport } from "@/components/calendar-import-export"
-import { CalendarListModal, type Calendar, type CalendarGroup } from "@/components/calendar-list-modal"
-import { CalendarShareModal } from "@/components/calendar-share-modal"
-import { CommandPalette } from "@/components/command-palette"
-import { DatabaseBoardView } from "@/components/database-board-view"
-import { DatabaseCard } from "@/components/database-card"
-import { DatabaseFilter } from "@/components/database-filter"
-import { DatabaseItemContextMenu } from "@/components/database-item-context-menu"
-import { DatabaseSort } from "@/components/database-sort"
-import { DatabaseTableView } from "@/components/database-table-view"
-import { DatePickerModal } from "@/components/date-picker-modal"
-import { DayView } from "@/components/day-view"
-import { DraggableDatabaseItem } from "@/components/draggable-database-item"
-import { DraggableEvent } from "@/components/draggable-event"
-import { EventContextMenu } from "@/components/event-context-menu"
-import { EventCreateModal } from "@/components/event-create-modal"
-import { EventDetailModal } from "@/components/event-detail-modal"
-import { EventHoverPreview } from "@/components/event-hover-preview"
-import { EventSeriesModal } from "@/components/event-series-modal"
-import { MultiSelectToolbar } from "@/components/multi-select-toolbar"
-import { NotificationCenter, type Notification } from "@/components/notification-center"
-import { generateRecurringDates, type RecurrenceRule } from "@/components/recurrence-editor"
-import { SearchBar } from "@/components/search-bar"
-import { SelectionContextMenu } from "@/components/selection-context-menu"
-import { SettingsModal, type Settings } from "@/components/settings-modal"
-import { ToastContainer } from "@/components/toast-notification"
-import { Button } from "@/components/ui/button"; // Added for scheduling links
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
-import { ViewSwitcher } from "@/components/view-switcher"
-import { WeekView } from "@/components/week-view"
-import { cn } from "@/lib/utils"
+import { AgendaView } from '@/components/agenda-view'
+import { BulkActionModal } from '@/components/bulk-action-modal'
+import { CalendarContextMenu } from '@/components/calendar-context-menu'
+import { CalendarImportExport } from '@/components/calendar-import-export'
 import {
-    CalendarIcon,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-    LayoutGrid,
-    MoreHorizontal,
-    PanelLeftClose,
-    PanelLeftOpen,
-    PanelRightClose,
-    PanelRightOpen,
-    Plus,
-    Search,
-    Table,
-    X,
-} from "lucide-react"
-import { useEffect, useState } from "react"
+  CalendarListModal,
+  type Calendar,
+  type CalendarGroup,
+} from '@/components/calendar-list-modal'
+import { CalendarShareModal } from '@/components/calendar-share-modal'
+import { CommandPalette } from '@/components/command-palette'
+import { DatabaseBoardView } from '@/components/database-board-view'
+import { DatabaseCard } from '@/components/database-card'
+import { DatabaseFilter } from '@/components/database-filter'
+import { DatabaseItemContextMenu } from '@/components/database-item-context-menu'
+import { DatabaseSort } from '@/components/database-sort'
+import { DatabaseTableView } from '@/components/database-table-view'
+import { DatePickerModal } from '@/components/date-picker-modal'
+import { DayView } from '@/components/day-view'
+import { DraggableDatabaseItem } from '@/components/draggable-database-item'
+import { DraggableEvent } from '@/components/draggable-event'
+import { EventContextMenu } from '@/components/event-context-menu'
+import { EventCreateModal } from '@/components/event-create-modal'
+import { EventDetailModal } from '@/components/event-detail-modal'
+import { EventHoverPreview } from '@/components/event-hover-preview'
+import { EventSeriesModal } from '@/components/event-series-modal'
+import { MultiSelectToolbar } from '@/components/multi-select-toolbar'
+import { NotificationCenter, type Notification } from '@/components/notification-center'
+import { generateRecurringDates, type RecurrenceRule } from '@/components/recurrence-editor'
+import { SearchBar } from '@/components/search-bar'
+import { SelectionContextMenu } from '@/components/selection-context-menu'
+import { SettingsModal, type Settings } from '@/components/settings-modal'
+import { ToastContainer } from '@/components/toast-notification'
+import { Button } from '@/components/ui/button' // Added for scheduling links
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { ViewSwitcher } from '@/components/view-switcher'
+import { WeekView } from '@/components/week-view'
+import { cn } from '@/lib/utils'
+import {
+  CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  LayoutGrid,
+  MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelRightClose,
+  PanelRightOpen,
+  Plus,
+  Search,
+  Table,
+  X,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 // Add scheduling links imports
-import { AvailabilityEditor } from "@/components/availability-editor"
-import { SchedulingLinkModal } from "@/components/scheduling-link-modal"
-import { SchedulingLinksList } from "@/components/scheduling-links-list"
+import { AvailabilityEditor } from '@/components/availability-editor'
+import { SchedulingLinkModal } from '@/components/scheduling-link-modal'
+import { SchedulingLinksList } from '@/components/scheduling-links-list'
 
 const initialEvents = [
-  { id: "1", date: "2025-10-31", title: "Halloween", type: "holiday" },
-  { id: "2", date: "2025-11-02", title: "Daylight Saving Time ends", type: "info" },
-  { id: "3", date: "2025-11-03", title: "Election Day", type: "info" },
-  { id: "4", date: "2025-11-03", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
-  { id: "5", date: "2025-11-05", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
-  { id: "6", date: "2025-11-11", title: "Veterans Day", type: "holiday" },
-  { id: "7", date: "2025-11-12", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
-  { id: "8", date: "2025-11-13", title: "Thanksgiving" },
-  { id: "9", date: "2025-11-19", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
-  { id: "10", date: "2025-11-26", title: "Thanksgiving Day", type: "holiday" },
-  { id: "11", date: "2025-11-26", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
-  { id: "12", date: "2025-11-27", title: "Black Friday", type: "info" },
-  { id: "13", date: "2025-12-03", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
+  { id: '1', date: '2025-10-31', title: 'Halloween', type: 'holiday' },
+  { id: '2', date: '2025-11-02', title: 'Daylight Saving Time ends', type: 'info' },
+  { id: '3', date: '2025-11-03', title: 'Election Day', type: 'info' },
+  {
+    id: '4',
+    date: '2025-11-03',
+    title: 'Game night!',
+    time: '8 PM',
+    startTime: '20:00',
+    endTime: '22:00',
+  },
+  {
+    id: '5',
+    date: '2025-11-05',
+    title: 'Game night!',
+    time: '8 PM',
+    startTime: '20:00',
+    endTime: '22:00',
+  },
+  { id: '6', date: '2025-11-11', title: 'Veterans Day', type: 'holiday' },
+  {
+    id: '7',
+    date: '2025-11-12',
+    title: 'Game night!',
+    time: '8 PM',
+    startTime: '20:00',
+    endTime: '22:00',
+  },
+  { id: '8', date: '2025-11-13', title: 'Thanksgiving' },
+  {
+    id: '9',
+    date: '2025-11-19',
+    title: 'Game night!',
+    time: '8 PM',
+    startTime: '20:00',
+    endTime: '22:00',
+  },
+  { id: '10', date: '2025-11-26', title: 'Thanksgiving Day', type: 'holiday' },
+  {
+    id: '11',
+    date: '2025-11-26',
+    title: 'Game night!',
+    time: '8 PM',
+    startTime: '20:00',
+    endTime: '22:00',
+  },
+  { id: '12', date: '2025-11-27', title: 'Black Friday', type: 'info' },
+  {
+    id: '13',
+    date: '2025-12-03',
+    title: 'Game night!',
+    time: '8 PM',
+    startTime: '20:00',
+    endTime: '22:00',
+  },
 ]
 
 const personnelData = [
   {
-    name: "Personnel Roster",
+    name: 'Personnel Roster',
     items: [
       {
-        id: "p1",
-        name: "Michael Foster",
-        time: "October 18, 7:33-7:33PM",
+        id: 'p1',
+        name: 'Michael Foster',
+        time: 'October 18, 7:33-7:33PM',
         properties: {
           UTV: true,
           ALS: false,
@@ -90,22 +136,22 @@ const personnelData = [
           Available: true,
           BLS: true,
           Boat: true,
-          "Brush Truck": true,
-          "Certification Level": "EMT",
+          'Brush Truck': true,
+          'Certification Level': 'EMT',
           Engine: true,
           FTO: true,
-          "Last Hold Date": "October 18, 2024",
-          "Rescue Squad": true,
-          Shift: "B",
-          Station: "Station 7",
+          'Last Hold Date': 'October 18, 2024',
+          'Rescue Squad': true,
+          Shift: 'B',
+          Station: 'Station 7',
           Tanker: true,
           Truck: true,
         },
       },
       {
-        id: "p2",
-        name: "Ryan Baldwin",
-        time: "October 18, 7:40-7:40PM",
+        id: 'p2',
+        name: 'Ryan Baldwin',
+        time: 'October 18, 7:40-7:40PM',
         properties: {
           UTV: true,
           ALS: false,
@@ -114,19 +160,19 @@ const personnelData = [
           Available: true,
           BLS: true,
           Boat: true,
-          "Brush Truck": true,
-          "Certification Level": "EMT",
+          'Brush Truck': true,
+          'Certification Level': 'EMT',
           Engine: true,
           FTO: true,
-          "Last Hold Date": "September 22, 2024",
-          Shift: "A",
-          Station: "Station 3",
+          'Last Hold Date': 'September 22, 2024',
+          Shift: 'A',
+          Station: 'Station 3',
         },
       },
       {
-        id: "p3",
-        name: "Chad Biby",
-        time: "October 18, 7:39-7:39PM",
+        id: 'p3',
+        name: 'Chad Biby',
+        time: 'October 18, 7:39-7:39PM',
         properties: {
           UTV: true,
           ALS: false,
@@ -135,22 +181,22 @@ const personnelData = [
           Available: true,
           BLS: true,
           Boat: false,
-          "Brush Truck": false,
-          "Certification Level": "EMT",
+          'Brush Truck': false,
+          'Certification Level': 'EMT',
           Engine: true,
           FTO: true,
-          "Last Hold Date": null,
-          "Rescue Squad": true,
-          Shift: "C",
-          Station: "Station 5",
+          'Last Hold Date': null,
+          'Rescue Squad': true,
+          Shift: 'C',
+          Station: 'Station 5',
           Tanker: true,
           Truck: true,
         },
       },
       {
-        id: "p4",
-        name: "Kiersten Kennedy",
-        time: "October 18, 7:40-7:40PM",
+        id: 'p4',
+        name: 'Kiersten Kennedy',
+        time: 'October 18, 7:40-7:40PM',
         properties: {
           UTV: true,
           ALS: false,
@@ -159,156 +205,156 @@ const personnelData = [
           Available: true,
           BLS: true,
           Boat: false,
-          "Brush Truck": true,
-          "Certification Level": "EMT",
+          'Brush Truck': true,
+          'Certification Level': 'EMT',
           Engine: true,
           FTO: true,
-          "Last Hold Date": "November 10, 2024",
-          "Rescue Squad": true,
-          Shift: "B",
-          Station: "Station 2",
+          'Last Hold Date': 'November 10, 2024',
+          'Rescue Squad': true,
+          Shift: 'B',
+          Station: 'Station 2',
           Tanker: true,
         },
       },
       {
-        id: "p5",
-        name: "Eddie Hammack",
-        time: "October 18, 7:42-7:42PM",
+        id: 'p5',
+        name: 'Eddie Hammack',
+        time: 'October 18, 7:42-7:42PM',
         properties: {
           UTV: true,
-          "Last Hold Date": "October 5, 2024",
-          Shift: "A",
-          Station: "Station 1",
+          'Last Hold Date': 'October 5, 2024',
+          Shift: 'A',
+          Station: 'Station 1',
         },
       },
       {
-        id: "p6",
-        name: "Sarah Martinez",
-        time: "October 19, 8:15-8:15AM",
+        id: 'p6',
+        name: 'Sarah Martinez',
+        time: 'October 19, 8:15-8:15AM',
         properties: {
           ALS: true,
-          "Certification Level": "Paramedic",
-          "Last Hold Date": "November 1, 2024",
-          Shift: "C",
-          Station: "Station 4",
+          'Certification Level': 'Paramedic',
+          'Last Hold Date': 'November 1, 2024',
+          Shift: 'C',
+          Station: 'Station 4',
         },
       },
       {
-        id: "p7",
-        name: "James Thompson",
-        time: "October 19, 9:00-9:00AM",
+        id: 'p7',
+        name: 'James Thompson',
+        time: 'October 19, 9:00-9:00AM',
         properties: {
           Engine: true,
           Truck: true,
-          "Certification Level": "EMT",
-          "Last Hold Date": null,
-          Shift: "B",
-          Station: "Station 6",
+          'Certification Level': 'EMT',
+          'Last Hold Date': null,
+          Shift: 'B',
+          Station: 'Station 6',
         },
       },
       {
-        id: "p8",
-        name: "Emily Chen",
-        time: "October 19, 10:30-10:30AM",
+        id: 'p8',
+        name: 'Emily Chen',
+        time: 'October 19, 10:30-10:30AM',
         properties: {
           ALS: true,
           Ambulance: true,
-          "Certification Level": "Paramedic",
-          "Last Hold Date": "October 28, 2024",
-          Shift: "A",
-          Station: "Station 8",
+          'Certification Level': 'Paramedic',
+          'Last Hold Date': 'October 28, 2024',
+          Shift: 'A',
+          Station: 'Station 8',
         },
       },
       {
-        id: "p9",
-        name: "David Rodriguez",
-        time: "October 20, 7:00-7:00AM",
+        id: 'p9',
+        name: 'David Rodriguez',
+        time: 'October 20, 7:00-7:00AM',
         properties: {
           Engine: true,
-          "Rescue Squad": true,
-          "Certification Level": "EMT",
-          "Last Hold Date": "September 15, 2024",
-          Shift: "C",
-          Station: "Station 2",
+          'Rescue Squad': true,
+          'Certification Level': 'EMT',
+          'Last Hold Date': 'September 15, 2024',
+          Shift: 'C',
+          Station: 'Station 2',
         },
       },
       {
-        id: "p10",
-        name: "Jessica Williams",
-        time: "October 20, 8:45-8:45AM",
+        id: 'p10',
+        name: 'Jessica Williams',
+        time: 'October 20, 8:45-8:45AM',
         properties: {
           ALS: true,
           Ambulance: true,
-          "Certification Level": "Paramedic",
-          "Last Hold Date": "November 5, 2024",
-          Shift: "B",
-          Station: "Station 3",
+          'Certification Level': 'Paramedic',
+          'Last Hold Date': 'November 5, 2024',
+          Shift: 'B',
+          Station: 'Station 3',
         },
       },
       {
-        id: "p11",
-        name: "Robert Jackson",
-        time: "October 21, 6:30-6:30AM",
+        id: 'p11',
+        name: 'Robert Jackson',
+        time: 'October 21, 6:30-6:30AM',
         properties: {
           Engine: true,
           Truck: true,
           Tanker: true,
-          "Certification Level": "EMT",
-          "Last Hold Date": "October 12, 2024",
-          Shift: "A",
-          Station: "Station 5",
+          'Certification Level': 'EMT',
+          'Last Hold Date': 'October 12, 2024',
+          Shift: 'A',
+          Station: 'Station 5',
         },
       },
       {
-        id: "p12",
-        name: "Amanda Davis",
-        time: "October 21, 9:15-9:15AM",
+        id: 'p12',
+        name: 'Amanda Davis',
+        time: 'October 21, 9:15-9:15AM',
         properties: {
           BLS: true,
           Ambulance: true,
-          "Certification Level": "EMT",
-          "Last Hold Date": null,
-          Shift: "C",
-          Station: "Station 7",
+          'Certification Level': 'EMT',
+          'Last Hold Date': null,
+          Shift: 'C',
+          Station: 'Station 7',
         },
       },
       {
-        id: "p13",
-        name: "Christopher Lee",
-        time: "October 22, 7:20-7:20AM",
+        id: 'p13',
+        name: 'Christopher Lee',
+        time: 'October 22, 7:20-7:20AM',
         properties: {
           Engine: true,
-          "Rescue Squad": true,
-          "Certification Level": "EMT",
-          "Last Hold Date": "October 30, 2024",
-          Shift: "B",
-          Station: "Station 1",
+          'Rescue Squad': true,
+          'Certification Level': 'EMT',
+          'Last Hold Date': 'October 30, 2024',
+          Shift: 'B',
+          Station: 'Station 1',
         },
       },
       {
-        id: "p14",
-        name: "Michelle Anderson",
-        time: "October 22, 10:00-10:00AM",
+        id: 'p14',
+        name: 'Michelle Anderson',
+        time: 'October 22, 10:00-10:00AM',
         properties: {
           ALS: true,
           Ambulance: true,
-          "Certification Level": "Paramedic",
-          "Last Hold Date": "September 28, 2024",
-          Shift: "A",
-          Station: "Station 4",
+          'Certification Level': 'Paramedic',
+          'Last Hold Date': 'September 28, 2024',
+          Shift: 'A',
+          Station: 'Station 4',
         },
       },
       {
-        id: "p15",
-        name: "Daniel Brown",
-        time: "October 23, 8:00-8:00AM",
+        id: 'p15',
+        name: 'Daniel Brown',
+        time: 'October 23, 8:00-8:00AM',
         properties: {
           Engine: true,
           Truck: true,
-          "Certification Level": "EMT",
-          "Last Hold Date": "November 8, 2024",
-          Shift: "C",
-          Station: "Station 6",
+          'Certification Level': 'EMT',
+          'Last Hold Date': 'November 8, 2024',
+          Shift: 'C',
+          Station: 'Station 6',
         },
       },
     ],
@@ -325,22 +371,24 @@ export default function CalendarPage() {
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
-  const [currentView, setCurrentView] = useState<"month" | "week" | "day" | "agenda">("month")
-  const [leftSidebarView, setLeftSidebarView] = useState<"calendar" | "database">("database")
-  const [databaseView, setDatabaseView] = useState<"list" | "table" | "board">("list")
+  const [currentView, setCurrentView] = useState<'month' | 'week' | 'day' | 'agenda'>('month')
+  const [leftSidebarView, setLeftSidebarView] = useState<'calendar' | 'database'>('database')
+  const [databaseView, setDatabaseView] = useState<'list' | 'table' | 'board'>('list')
   const [expandedPersonnel, setExpandedPersonnel] = useState<{ [key: string]: boolean }>({
-    "Michael Foster": false,
+    'Michael Foster': false,
   })
-  const [selectedPerson, setSelectedPerson] = useState<string | null>("Michael Foster")
-  const [selectedDatabase, setSelectedDatabase] = useState<string | null>("Personnel Roster")
+  const [selectedPerson, setSelectedPerson] = useState<string | null>('Michael Foster')
+  const [selectedDatabase, setSelectedDatabase] = useState<string | null>('Personnel Roster')
   const [showDatabaseDropdown, setShowDatabaseDropdown] = useState(false)
-  const [databaseFilter, setDatabaseFilter] = useState<"Personnel Roster" | "All Properties">("Personnel Roster")
+  const [databaseFilter, setDatabaseFilter] = useState<'Personnel Roster' | 'All Properties'>(
+    'Personnel Roster'
+  )
   const [draggedEvent, setDraggedEvent] = useState<any>(null)
   const [filters, setFilters] = useState<any[]>([])
-  const [sort, setSort] = useState<{ property: string; direction: "asc" | "desc" } | null>(null)
+  const [sort, setSort] = useState<{ property: string; direction: 'asc' | 'desc' } | null>(null)
   const [showRecurrenceEditor, setShowRecurrenceEditor] = useState(false)
   const [showEventSeriesModal, setShowEventSeriesModal] = useState(false)
-  const [eventSeriesAction, setEventSeriesAction] = useState<"edit" | "delete">("edit")
+  const [eventSeriesAction, setEventSeriesAction] = useState<'edit' | 'delete'>('edit')
   const [editingRecurrence, setEditingRecurrence] = useState<RecurrenceRule | null>(null)
 
   const [currentDate, setCurrentDate] = useState(new Date(2025, 10, 13)) // November 13, 2025
@@ -352,26 +400,26 @@ export default function CalendarPage() {
 
   const [notifications, setNotifications] = useState<Notification[]>([
     {
-      id: "1",
-      type: "reminder",
-      title: "Upcoming Event",
-      message: "Game night! starts in 15 minutes",
+      id: '1',
+      type: 'reminder',
+      title: 'Upcoming Event',
+      message: 'Game night! starts in 15 minutes',
       timestamp: new Date(Date.now() - 900000), // 15 min ago
       read: false,
     },
     {
-      id: "2",
-      type: "event-change",
-      title: "Event Updated",
-      message: "Thanksgiving Day has been updated",
+      id: '2',
+      type: 'event-change',
+      title: 'Event Updated',
+      message: 'Thanksgiving Day has been updated',
       timestamp: new Date(Date.now() - 3600000), // 1 hour ago
       read: false,
     },
     {
-      id: "3",
-      type: "system",
-      title: "Calendar Synced",
-      message: "Your Google Calendar has been successfully synced",
+      id: '3',
+      type: 'system',
+      title: 'Calendar Synced',
+      message: 'Your Google Calendar has been successfully synced',
       timestamp: new Date(Date.now() - 7200000), // 2 hours ago
       read: true,
     },
@@ -382,20 +430,20 @@ export default function CalendarPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [settings, setSettings] = useState<Settings>({
     // General
-    defaultView: "month",
-    weekStartsOn: "sunday",
-    timeFormat: "12h",
-    dateFormat: "MM/DD/YYYY",
+    defaultView: 'month',
+    weekStartsOn: 'sunday',
+    timeFormat: '12h',
+    dateFormat: 'MM/DD/YYYY',
 
     // Appearance
-    theme: "dark",
+    theme: 'dark',
     showWeekNumbers: false,
     showDeclinedEvents: false,
     compactMode: false,
 
     // Calendar
     defaultEventDuration: 60,
-    defaultReminders: ["15 min before"],
+    defaultReminders: ['15 min before'],
     showWeatherForecast: false,
     enableDragAndDrop: true,
 
@@ -419,11 +467,11 @@ export default function CalendarPage() {
 
   const [showAvailabilitySettings, setShowAvailabilitySettings] = useState(false)
   const [weeklyAvailability, setWeeklyAvailability] = useState<any>({
-    Monday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
-    Tuesday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
-    Wednesday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
-    Thursday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
-    Friday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] },
+    Monday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
+    Tuesday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
+    Wednesday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
+    Thursday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
+    Friday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
     Saturday: { enabled: false, slots: [] },
     Sunday: { enabled: false, slots: [] },
   })
@@ -435,7 +483,7 @@ export default function CalendarPage() {
 
   const [selectedEvents, setSelectedEvents] = useState<string[]>([])
   const [showBulkActionModal, setShowBulkActionModal] = useState(false)
-  const [bulkAction, setBulkAction] = useState<"color" | "calendar">("color")
+  const [bulkAction, setBulkAction] = useState<'color' | 'calendar'>('color')
 
   const [hoverPreview, setHoverPreview] = useState<{
     event: any
@@ -445,40 +493,40 @@ export default function CalendarPage() {
 
   const [calendars, setCalendars] = useState<Calendar[]>([
     {
-      id: "1",
-      name: "Personal",
-      color: "#3b82f6",
+      id: '1',
+      name: 'Personal',
+      color: '#3b82f6',
       visible: true,
       isDefault: true,
-      type: "personal",
+      type: 'personal',
     },
     {
-      id: "2",
-      name: "Google Appointments",
-      color: "#f97316",
+      id: '2',
+      name: 'Google Appointments',
+      color: '#f97316',
       visible: true,
-      type: "google",
-      email: "griffinradcliffe@gmail.com",
+      type: 'google',
+      email: 'griffinradcliffe@gmail.com',
     },
     {
-      id: "3",
-      name: "Birthdays",
-      color: "#f97316",
+      id: '3',
+      name: 'Birthdays',
+      color: '#f97316',
       visible: true,
-      type: "google",
+      type: 'google',
     },
     {
-      id: "4",
-      name: "Holidays in United States",
-      color: "#22c55e",
+      id: '4',
+      name: 'Holidays in United States',
+      color: '#22c55e',
       visible: true,
-      type: "personal",
+      type: 'personal',
     },
   ])
 
   const [calendarGroups, setCalendarGroups] = useState<CalendarGroup[]>([
-    { id: "1", name: "Personal", expanded: true },
-    { id: "2", name: "Work", expanded: true },
+    { id: '1', name: 'Personal', expanded: true },
+    { id: '2', name: 'Work', expanded: true },
   ])
 
   const [showCalendarList, setShowCalendarList] = useState(false)
@@ -518,8 +566,8 @@ export default function CalendarPage() {
   const handleEditCalendar = (calendar: any) => {
     // Open edit calendar modal
     addToast({
-      type: "info",
-      title: "Edit Calendar",
+      type: 'info',
+      title: 'Edit Calendar',
       message: `Editing ${calendar.name}`,
     })
   }
@@ -527,26 +575,26 @@ export default function CalendarPage() {
   const handleDeleteCalendar = (id: string) => {
     setCalendars(calendars.filter((c) => c.id !== id))
     addToast({
-      type: "success",
-      title: "Calendar Deleted",
-      message: "Calendar has been removed",
+      type: 'success',
+      title: 'Calendar Deleted',
+      message: 'Calendar has been removed',
     })
   }
 
   const handleSetDefaultCalendar = (calendarId: string) => {
     setCalendars(calendars.map((c) => ({ ...c, isDefault: c.id === calendarId })))
     addToast({
-      type: "success",
-      title: "Default Calendar Set",
-      message: "Default calendar has been updated",
+      type: 'success',
+      title: 'Default Calendar Set',
+      message: 'Default calendar has been updated',
     })
   }
 
   const handleExportCalendarInitial = (calendar: any) => {
     setShowImportExport(true)
     addToast({
-      type: "info",
-      title: "Export Calendar",
+      type: 'info',
+      title: 'Export Calendar',
       message: `Preparing export for ${calendar.name}`,
     })
   }
@@ -554,8 +602,8 @@ export default function CalendarPage() {
   const handleChangeCalendarColor = (calendar: any, color: string) => {
     setCalendars(calendars.map((c) => (c.id === calendar.id ? { ...c, color } : c)))
     addToast({
-      type: "success",
-      title: "Color Updated",
+      type: 'success',
+      title: 'Color Updated',
       message: `Calendar color has been changed`,
     })
   }
@@ -565,15 +613,15 @@ export default function CalendarPage() {
     if (editingSchedulingLink) {
       setSchedulingLinks(schedulingLinks.map((l) => (l.id === link.id ? link : l)))
       addToast({
-        type: "success",
-        title: "Link Updated",
+        type: 'success',
+        title: 'Link Updated',
         message: `${link.name} has been updated`,
       })
     } else {
       setSchedulingLinks([...schedulingLinks, link])
       addToast({
-        type: "success",
-        title: "Link Created",
+        type: 'success',
+        title: 'Link Created',
         message: `${link.name} is ready to share`,
       })
     }
@@ -590,8 +638,8 @@ export default function CalendarPage() {
     const link = schedulingLinks.find((l) => l.id === id)
     setSchedulingLinks(schedulingLinks.filter((l) => l.id !== id))
     addToast({
-      type: "success",
-      title: "Link Deleted",
+      type: 'success',
+      title: 'Link Deleted',
       message: `${link?.name} has been removed`,
     })
   }
@@ -599,8 +647,8 @@ export default function CalendarPage() {
   const handleViewBookings = (link: any) => {
     // Navigate to bookings view
     addToast({
-      type: "info",
-      title: "View Bookings",
+      type: 'info',
+      title: 'View Bookings',
       message: `Showing bookings for ${link.name}`,
     })
   }
@@ -617,8 +665,8 @@ export default function CalendarPage() {
   const handleEditDatabaseItem = (item: any) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
     addToast({
-      type: "info",
-      title: "Edit Item",
+      type: 'info',
+      title: 'Edit Item',
       message: `Editing ${item.name}`,
     })
   }
@@ -626,9 +674,9 @@ export default function CalendarPage() {
   const handleDeleteDatabaseItem = (itemId: string) => {
     setPersonnel(personnel.filter((p) => p.id !== itemId))
     addToast({
-      type: "success",
-      title: "Item Deleted",
-      message: "Database item has been removed",
+      type: 'success',
+      title: 'Item Deleted',
+      message: 'Database item has been removed',
     })
   }
 
@@ -640,15 +688,15 @@ export default function CalendarPage() {
     }
     setPersonnel([...personnel, newItem])
     addToast({
-      type: "success",
-      title: "Item Duplicated",
-      message: "Database item has been duplicated",
+      type: 'success',
+      title: 'Item Duplicated',
+      message: 'Database item has been duplicated',
     })
   }
 
   const handleOpenDatabaseItemInFull = (item: any) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
-    setLeftSidebarView("database") // Assuming 'person' is a valid view for the left sidebar, though 'database' is used here
+    setLeftSidebarView('database') // Assuming 'person' is a valid view for the left sidebar, though 'database' is used here
     setShowWelcome(false) // Hide welcome screen when viewing details
   }
 
@@ -665,8 +713,8 @@ export default function CalendarPage() {
     setEvents(events.filter((e) => !selectedEvents.includes(e.id)))
     setSelectedEvents([])
     addToast({
-      type: "success",
-      title: "Events Deleted",
+      type: 'success',
+      title: 'Events Deleted',
       message: `${selectedEvents.length} events have been deleted`,
     })
   }
@@ -682,78 +730,83 @@ export default function CalendarPage() {
     setEvents([...events, ...newEvents])
     setSelectedEvents([])
     addToast({
-      type: "success",
-      title: "Events Duplicated",
+      type: 'success',
+      title: 'Events Duplicated',
       message: `${selectedEvents.length} events have been duplicated`,
     })
   }
 
   const handleBulkChangeColor = () => {
     setShowBulkActionModal(true)
-    setBulkAction("color")
+    setBulkAction('color')
   }
 
   const handleBulkMoveToCalendar = () => {
     setShowBulkActionModal(true)
-    setBulkAction("calendar")
+    setBulkAction('calendar')
   }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
         setShowCommandPalette(true)
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "n") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
         e.preventDefault()
         setShowEventCreateModal(true)
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "f") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
         e.preventDefault()
         document.querySelector<HTMLInputElement>('input[placeholder="Search events"]')?.focus()
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "g") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'g') {
         e.preventDefault()
         setShowDatePicker(true)
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "t") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 't') {
         e.preventDefault()
         navigateToToday()
       }
 
       // Toggle sidebars
-      if ((e.metaKey || e.ctrlKey) && e.key === "b" && !e.shiftKey) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'b' && !e.shiftKey) {
         e.preventDefault()
-        setLeftSidebarCollapsed(prev => !prev)
+        setLeftSidebarCollapsed((prev) => !prev)
       }
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "B") {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'B') {
         e.preventDefault()
-        setRightSidebarCollapsed(prev => !prev)
+        setRightSidebarCollapsed((prev) => !prev)
       }
 
       // Navigate between days/weeks with arrow keys
-      if (!showCommandPalette && !showEventCreateModal && !showEventDetailModal && !showDatePicker) {
-        if (e.key === "ArrowLeft") {
+      if (
+        !showCommandPalette &&
+        !showEventCreateModal &&
+        !showEventDetailModal &&
+        !showDatePicker
+      ) {
+        if (e.key === 'ArrowLeft') {
           e.preventDefault()
-          if (currentView === "month") {
+          if (currentView === 'month') {
             navigatePrevious()
-          } else if (currentView === "week" || currentView === "day") {
+          } else if (currentView === 'week' || currentView === 'day') {
             const prev = new Date(currentDate)
             prev.setDate(prev.getDate() - 1)
             setCurrentDate(prev)
           }
         }
-        if (e.key === "ArrowRight") {
+        if (e.key === 'ArrowRight') {
           e.preventDefault()
-          if (currentView === "month") {
+          if (currentView === 'month') {
             navigateNext()
-          } else if (currentView === "week" || currentView === "day") {
+          } else if (currentView === 'week' || currentView === 'day') {
             const next = new Date(currentDate)
             next.setDate(next.getDate() + 1)
             setCurrentDate(next)
           }
         }
-        if (e.key === "ArrowUp" && currentView === "month") {
+        if (e.key === 'ArrowUp' && currentView === 'month') {
           e.preventDefault()
           const prev = new Date(currentDate)
           prev.setDate(prev.getDate() - 7)
@@ -761,7 +814,7 @@ export default function CalendarPage() {
           setDisplayMonth(prev.getMonth())
           setDisplayYear(prev.getFullYear())
         }
-        if (e.key === "ArrowDown" && currentView === "month") {
+        if (e.key === 'ArrowDown' && currentView === 'month') {
           e.preventDefault()
           const next = new Date(currentDate)
           next.setDate(next.getDate() + 7)
@@ -771,37 +824,42 @@ export default function CalendarPage() {
         }
       }
 
-      if ((e.metaKey || e.ctrlKey) && e.key === "e" && selectedEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'e' && selectedEvent) {
         e.preventDefault()
         setShowEventDetailModal(true)
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "d" && selectedEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd' && selectedEvent) {
         e.preventDefault()
         handleDuplicateEvent(selectedEvent)
       }
-      if ((e.key === "Backspace" || e.key === "Delete") && selectedEvent && !showEventDetailModal) {
+      if ((e.key === 'Backspace' || e.key === 'Delete') && selectedEvent && !showEventDetailModal) {
         e.preventDefault()
         handleDeleteEvent(selectedEvent.id)
       }
 
-      if (e.key === "Escape" && selectedEvents.length > 0) {
+      if (e.key === 'Escape' && selectedEvents.length > 0) {
         e.preventDefault()
         setSelectedEvents([])
       }
 
-      if ((e.metaKey || e.ctrlKey) && e.key === "a" && !showEventCreateModal && !showEventDetailModal) {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.key === 'a' &&
+        !showEventCreateModal &&
+        !showEventDetailModal
+      ) {
         e.preventDefault()
         const visibleEventIds = events.map((e) => e.id)
         setSelectedEvents(visibleEventIds)
       }
       // Add right-click handler for selection
-      if (e.type === "contextmenu" && selectedEvents.length > 0) {
+      if (e.type === 'contextmenu' && selectedEvents.length > 0) {
         handleSelectionRightClick(e as any)
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [
     currentView,
     currentDate,
@@ -825,16 +883,16 @@ export default function CalendarPage() {
   }
 
   const navigatePrevious = () => {
-    if (currentView === "month") {
+    if (currentView === 'month') {
       const prevMonth = displayMonth === 0 ? 11 : displayMonth - 1
       const prevYear = displayMonth === 0 ? displayYear - 1 : displayYear
       setDisplayMonth(prevMonth)
       setDisplayYear(prevYear)
-    } else if (currentView === "week") {
+    } else if (currentView === 'week') {
       const prev = new Date(currentDate)
       prev.setDate(prev.getDate() - 7)
       setCurrentDate(prev)
-    } else if (currentView === "day") {
+    } else if (currentView === 'day') {
       const prev = new Date(currentDate)
       prev.setDate(prev.getDate() - 1)
       setCurrentDate(prev)
@@ -842,16 +900,16 @@ export default function CalendarPage() {
   }
 
   const navigateNext = () => {
-    if (currentView === "month") {
+    if (currentView === 'month') {
       const nextMonth = displayMonth === 11 ? 0 : displayMonth + 1
       const nextYear = displayMonth === 11 ? displayYear + 1 : displayYear
       setDisplayMonth(nextMonth)
       setDisplayYear(nextYear)
-    } else if (currentView === "week") {
+    } else if (currentView === 'week') {
       const next = new Date(currentDate)
       next.setDate(next.getDate() + 7)
       setCurrentDate(next)
-    } else if (currentView === "day") {
+    } else if (currentView === 'day') {
       const next = new Date(currentDate)
       next.setDate(next.getDate() + 1)
       setCurrentDate(next)
@@ -950,12 +1008,12 @@ export default function CalendarPage() {
   }
 
   const getEventsForDate = (date: Date) => {
-    const dateStr = date.toISOString().split("T")[0]
+    const dateStr = date.toISOString().split('T')[0]
     return events.filter((event) => event.date === dateStr)
   }
 
   const formatDateForGrid = (date: Date) => {
-    return date.toISOString().split("T")[0]
+    return date.toISOString().split('T')[0]
   }
 
   const weeks = []
@@ -984,7 +1042,7 @@ export default function CalendarPage() {
     setShowWelcome(true)
   }
 
-  const addNotification = (notification: Omit<Notification, "id" | "timestamp" | "read">) => {
+  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification = {
       ...notification,
       id: Date.now().toString(),
@@ -995,13 +1053,17 @@ export default function CalendarPage() {
 
     // Show toast for new notifications
     addToast({
-      type: notification.type === "reminder" ? "info" : "info",
+      type: notification.type === 'reminder' ? 'info' : 'info',
       title: notification.title,
       message: notification.message,
     })
   }
 
-  const addToast = (toast: { type: "success" | "error" | "warning" | "info"; title: string; message: string }) => {
+  const addToast = (toast: {
+    type: 'success' | 'error' | 'warning' | 'info'
+    title: string
+    message: string
+  }) => {
     const newToast = {
       ...toast,
       id: Date.now().toString(),
@@ -1039,18 +1101,18 @@ export default function CalendarPage() {
           event.reminders.forEach((reminder: string) => {
             const eventDate = new Date(event.date)
             if (event.startTime) {
-              const [hours, minutes] = event.startTime.split(":")
+              const [hours, minutes] = event.startTime.split(':')
               eventDate.setHours(Number.parseInt(hours), Number.parseInt(minutes))
             }
 
             const reminderTime = new Date(eventDate)
-            if (reminder.includes("min")) {
+            if (reminder.includes('min')) {
               const mins = Number.parseInt(reminder)
               reminderTime.setMinutes(reminderTime.getMinutes() - mins)
-            } else if (reminder.includes("hour")) {
+            } else if (reminder.includes('hour')) {
               const hrs = Number.parseInt(reminder)
               reminderTime.setHours(reminderTime.getHours() - hrs)
-            } else if (reminder.includes("day")) {
+            } else if (reminder.includes('day')) {
               const days = Number.parseInt(reminder)
               reminderTime.setDate(reminderTime.getDate() - days)
             }
@@ -1059,12 +1121,14 @@ export default function CalendarPage() {
             const diff = reminderTime.getTime() - now.getTime()
             if (diff > 0 && diff < 60000) {
               // Will fire within next minute
-              const existingReminder = notifications.find((n) => n.eventId === event.id && n.message.includes(reminder))
+              const existingReminder = notifications.find(
+                (n) => n.eventId === event.id && n.message.includes(reminder)
+              )
               if (!existingReminder) {
                 addNotification({
-                  type: "reminder",
-                  title: "Upcoming Event",
-                  message: `${event.title} starts ${reminder.replace("min", " minutes").replace("hour", " hour").replace("day", " day")} from now`,
+                  type: 'reminder',
+                  title: 'Upcoming Event',
+                  message: `${event.title} starts ${reminder.replace('min', ' minutes').replace('hour', ' hour').replace('day', ' day')} from now`,
                   eventId: event.id,
                 })
               }
@@ -1094,8 +1158,8 @@ export default function CalendarPage() {
       }))
       setEvents([...events, ...recurringEvents])
       addToast({
-        type: "success",
-        title: "Events Created",
+        type: 'success',
+        title: 'Events Created',
         message: `Created ${recurringEvents.length} recurring events`,
       })
     } else {
@@ -1106,8 +1170,8 @@ export default function CalendarPage() {
       }
       setEvents([...events, newEvent])
       addToast({
-        type: "success",
-        title: "Event Created",
+        type: 'success',
+        title: 'Event Created',
         message: `${eventData.title} has been added to your calendar`,
       })
     }
@@ -1117,28 +1181,32 @@ export default function CalendarPage() {
     if (eventData.seriesId && eventData.recurrence) {
       // This is a recurring event - show modal to ask which events to edit
       setSelectedEvent(eventData)
-      setEventSeriesAction("edit")
+      setEventSeriesAction('edit')
       setShowEventSeriesModal(true)
     } else {
       setEvents(events.map((e) => (e.id === eventData.id ? eventData : e)))
       addToast({
-        type: "success",
-        title: "Event Updated",
+        type: 'success',
+        title: 'Event Updated',
         message: `${eventData.title} has been updated`,
       })
     }
   }
 
-  const handleEditEventChoice = (choice: "this" | "all" | "future", eventData: any) => {
-    if (choice === "this") {
+  const handleEditEventChoice = (choice: 'this' | 'all' | 'future', eventData: any) => {
+    if (choice === 'this') {
       // Edit only this instance
-      setEvents(events.map((e) => (e.id === eventData.id ? { ...eventData, seriesId: undefined } : e)))
-    } else if (choice === "all") {
+      setEvents(
+        events.map((e) => (e.id === eventData.id ? { ...eventData, seriesId: undefined } : e))
+      )
+    } else if (choice === 'all') {
       // Edit all instances
       setEvents(
-        events.map((e) => (e.seriesId === eventData.seriesId ? { ...e, ...eventData, id: e.id, date: e.date } : e)),
+        events.map((e) =>
+          e.seriesId === eventData.seriesId ? { ...e, ...eventData, id: e.id, date: e.date } : e
+        )
       )
-    } else if (choice === "future") {
+    } else if (choice === 'future') {
       // Edit this and future instances
       const currentDate = new Date(eventData.date)
       setEvents(
@@ -1150,13 +1218,13 @@ export default function CalendarPage() {
             }
           }
           return e
-        }),
+        })
       )
     }
     setShowEventSeriesModal(false)
     addToast({
-      type: "success",
-      title: "Event Updated",
+      type: 'success',
+      title: 'Event Updated',
       message: `${eventData.title} has been updated`,
     })
   }
@@ -1165,26 +1233,26 @@ export default function CalendarPage() {
     const event = events.find((e) => e.id === eventId)
     if (event?.seriesId && event?.recurrence) {
       setSelectedEvent(event)
-      setEventSeriesAction("delete")
+      setEventSeriesAction('delete')
       setShowEventSeriesModal(true)
     } else {
       setEvents(events.filter((e) => e.id !== eventId))
       addToast({
-        type: "success",
-        title: "Event Deleted",
-        message: "Event has been removed from your calendar",
+        type: 'success',
+        title: 'Event Deleted',
+        message: 'Event has been removed from your calendar',
       })
     }
   }
 
-  const handleDeleteEventChoice = (choice: "this" | "all" | "future") => {
+  const handleDeleteEventChoice = (choice: 'this' | 'all' | 'future') => {
     if (!selectedEvent) return
 
-    if (choice === "this") {
+    if (choice === 'this') {
       setEvents(events.filter((e) => e.id !== selectedEvent.id))
-    } else if (choice === "all") {
+    } else if (choice === 'all') {
       setEvents(events.filter((e) => e.seriesId !== selectedEvent.seriesId))
-    } else if (choice === "future") {
+    } else if (choice === 'future') {
       const currentDate = new Date(selectedEvent.date)
       setEvents(
         events.filter((e) => {
@@ -1193,15 +1261,15 @@ export default function CalendarPage() {
             return eventDate < currentDate
           }
           return true
-        }),
+        })
       )
     }
     setShowEventSeriesModal(false)
     setShowEventDetailModal(false)
     addToast({
-      type: "success",
-      title: "Event Deleted",
-      message: "Event has been removed from your calendar",
+      type: 'success',
+      title: 'Event Deleted',
+      message: 'Event has been removed from your calendar',
     })
   }
 
@@ -1213,8 +1281,8 @@ export default function CalendarPage() {
     }
     setEvents([...events, newEvent])
     addToast({
-      type: "success",
-      title: "Event Duplicated",
+      type: 'success',
+      title: 'Event Duplicated',
       message: `${event.title} has been duplicated`,
     })
   }
@@ -1240,8 +1308,8 @@ export default function CalendarPage() {
   const handleChangeEventColor = (event: any, color: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, color } : e)))
     addToast({
-      type: "success",
-      title: "Color Updated",
+      type: 'success',
+      title: 'Color Updated',
       message: `Event color has been changed`,
     })
   }
@@ -1249,8 +1317,8 @@ export default function CalendarPage() {
   const handleMoveToCalendar = (event: any, calendar: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar } : e)))
     addToast({
-      type: "success",
-      title: "Event Moved",
+      type: 'success',
+      title: 'Event Moved',
       message: `Event moved to ${calendar}`,
     })
   }
@@ -1270,40 +1338,42 @@ export default function CalendarPage() {
   const handleEventResize = (event: any, newStartTime: string, newEndTime: string) => {
     setEvents(
       events.map((e) =>
-        e.id === event.id ? { ...e, startTime: newStartTime, endTime: newEndTime, time: newStartTime } : e,
-      ),
+        e.id === event.id
+          ? { ...e, startTime: newStartTime, endTime: newEndTime, time: newStartTime }
+          : e
+      )
     )
     addToast({
-      type: "success",
-      title: "Event Updated",
+      type: 'success',
+      title: 'Event Updated',
       message: `${event.title} duration has been changed`,
     })
   }
 
   const handleCommand = (command: string) => {
     switch (command) {
-      case "create-event":
+      case 'create-event':
         setShowEventCreateModal(true)
         break
-      case "today":
+      case 'today':
         navigateToToday()
         break
-      case "week-view":
-        setCurrentView("week")
+      case 'week-view':
+        setCurrentView('week')
         break
-      case "day-view":
-        setCurrentView("day")
+      case 'day-view':
+        setCurrentView('day')
         break
-      case "month-view":
-        setCurrentView("month")
+      case 'month-view':
+        setCurrentView('month')
         break
-      case "agenda-view":
-        setCurrentView("agenda")
+      case 'agenda-view':
+        setCurrentView('agenda')
         break
-      case "settings":
+      case 'settings':
         setShowSettings(true)
         break
-      case "search-events":
+      case 'search-events':
         // TODO: Focus search
         break
     }
@@ -1318,8 +1388,8 @@ export default function CalendarPage() {
       const updatedEvent = { ...draggedEvent, date: newDate }
       setEvents(events.map((e) => (e.id === draggedEvent.id ? updatedEvent : e)))
       addToast({
-        type: "success",
-        title: "Event Moved",
+        type: 'success',
+        title: 'Event Moved',
         message: `${draggedEvent.title} has been moved`,
       })
     }
@@ -1329,14 +1399,14 @@ export default function CalendarPage() {
   const isDuplicate = (e: React.DragEvent): boolean => {
     // In a real app, you might check e.altKey, but for drag/drop,
     // we'll pass this information via dataTransfer.
-    return e.dataTransfer.getData("isDuplicate") === "true"
+    return e.dataTransfer.getData('isDuplicate') === 'true'
   }
 
   const handleDrop = (e: React.DragEvent, date: Date) => {
     e.preventDefault()
 
     if (draggedEvent) {
-      const newDateStr = date.toISOString().split("T")[0]
+      const newDateStr = date.toISOString().split('T')[0]
 
       if (isDuplicate(e)) {
         const duplicatedEvent = {
@@ -1347,8 +1417,8 @@ export default function CalendarPage() {
         }
         setEvents([...events, duplicatedEvent])
         addToast({
-          type: "success",
-          title: "Event Duplicated",
+          type: 'success',
+          title: 'Event Duplicated',
           message: `${draggedEvent.title} has been duplicated`,
         })
       } else {
@@ -1363,7 +1433,7 @@ export default function CalendarPage() {
       // Cmd/Ctrl+Click to toggle selection
       e.stopPropagation()
       setSelectedEvents((prev) =>
-        prev.includes(event.id) ? prev.filter((id) => id !== event.id) : [...prev, event.id],
+        prev.includes(event.id) ? prev.filter((id) => id !== event.id) : [...prev, event.id]
       )
     } else if (e.shiftKey && selectedEvents.length > 0) {
       // Shift+Click to select range
@@ -1392,19 +1462,19 @@ export default function CalendarPage() {
   }
 
   const handleApplyBulkAction = (value: string) => {
-    if (bulkAction === "color") {
+    if (bulkAction === 'color') {
       setEvents(events.map((e) => (selectedEvents.includes(e.id) ? { ...e, color: value } : e)))
       addToast({
-        type: "success",
-        title: "Color Changed",
-        message: `${selectedEvents.length} event${selectedEvents.length > 1 ? "s" : ""} updated`,
+        type: 'success',
+        title: 'Color Changed',
+        message: `${selectedEvents.length} event${selectedEvents.length > 1 ? 's' : ''} updated`,
       })
     } else {
       setEvents(events.map((e) => (selectedEvents.includes(e.id) ? { ...e, calendar: value } : e)))
       addToast({
-        type: "success",
-        title: "Events Moved",
-        message: `${selectedEvents.length} event${selectedEvents.length > 1 ? "s" : ""} moved to ${value}`,
+        type: 'success',
+        title: 'Events Moved',
+        message: `${selectedEvents.length} event${selectedEvents.length > 1 ? 's' : ''} moved to ${value}`,
       })
     }
     setSelectedEvents([])
@@ -1417,11 +1487,11 @@ export default function CalendarPage() {
       const value = item.properties[filter.property]
       const filterValue = filter.value.toLowerCase()
 
-      if (filter.operator === "is") {
+      if (filter.operator === 'is') {
         return String(value).toLowerCase() === filterValue
-      } else if (filter.operator === "is-not") {
+      } else if (filter.operator === 'is-not') {
         return String(value).toLowerCase() !== filterValue
-      } else if (filter.operator === "contains") {
+      } else if (filter.operator === 'contains') {
         return String(value).toLowerCase().includes(filterValue)
       }
       return true
@@ -1433,7 +1503,7 @@ export default function CalendarPage() {
         const aValue = a.properties[sort.property]
         const bValue = b.properties[sort.property]
 
-        if (sort.direction === "asc") {
+        if (sort.direction === 'asc') {
           return String(aValue).localeCompare(String(bValue))
         } else {
           return String(bValue).localeCompare(String(aValue))
@@ -1441,14 +1511,15 @@ export default function CalendarPage() {
       })
     : filteredPersonnel
 
-  const allProperties = personnelData[0].items.length > 0 ? Object.keys(personnelData[0].items[0].properties) : []
+  const allProperties =
+    personnelData[0].items.length > 0 ? Object.keys(personnelData[0].items[0].properties) : []
 
   // Event hover handlers
   const handleEventMouseEnter = (e: React.MouseEvent, event: any) => {
     setHoverTimeout(
       setTimeout(() => {
         setHoverPreview({ event, position: { x: e.clientX, y: e.clientY } })
-      }, 500),
+      }, 500)
     )
   }
 
@@ -1479,9 +1550,9 @@ export default function CalendarPage() {
   const handleSetDefault = (id: string) => {
     setCalendars(calendars.map((c) => ({ ...c, isDefault: c.id === id })))
     addToast({
-      type: "success",
-      title: "Default Calendar Set",
-      message: "New events will be added to this calendar",
+      type: 'success',
+      title: 'Default Calendar Set',
+      message: 'New events will be added to this calendar',
     })
   }
 
@@ -1505,63 +1576,63 @@ export default function CalendarPage() {
       const content = e.target?.result as string
       // TODO: Parse ICS format and add events
       addToast({
-        type: "success",
-        title: "Calendar Imported",
+        type: 'success',
+        title: 'Calendar Imported',
         message: `Successfully imported ${file.name}`,
       })
     }
     reader.readAsText(file)
   }
 
-  const handleExportCalendar = (calendarId: string, format: "ics" | "csv") => {
+  const handleExportCalendar = (calendarId: string, format: 'ics' | 'csv') => {
     // Export events to ICS/CSV format
     const calendar = calendars.find((c) => c.id === calendarId)
     const calendarEvents = events.filter((e) => e.calendar === calendarId || !e.calendar)
 
-    if (format === "ics") {
+    if (format === 'ics') {
       // Generate ICS content
-      let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Notion Calendar//EN\n"
+      let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Notion Calendar//EN\n'
       calendarEvents.forEach((event) => {
-        icsContent += "BEGIN:VEVENT\n"
+        icsContent += 'BEGIN:VEVENT\n'
         icsContent += `UID:${event.id}\n`
-        icsContent += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z\n`
-        icsContent += `DTSTART:${event.date.replace(/-/g, "")}T${event.startTime?.replace(":", "") || "000000"}\n`
+        icsContent += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z\n`
+        icsContent += `DTSTART:${event.date.replace(/-/g, '')}T${event.startTime?.replace(':', '') || '000000'}\n`
         icsContent += `SUMMARY:${event.title}\n`
         if (event.location) icsContent += `LOCATION:${event.location}\n`
         if (event.description) icsContent += `DESCRIPTION:${event.description}\n`
-        icsContent += "END:VEVENT\n"
+        icsContent += 'END:VEVENT\n'
       })
-      icsContent += "END:VCALENDAR"
+      icsContent += 'END:VCALENDAR'
 
-      const blob = new Blob([icsContent], { type: "text/calendar" })
+      const blob = new Blob([icsContent], { type: 'text/calendar' })
       const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
+      const a = document.createElement('a')
       a.href = url
-      a.download = `${calendar?.name || "calendar"}.ics`
+      a.download = `${calendar?.name || 'calendar'}.ics`
       a.click()
     } else {
       // Generate CSV content
-      let csvContent = "Subject,Start Date,Start Time,End Date,End Time,Location,Description\n"
+      let csvContent = 'Subject,Start Date,Start Time,End Date,End Time,Location,Description\n'
       calendarEvents.forEach((event) => {
-        csvContent += `"${event.title}","${event.date}","${event.startTime || ""}","${event.date}","${event.endTime || ""}","${event.location || ""}","${event.description || ""}"\n`
+        csvContent += `"${event.title}","${event.date}","${event.startTime || ''}","${event.date}","${event.endTime || ''}","${event.location || ''}","${event.description || ''}"\n`
       })
 
-      const blob = new Blob([csvContent], { type: "text/csv" })
+      const blob = new Blob([csvContent], { type: 'text/csv' })
       const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
+      const a = document.createElement('a')
       a.href = url
-      a.download = `${calendar?.name || "calendar"}.csv`
+      a.download = `${calendar?.name || 'calendar'}.csv`
       a.click()
     }
 
     addToast({
-      type: "success",
-      title: "Calendar Exported",
+      type: 'success',
+      title: 'Calendar Exported',
       message: `Exported to ${format.toUpperCase()} format`,
     })
   }
 
-  const handleShareCalendar = (email: string, permission: "view" | "edit" | "manage") => {
+  const handleShareCalendar = (email: string, permission: 'view' | 'edit' | 'manage') => {
     const newShare = {
       id: Date.now().toString(),
       email,
@@ -1570,8 +1641,8 @@ export default function CalendarPage() {
     }
     setCalendarShares([...calendarShares, newShare])
     addToast({
-      type: "success",
-      title: "Calendar Shared",
+      type: 'success',
+      title: 'Calendar Shared',
       message: `Shared with ${email}`,
     })
   }
@@ -1579,13 +1650,13 @@ export default function CalendarPage() {
   const handleRevokeShare = (shareId: string) => {
     setCalendarShares(calendarShares.filter((s) => s.id !== shareId))
     addToast({
-      type: "success",
-      title: "Access Revoked",
-      message: "Calendar access has been removed",
+      type: 'success',
+      title: 'Access Revoked',
+      message: 'Calendar access has been removed',
     })
   }
 
-  const handleGenerateShareLink = (permission: "view" | "edit") => {
+  const handleGenerateShareLink = (permission: 'view' | 'edit') => {
     const link = `https://calendar.notion.so/share/${selectedCalendarForShare?.id}?permission=${permission}`
     return link
   }
@@ -1605,9 +1676,9 @@ export default function CalendarPage() {
       [eventId]: [...(prev[eventId] || []), ...files],
     }))
     addToast({
-      type: "success",
-      title: "Files Attached",
-      message: `${files.length} file${files.length > 1 ? "s" : ""} added to event`,
+      type: 'success',
+      title: 'Files Attached',
+      message: `${files.length} file${files.length > 1 ? 's' : ''} added to event`,
     })
   }
 
@@ -1625,9 +1696,9 @@ export default function CalendarPage() {
     newPersonnel.splice(toIndex, 0, removed)
     setPersonnel(newPersonnel)
     addToast({
-      type: "success",
-      title: "Items Reordered",
-      message: "Database items have been reordered",
+      type: 'success',
+      title: 'Items Reordered',
+      message: 'Database items have been reordered',
     })
   }
 
@@ -1636,8 +1707,8 @@ export default function CalendarPage() {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar: calendarId } : e)))
     const calendar = calendars.find((c) => c.id === calendarId)
     addToast({
-      type: "success",
-      title: "Event Moved",
+      type: 'success',
+      title: 'Event Moved',
       message: `${event.title} moved to ${calendar?.name}`,
     })
   }
@@ -1648,698 +1719,786 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="h-screen bg-[#1a1a1a] text-white dark">
-    <ResizablePanelGroup direction="horizontal" className="h-screen">
-      {/* Left Sidebar */}
-      {!leftSidebarCollapsed && (
-        <>
-          <ResizablePanel defaultSize={15} minSize={10} maxSize={30} className="relative">
-            <div className="h-full bg-[#1c1c1c] border-r border-[#2a2a2a] flex flex-col">{leftSidebarView === "calendar" ? (
+    <div className="dark h-screen bg-[#1a1a1a] text-white">
+      <ResizablePanelGroup direction="horizontal" className="h-screen">
+        {/* Left Sidebar */}
+        {!leftSidebarCollapsed && (
           <>
-            {/* Mini Calendar */}
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <button onClick={navigateMiniCalendarPrevious} className="hover:bg-[#2a2a2a] p-1 rounded">
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <h3 className="text-sm font-medium">
-                  {new Date(miniCalendarYear, miniCalendarMonth).toLocaleDateString("en-US", {
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </h3>
-                <button onClick={navigateMiniCalendarNext} className="hover:bg-[#2a2a2a] p-1 rounded">
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Mini calendar grid */}
-              <div className="text-xs">
-                <div className="grid grid-cols-7 gap-1 mb-2">
-                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-                    <div key={day} className="text-center text-[#6b6b6b] font-medium">
-                      {day}
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-7 gap-1">
-                  {miniCalendarDays.slice(0, 35).map((day, idx) => {
-                    const isToday =
-                      day.date.getDate() === new Date().getDate() &&
-                      day.date.getMonth() === new Date().getMonth() &&
-                      day.date.getFullYear() === new Date().getFullYear()
-                    const isSelected =
-                      day.date.getDate() === currentDate.getDate() &&
-                      day.date.getMonth() === currentDate.getMonth() &&
-                      day.date.getFullYear() === currentDate.getFullYear()
-
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => handleMiniCalendarDayClick(day.date)}
-                        className={cn(
-                          "aspect-square flex items-center justify-center rounded text-xs hover:bg-[#2a2a2a] transition-colors",
-                          !day.isCurrentMonth && "text-[#4a4a4a]",
-                          isToday && "bg-today font-semibold text-today-foreground",
-                          isSelected && !isToday && "bg-[#3a3a3a]",
-                        )}
-                      >
-                        {day.day}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Scheduling Section */}
-            <div className="px-4 py-2 border-t border-[#2a2a2a]">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2 text-sm text-[#9a9a9a]">
-                  <span>Scheduling</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setShowCalendarList(true)}
-                    className="text-[#6b6b6b] hover:text-white p-1 rounded hover:bg-[#2a2a2a]"
-                    title="Manage Calendars"
-                  >
-                    <span className="text-xs">⚙️</span>
-                  </button>
-                  <button className="text-[#6b6b6b] hover:text-white">
-                    <span className="text-xs">👁️</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <button
-                  onClick={() => setShowSchedulingLinks(true)}
-                  className="w-full px-3 py-2 bg-info/10 hover:bg-info/20 text-info rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
-                >
-                  <span>🔗</span>
-                  Scheduling Links
-                  {schedulingLinks.length > 0 && (
-                    <span className="ml-auto bg-info text-white text-xs px-2 py-0.5 rounded-full">
-                      {schedulingLinks.length}
-                    </span>
-                  )}
-                </button>
-              </div>
-
-              <div className="space-y-2 text-sm">
-                <div className="text-[#7a7a7a] text-xs mb-2">griffinradcliffe@gmail.com</div>
-                {calendars.map((calendar) => (
-                  <div
-                    key={calendar.id}
-                    className="flex items-center gap-2 group"
-                    onContextMenu={(e) => handleCalendarRightClick(e, calendar)}
-                  >
-                    <button
-                      onClick={() => handleToggleVisibility(calendar.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      {calendar.visible ? (
-                        <span className="text-xs">👁️</span>
-                      ) : (
-                        <span className="text-xs opacity-50">👁️</span>
-                      )}
-                    </button>
-                    <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: calendar.color }}></div>
-                    <span className={cn("text-[#d0d0d0] text-xs flex-1 truncate", !calendar.visible && "opacity-50")}>
-                      {calendar.name}
-                      {calendar.isDefault && " (Default)"}
-                    </span>
-                    <button
-                      onClick={() => handleOpenShareModal(calendar)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-white"
-                      title="Share Calendar"
-                    >
-                      <span className="text-xs">🔗</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-3 space-y-1">
-                <button className="w-full text-xs text-[#7a7a7a] hover:text-white flex items-center gap-1 py-1">
-                  <Plus className="w-3 h-3" />
-                  Add calendar account
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex flex-col" style={{ containerType: 'inline-size' }}>
-            {/* Container Hierarchy: Level 1 - Main roster container with padding */}
-            <div className="flex flex-col h-full">
-              {/* Level 2 - Header controls section with consistent padding */}
-              <div className="px-3 pt-2 pb-1.5 border-b border-[#2a2a2a]/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <button className="hover:bg-[#2a2a2a] p-1.5 rounded transition-colors">
-                    <Search className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                  <span className="flex items-center gap-1.5 text-xs text-[#d0d0d0] font-medium">
-                    <span className="text-red-500 text-sm">👥</span>
-                    <span>Personnel Roster</span>
-                  </span>
-                  <button className="hover:bg-[#2a2a2a] p-1.5 rounded transition-colors ml-auto">
-                    <MoreHorizontal className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                  <button className="hover:bg-[#2a2a2a] p-1.5 rounded transition-colors">
-                    <Plus className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setDatabaseView("list")}
-                    className={cn(
-                      "p-1.5 rounded transition-colors",
-                      databaseView === "list" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
-                    )}
-                    title="List View"
-                  >
-                    <span className="text-sm">☰</span>
-                  </button>
-                  <button
-                    onClick={() => setDatabaseView("table")}
-                    className={cn(
-                      "p-1.5 rounded transition-colors",
-                      databaseView === "table" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
-                    )}
-                    title="Table View"
-                  >
-                    <Table className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setDatabaseView("board")}
-                    className={cn(
-                      "p-1.5 rounded transition-colors",
-                      databaseView === "board" ? "bg-[#2a2a2a] text-white" : "text-[#6b6b6b] hover:text-white",
-                    )}
-                    title="Board View"
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                  </button>
-
-                  <div className="ml-auto flex items-center gap-1.5">
-                    <DatabaseFilter properties={allProperties} onFilterChange={setFilters} />
-                    <DatabaseSort properties={allProperties} onSortChange={setSort} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Level 3 - Scalable content area with transform-based responsive scaling */}
-              {selectedDatabase && leftSidebarView === "database" && (
-                <div className="flex-1 overflow-hidden flex flex-col">
-                  {/* Scale wrapper - dynamically scales content to prevent overflow */}
-                  <div 
-                    className="flex-1 flex flex-col min-h-0"
-                    style={{
-                      transformOrigin: 'top left',
-                      width: '100%',
-                    }}
-                  >
-                    {/* Table Header - Fixed at top with responsive padding */}
-                    <div className="py-1.5 border-b border-[#2a2a2a] bg-[#1a1a1a] sticky top-0 z-10">
-                      <div 
-                        className="grid items-center pr-2"
-                        style={{
-                          gridTemplateColumns: 'auto 1fr',
-                          gap: 'clamp(8px, 1vw, 12px)',
-                          paddingLeft: '8px',
-                        }}
-                      >
-                        <div className="text-[#6b6b6b] font-semibold uppercase tracking-wide" style={{ fontSize: 'clamp(9px, 0.8vw, 12px)' }}>
-                          #
-                        </div>
-                        <div className="text-[#6b6b6b] font-semibold uppercase tracking-wide" style={{ fontSize: 'clamp(9px, 0.8vw, 12px)' }}>
-                          Name
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Scrollable personnel list with proper spacing hierarchy */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden">
-                      <div>
-                        {personnel.map((person, index) => (
-                          <DraggableDatabaseItem
-                            key={person.id}
-                            item={person}
-                            index={index}
-                            onReorder={handleReorderDatabaseItems}
-                          >
-                            <div onContextMenu={(e) => handleDatabaseItemRightClick(e, person)}>
-                              <DatabaseCard
-                                person={person}
-                                position={index + 1}
-                                isExpanded={!!expandedPersonnel[person.name]}
-                                onToggle={() =>
-                                  setExpandedPersonnel((prev) => ({ ...prev, [person.name]: !prev[person.name] }))
-                                }
-                                onSelect={() => handleSelectPerson(person.name)}
-                              />
-                            </div>
-                          </DraggableDatabaseItem>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {databaseView === "table" && (
-              <div className="flex-1 border-t border-[#2a2a2a] overflow-auto">
-                <DatabaseTableView items={sortedPersonnel} onItemClick={handleSelectPerson} />
-              </div>
-            )}
-            {databaseView === "board" && (
-              <div className="flex-1 border-t border-[#2a2a2a] overflow-auto">
-                <DatabaseBoardView items={sortedPersonnel} onItemClick={handleSelectPerson} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Bottom icons */}
-        <div className="p-3 border-t border-[#2a2a2a] flex items-center gap-3">
-          <button className="text-[#6b6b6b] hover:text-white">
-            <span className="text-sm">🎯</span>
-          </button>
-          <button className="text-[#6b6b6b] hover:text-white">
-            <span className="text-sm">✨</span>
-          </button>
-          <button onClick={() => setShowNotificationCenter(true)} className="text-[#6b6b6b] hover:text-white relative">
-            <span className="text-sm">🔔</span>
-            {unreadNotificationsCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] flex items-center justify-center text-white font-medium">
-                {unreadNotificationsCount}
-              </span>
-            )}
-          </button>
-        </div>
-            </div>
-            {/* Collapse button */}
-            <button
-              onClick={() => setLeftSidebarCollapsed(true)}
-              className="absolute top-1/2 -right-3 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-full p-1 border border-[#3a3a3a]"
-              title="Collapse sidebar"
-            >
-              <PanelLeftClose className="w-3 h-3" />
-            </button>
-          </ResizablePanel>
-          <ResizableHandle withHandle className="bg-[#2a2a2a] hover:bg-[#3a3a3a] w-0.5" />
-        </>
-      )}
-      
-      {/* Expand button when collapsed */}
-      {leftSidebarCollapsed && (
-        <button
-          onClick={() => setLeftSidebarCollapsed(false)}
-          className="fixed left-0 top-1/2 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-r-lg p-2 border border-l-0 border-[#3a3a3a]"
-          title="Expand sidebar"
-        >
-          <PanelLeftOpen className="w-4 h-4" />
-        </button>
-      )}
-
-      {/* Main Calendar Area */}
-      <ResizablePanel defaultSize={showWelcome || selectedPerson ? 60 : 85} minSize={40}>
-        <div className="flex-1 flex flex-col min-w-0 h-full">
-        {/* Header */}
-        <div className="h-14 border-b border-[#2a2a2a] flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-[#6b6b6b]">🎨</span>
-            <ViewSwitcher currentView={currentView} onViewChange={setCurrentView} />
-            <button onClick={navigateToToday} className="text-sm bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-1.5 rounded">
-              Today
-            </button>
-            <button onClick={navigatePrevious} className="hover:bg-[#2a2a2a] p-1.5 rounded">
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button onClick={navigateNext} className="hover:bg-[#2a2a2a] p-1.5 rounded">
-              <ChevronRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setShowDatePicker(true)}
-              className="hover:bg-[#2a2a2a] p-1.5 rounded"
-              title="Go to date (⌘G)"
-            >
-              <CalendarIcon className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setShowEventCreateModal(true)}
-              className="flex items-center gap-2 bg-info hover:bg-info/90 text-info-foreground px-3 py-1.5 rounded text-sm font-medium ml-4"
-            >
-              <Plus className="w-4 h-4" />
-              <span>New Event</span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hover:bg-[#2a2a2a] px-3 py-1.5 rounded">
-              <SearchBar events={events} onEventSelect={handleEventClick} />
-            </div>
-          </div>
-        </div>
-
-        {/* Calendar Views */}
-        {currentView === "week" ? (
-          <div className="flex-1 min-h-0">
-            <WeekView
-              currentDate={currentDate}
-              events={events}
-              onEventClick={handleEventClick}
-              onTimeSlotClick={handleTimeSlotClick}
-              onEventResize={handleEventResize}
-              onEventRightClick={handleEventRightClick}
-            />
-          </div>
-        ) : currentView === "day" ? (
-          <div className="flex-1 min-h-0">
-            <DayView
-              currentDate={currentDate}
-              events={events}
-              onEventClick={handleEventClick}
-              onTimeSlotClick={handleTimeSlotClick}
-              onEventResize={handleEventResize}
-              onEventRightClick={handleEventRightClick}
-            />
-          </div>
-        ) : currentView === "agenda" ? (
-          <div className="flex-1 min-h-0">
-            <AgendaView currentDate={currentDate} events={events} onEventClick={handleEventClick} />
-          </div>
-        ) : (
-          <div className="flex-1 overflow-auto">
-            <div className="min-w-[900px] h-full flex flex-col">
-              {/* Week days header */}
-              <div className="grid grid-cols-7 border-b border-[#2a2a2a] bg-[#1a1a1a] z-10 shrink-0">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                  <div
-                    key={day}
-                    className="p-4 text-xs text-[#6b6b6b] font-medium border-r border-[#2a2a2a] last:border-r-0"
-                  >
-                    {day}
-                  </div>
-                ))}
-              </div>
-
-              {/* Calendar weeks - now flex-1 to fill remaining space */}
-              <div className="flex-1 flex flex-col">
-                {weeks.map((week, weekIdx) => (
-                  <div key={weekIdx} className="flex-1 grid grid-cols-7 border-b border-[#2a2a2a]">
-                    {week.map((day, dayIdx) => {
-                      const dayEvents = getEventsForDate(day.date)
-
-                      return (
-                        <div
-                          key={dayIdx}
-                          className={cn(
-                            "p-2 border-r border-[#2a2a2a] last:border-r-0 hover:bg-[#202020] cursor-pointer",
-                            !day.isCurrentMonth && "bg-[#151515]",
-                          )}
-                          onClick={() => handleDayClick(day.date)}
-                          onDrop={(e) => handleDrop(e, day.date)}
-                          onDragOver={handleDragOver}
-                          // Add right-click handler for selection
-                          onContextMenu={(e) => handleSelectionRightClick(e)}
+            <ResizablePanel defaultSize={15} minSize={10} maxSize={30} className="relative">
+              <div className="flex h-full flex-col border-r border-[#2a2a2a] bg-[#1c1c1c]">
+                {leftSidebarView === 'calendar' ? (
+                  <>
+                    {/* Mini Calendar */}
+                    <div className="p-4">
+                      <div className="mb-4 flex items-center justify-between">
+                        <button
+                          onClick={navigateMiniCalendarPrevious}
+                          className="rounded p-1 hover:bg-[#2a2a2a]"
                         >
-                          <div className={cn("text-xs mb-2", day.isCurrentMonth ? "text-[#d0d0d0]" : "text-[#5a5a5a]")}>
-                            {day.day}
-                          </div>
-                          <div className="space-y-1">
-                            {dayEvents.map((event, idx) => {
-                              const isSelected = selectedEvents.includes(event.id)
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <h3 className="text-sm font-medium">
+                          {new Date(miniCalendarYear, miniCalendarMonth).toLocaleDateString(
+                            'en-US',
+                            {
+                              month: 'long',
+                              year: 'numeric',
+                            }
+                          )}
+                        </h3>
+                        <button
+                          onClick={navigateMiniCalendarNext}
+                          className="rounded p-1 hover:bg-[#2a2a2a]"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
 
-                              return (
-                                <div
-                                  key={idx}
-                                  onContextMenu={(e) => handleEventRightClick(e, event)}
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleEventClickWithSelection(e, event)
-                                  }}
-                                  onMouseEnter={(e) => handleEventMouseEnter(e, event)}
-                                  onMouseLeave={handleEventMouseLeave}
-                                >
-                                  <DraggableEvent
-                                    event={event}
-                                    onClick={() => {}}
-                                    onDragStart={handleDragStart}
-                                    onDragEnd={handleDragEnd}
-                                    className={cn(
-                                      "text-xs px-2 py-1 rounded text-left transition-all",
-                                      event.color && `bg-[${event.color}]/60`,
-                                      event.type === "holiday" &&
-                                        !event.color &&
-                                        "bg-event-holiday/40 text-success-foreground",
-                                      event.type === "info" && !event.color && "bg-muted text-muted-foreground",
-                                      !event.type &&
-                                        !event.color &&
-                                        event.time &&
-                                        "text-foreground bg-event-default/60",
-                                      isSelected &&
-                                        "ring-2 ring-blue-500 ring-offset-2 ring-offset-[#1a1a1a] scale-105",
-                                    )}
-                                    style={event.color ? { backgroundColor: `${event.color}99` } : undefined}
-                                  >
-                                    {event.time && <span className="text-[#8a8a8a]">{event.time} </span>}
-                                    {event.title}
-                                  </DraggableEvent>
-                                </div>
-                              )
-                            })}
-                          </div>
+                      {/* Mini calendar grid */}
+                      <div className="text-xs">
+                        <div className="mb-2 grid grid-cols-7 gap-1">
+                          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                            <div key={day} className="text-center font-medium text-[#6b6b6b]">
+                              {day}
+                            </div>
+                          ))}
                         </div>
-                      )
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        </div>
-      </ResizablePanel>
+                        <div className="grid grid-cols-7 gap-1">
+                          {miniCalendarDays.slice(0, 35).map((day, idx) => {
+                            const isToday =
+                              day.date.getDate() === new Date().getDate() &&
+                              day.date.getMonth() === new Date().getMonth() &&
+                              day.date.getFullYear() === new Date().getFullYear()
+                            const isSelected =
+                              day.date.getDate() === currentDate.getDate() &&
+                              day.date.getMonth() === currentDate.getMonth() &&
+                              day.date.getFullYear() === currentDate.getFullYear()
 
-      {/* Right Sidebar */}
-      {(showWelcome || selectedPerson) && !rightSidebarCollapsed && (
-        <>
-          <ResizableHandle withHandle className="bg-[#2a2a2a] hover:bg-[#3a3a3a] w-0.5" />
-          <ResizablePanel defaultSize={25} minSize={15} maxSize={40} className="relative">
-            <div className="h-full bg-[#1c1c1c] border-l border-[#2a2a2a] overflow-auto">
-          <div className="p-6">
-            {showWelcome && !selectedPerson ? (
-              <>
-                {/* Welcome Screen */}
-                <div className="flex items-start justify-between mb-6">
-                  <h2 className="text-sm font-medium">Welcome to Notion Calendar</h2>
-                  <button onClick={() => setShowWelcome(false)} className="hover:bg-[#2a2a2a] p-1 rounded">
-                    <X className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="space-y-3 text-sm text-[#9a9a9a]">
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
-                      </div>
-                      <span>Use ⌘K command palette</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
-                      </div>
-                      <span>Connect another calendar</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
-                      </div>
-                      <span>Connect Notion workspace</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
-                      </div>
-                      <span>Create scheduling link</span>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-[#2a2a2a] pt-6 mt-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-sm font-medium">Invite to Notion Calendar</h3>
-                      <button className="hover:bg-[#2a2a2a] p-1 rounded">
-                        <X className="w-4 h-4 text-[#6b6b6b]" />
-                      </button>
-                    </div>
-                    <p className="text-sm text-[#9a9a9a] mb-4">Who else would benefit from Notion Calendar?</p>
-                    <button className="w-full flex items-center justify-between text-sm text-[#9a9a9a] hover:text-white bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-2 rounded">
-                      <span>Invite friend or teammate</span>
-                      <span className="text-xs bg-[#3a3a3a] px-1.5 py-0.5 rounded">⌘</span>
-                    </button>
-                  </div>
-
-                  <div className="border-t border-[#2a2a2a] pt-6">
-                    <h3 className="text-sm font-medium mb-3">Useful shortcuts</h3>
-                    <div className="space-y-2 text-sm text-[#9a9a9a]">
-                      <div className="flex items-center justify-between">
-                        <span>Command menu</span>
-                        <span className="text-xs bg-[#2a2a2a] px-2 py-1 rounded">⌘ K</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Toggle sidebar</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Go to date</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>All keyboard shortcuts</span>
-                        <span className="text-xs">→</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Person Details */}
-                <div className="flex items-start justify-between mb-6">
-                  <h2 className="text-sm font-medium text-[#9a9a9a]">Page</h2>
-                  <button onClick={handleClosePersonDetails} className="hover:bg-[#2a2a2a] p-1 rounded">
-                    <X className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                </div>
-
-                <div className="space-y-6 border-0">
-                  <h3 className="text-lg font-semibold mb-6">{selectedPerson}</h3>
-
-                  {personnelData[0].items
-                    .filter((p) => p.name === selectedPerson)
-                    .map((person) => (
-                      <div key={person.id} className="space-y-4">
-                        <div className="pb-4">
-                          <div className="text-xs text-[#6b6b6b] mb-2">Created At</div>
-                          <div className="text-sm text-[#d0d0d0]">7:33 PM</div>
-                          <div className="text-xs text-[#8a8a8a] mt-1">
-                            <span className="inline-flex items-center gap-1">
-                              <span>→</span>
-                              <span className="text-[#6b6b6b]">7:33 PM</span>
-                              <span className="text-[#6b6b6b]">0 min</span>
-                            </span>
-                          </div>
-                          <div className="text-xs text-[#6b6b6b] mt-1">Sat Oct 18</div>
-                        </div>
-
-                        <div className="pb-4">
-                          <div className="text-xs text-[#6b6b6b] mb-1">All-day</div>
-                          <div className="text-xs text-[#6b6b6b]">Time zone</div>
-                        </div>
-
-                        <div className="border-t border-[#2a2a2a] pt-4">
-                          <div className="flex items-center gap-2 mb-4">
-                            <span className="text-xs">👥</span>
-                            {/* Replace text-blue-400 with text-info-foreground */}
-                            <span className="text-sm text-info-foreground">Personnel Roster</span>
-                            <span className="text-xs text-[#6b6b6b]">All Properties</span>
-                          </div>
-
-                          <div className="space-y-2.5">
-                            {Object.entries(person.properties).map(([key, value]) => (
-                              <div key={key} className="flex items-center gap-3 text-sm">
-                                {typeof value === "boolean" ? (
-                                  <>
-                                    <div
-                                      className={cn(
-                                        "w-4 h-4 rounded border flex items-center justify-center shrink-0",
-                                        value ? "bg-info border-info" : "border-[#4a4a4a]",
-                                      )}
-                                    >
-                                      {value && <span className="text-[10px] font-bold">✓</span>}
-                                    </div>
-                                    <span className="text-[#9a9a9a]">{key}</span>
-                                    {value && (
-                                      <span className="ml-auto w-4 h-4 rounded bg-info flex items-center justify-center">
-                                        <span className="text-[10px] font-bold">✓</span>
-                                      </span>
-                                    )}
-                                  </>
-                                ) : key === "Certification Level" ? (
-                                  <>
-                                    <span className="text-[#9a9a9a] flex-1">{key}</span>
-                                    {/* Replace badge colors with semantic tokens */}
-                                    <span className="bg-badge-green text-badge-green-foreground px-3 py-1 rounded text-xs font-medium">
-                                      {value}
-                                    </span>
-                                  </>
-                                ) : key === "Shift" ? (
-                                  <>
-                                    <span className="text-[#9a9a9a] flex-1">{key}</span>
-                                    {/* Replace bg-pink-900/50 text-pink-400 with semantic tokens */}
-                                    <span className="bg-badge-pink text-badge-pink-foreground px-3 py-1 rounded-full text-xs font-medium flex items-center justify-center w-7 h-7">
-                                      {value}
-                                    </span>
-                                  </>
-                                ) : key === "Last Hold Date" ? (
-                                  <>
-                                    <span className="text-[#9a9a9a] flex-1">{key}</span>
-                                    <span className="text-[#6b6b6b] text-xs italic">Empty</span>
-                                  </>
-                                ) : (
-                                  <span className="text-[#6b6b6b]">
-                                    {key}: {String(value)}
-                                  </span>
+                            return (
+                              <button
+                                key={idx}
+                                onClick={() => handleMiniCalendarDayClick(day.date)}
+                                className={cn(
+                                  'flex aspect-square items-center justify-center rounded text-xs transition-colors hover:bg-[#2a2a2a]',
+                                  !day.isCurrentMonth && 'text-[#4a4a4a]',
+                                  isToday && 'bg-today text-today-foreground font-semibold',
+                                  isSelected && !isToday && 'bg-[#3a3a3a]'
                                 )}
-                              </div>
-                            ))}
-                          </div>
+                              >
+                                {day.day}
+                              </button>
+                            )
+                          })}
                         </div>
+                      </div>
+                    </div>
 
-                        <div className="border-t border-[#2a2a2a] pt-4">
-                          <div className="text-xs text-[#6b6b6b] mb-2">Updated At</div>
-                          <div className="text-sm text-[#d0d0d0]">{person.time}</div>
+                    {/* Scheduling Section */}
+                    <div className="border-t border-[#2a2a2a] px-4 py-2">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm text-[#9a9a9a]">
+                          <span>Scheduling</span>
                         </div>
-
-                        <div className="border-t border-[#2a2a2a] pt-4">
-                          <button className="w-full flex items-center justify-between text-sm text-[#9a9a9a] hover:text-white bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-2 rounded">
-                            <span>Manage in Notion</span>
-                            <span className="text-xs bg-[#3a3a3a] px-1.5 py-0.5 rounded">⌘</span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setShowCalendarList(true)}
+                            className="rounded p-1 text-[#6b6b6b] hover:bg-[#2a2a2a] hover:text-white"
+                            title="Manage Calendars"
+                          >
+                            <span className="text-xs">⚙️</span>
+                          </button>
+                          <button className="text-[#6b6b6b] hover:text-white">
+                            <span className="text-xs">👁️</span>
                           </button>
                         </div>
                       </div>
-                    ))}
+
+                      <div className="mb-3">
+                        <button
+                          onClick={() => setShowSchedulingLinks(true)}
+                          className="bg-info/10 hover:bg-info/20 text-info flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                        >
+                          <span>🔗</span>
+                          Scheduling Links
+                          {schedulingLinks.length > 0 && (
+                            <span className="bg-info ml-auto rounded-full px-2 py-0.5 text-xs text-white">
+                              {schedulingLinks.length}
+                            </span>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="space-y-2 text-sm">
+                        <div className="mb-2 text-xs text-[#7a7a7a]">
+                          griffinradcliffe@gmail.com
+                        </div>
+                        {calendars.map((calendar) => (
+                          <div
+                            key={calendar.id}
+                            className="group flex items-center gap-2"
+                            onContextMenu={(e) => handleCalendarRightClick(e, calendar)}
+                          >
+                            <button
+                              onClick={() => handleToggleVisibility(calendar.id)}
+                              className="opacity-0 transition-opacity group-hover:opacity-100"
+                            >
+                              {calendar.visible ? (
+                                <span className="text-xs">👁️</span>
+                              ) : (
+                                <span className="text-xs opacity-50">👁️</span>
+                              )}
+                            </button>
+                            <div
+                              className="h-3 w-3 shrink-0 rounded-full"
+                              style={{ backgroundColor: calendar.color }}
+                            ></div>
+                            <span
+                              className={cn(
+                                'flex-1 truncate text-xs text-[#d0d0d0]',
+                                !calendar.visible && 'opacity-50'
+                              )}
+                            >
+                              {calendar.name}
+                              {calendar.isDefault && ' (Default)'}
+                            </span>
+                            <button
+                              onClick={() => handleOpenShareModal(calendar)}
+                              className="opacity-0 transition-opacity group-hover:opacity-100 hover:text-white"
+                              title="Share Calendar"
+                            >
+                              <span className="text-xs">🔗</span>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-3 space-y-1">
+                        <button className="flex w-full items-center gap-1 py-1 text-xs text-[#7a7a7a] hover:text-white">
+                          <Plus className="h-3 w-3" />
+                          Add calendar account
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-1 flex-col" style={{ containerType: 'inline-size' }}>
+                    {/* Container Hierarchy: Level 1 - Main roster container with padding */}
+                    <div className="flex h-full flex-col">
+                      {/* Level 2 - Header controls section with consistent padding */}
+                      <div className="border-b border-[#2a2a2a]/50 px-3 pt-2 pb-1.5">
+                        <div className="mb-2 flex items-center gap-2">
+                          <button className="rounded p-1.5 transition-colors hover:bg-[#2a2a2a]">
+                            <Search className="h-4 w-4 text-[#6b6b6b]" />
+                          </button>
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-[#d0d0d0]">
+                            <span className="text-sm text-red-500">👥</span>
+                            <span>Personnel Roster</span>
+                          </span>
+                          <button className="ml-auto rounded p-1.5 transition-colors hover:bg-[#2a2a2a]">
+                            <MoreHorizontal className="h-4 w-4 text-[#6b6b6b]" />
+                          </button>
+                          <button className="rounded p-1.5 transition-colors hover:bg-[#2a2a2a]">
+                            <Plus className="h-4 w-4 text-[#6b6b6b]" />
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setDatabaseView('list')}
+                            className={cn(
+                              'rounded p-1.5 transition-colors',
+                              databaseView === 'list'
+                                ? 'bg-[#2a2a2a] text-white'
+                                : 'text-[#6b6b6b] hover:text-white'
+                            )}
+                            title="List View"
+                          >
+                            <span className="text-sm">☰</span>
+                          </button>
+                          <button
+                            onClick={() => setDatabaseView('table')}
+                            className={cn(
+                              'rounded p-1.5 transition-colors',
+                              databaseView === 'table'
+                                ? 'bg-[#2a2a2a] text-white'
+                                : 'text-[#6b6b6b] hover:text-white'
+                            )}
+                            title="Table View"
+                          >
+                            <Table className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setDatabaseView('board')}
+                            className={cn(
+                              'rounded p-1.5 transition-colors',
+                              databaseView === 'board'
+                                ? 'bg-[#2a2a2a] text-white'
+                                : 'text-[#6b6b6b] hover:text-white'
+                            )}
+                            title="Board View"
+                          >
+                            <LayoutGrid className="h-4 w-4" />
+                          </button>
+
+                          <div className="ml-auto flex items-center gap-1.5">
+                            <DatabaseFilter
+                              properties={allProperties}
+                              onFilterChange={setFilters}
+                            />
+                            <DatabaseSort properties={allProperties} onSortChange={setSort} />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Level 3 - Scalable content area with transform-based responsive scaling */}
+                      {selectedDatabase && leftSidebarView === 'database' && (
+                        <div className="flex flex-1 flex-col overflow-hidden">
+                          {/* Scale wrapper - dynamically scales content to prevent overflow */}
+                          <div
+                            className="flex min-h-0 flex-1 flex-col"
+                            style={{
+                              transformOrigin: 'top left',
+                              width: '100%',
+                            }}
+                          >
+                            {/* Table Header - Fixed at top with responsive padding */}
+                            <div className="sticky top-0 z-10 border-b border-[#2a2a2a] bg-[#1a1a1a] py-1.5">
+                              <div
+                                className="grid items-center pr-2"
+                                style={{
+                                  gridTemplateColumns: 'auto 1fr',
+                                  gap: 'clamp(8px, 1vw, 12px)',
+                                  paddingLeft: '8px',
+                                }}
+                              >
+                                <div
+                                  className="font-semibold tracking-wide text-[#6b6b6b] uppercase"
+                                  style={{ fontSize: 'clamp(9px, 0.8vw, 12px)' }}
+                                >
+                                  #
+                                </div>
+                                <div
+                                  className="font-semibold tracking-wide text-[#6b6b6b] uppercase"
+                                  style={{ fontSize: 'clamp(9px, 0.8vw, 12px)' }}
+                                >
+                                  Name
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Scrollable personnel list with proper spacing hierarchy */}
+                            <div className="flex-1 overflow-x-hidden overflow-y-auto">
+                              <div>
+                                {personnel.map((person, index) => (
+                                  <DraggableDatabaseItem
+                                    key={person.id}
+                                    item={person}
+                                    index={index}
+                                    onReorder={handleReorderDatabaseItems}
+                                  >
+                                    <div
+                                      onContextMenu={(e) => handleDatabaseItemRightClick(e, person)}
+                                    >
+                                      <DatabaseCard
+                                        person={person}
+                                        position={index + 1}
+                                        isExpanded={!!expandedPersonnel[person.name]}
+                                        onToggle={() =>
+                                          setExpandedPersonnel((prev) => ({
+                                            ...prev,
+                                            [person.name]: !prev[person.name],
+                                          }))
+                                        }
+                                        onSelect={() => handleSelectPerson(person.name)}
+                                      />
+                                    </div>
+                                  </DraggableDatabaseItem>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {databaseView === 'table' && (
+                      <div className="flex-1 overflow-auto border-t border-[#2a2a2a]">
+                        <DatabaseTableView
+                          items={sortedPersonnel}
+                          onItemClick={handleSelectPerson}
+                        />
+                      </div>
+                    )}
+                    {databaseView === 'board' && (
+                      <div className="flex-1 overflow-auto border-t border-[#2a2a2a]">
+                        <DatabaseBoardView
+                          items={sortedPersonnel}
+                          onItemClick={handleSelectPerson}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Bottom icons */}
+                <div className="flex items-center gap-3 border-t border-[#2a2a2a] p-3">
+                  <button className="text-[#6b6b6b] hover:text-white">
+                    <span className="text-sm">🎯</span>
+                  </button>
+                  <button className="text-[#6b6b6b] hover:text-white">
+                    <span className="text-sm">✨</span>
+                  </button>
+                  <button
+                    onClick={() => setShowNotificationCenter(true)}
+                    className="relative text-[#6b6b6b] hover:text-white"
+                  >
+                    <span className="text-sm">🔔</span>
+                    {unreadNotificationsCount > 0 && (
+                      <span className="bg-destructive absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium text-white">
+                        {unreadNotificationsCount}
+                      </span>
+                    )}
+                  </button>
                 </div>
-              </>
+              </div>
+              {/* Collapse button */}
+              <button
+                onClick={() => setLeftSidebarCollapsed(true)}
+                className="absolute top-1/2 -right-3 z-10 rounded-full border border-[#3a3a3a] bg-[#2a2a2a] p-1 hover:bg-[#3a3a3a]"
+                title="Collapse sidebar"
+              >
+                <PanelLeftClose className="h-3 w-3" />
+              </button>
+            </ResizablePanel>
+            <ResizableHandle withHandle className="w-0.5 bg-[#2a2a2a] hover:bg-[#3a3a3a]" />
+          </>
+        )}
+
+        {/* Expand button when collapsed */}
+        {leftSidebarCollapsed && (
+          <button
+            onClick={() => setLeftSidebarCollapsed(false)}
+            className="fixed top-1/2 left-0 z-10 rounded-r-lg border border-l-0 border-[#3a3a3a] bg-[#2a2a2a] p-2 hover:bg-[#3a3a3a]"
+            title="Expand sidebar"
+          >
+            <PanelLeftOpen className="h-4 w-4" />
+          </button>
+        )}
+
+        {/* Main Calendar Area */}
+        <ResizablePanel defaultSize={showWelcome || selectedPerson ? 60 : 85} minSize={40}>
+          <div className="flex h-full min-w-0 flex-1 flex-col">
+            {/* Header */}
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-[#2a2a2a] px-6">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-[#6b6b6b]">🎨</span>
+                <ViewSwitcher currentView={currentView} onViewChange={setCurrentView} />
+                <button
+                  onClick={navigateToToday}
+                  className="rounded bg-[#2a2a2a] px-3 py-1.5 text-sm hover:bg-[#3a3a3a]"
+                >
+                  Today
+                </button>
+                <button onClick={navigatePrevious} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button onClick={navigateNext} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setShowDatePicker(true)}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  title="Go to date (⌘G)"
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setShowEventCreateModal(true)}
+                  className="bg-info hover:bg-info/90 text-info-foreground ml-4 flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>New Event</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="rounded px-3 py-1.5 hover:bg-[#2a2a2a]">
+                  <SearchBar events={events} onEventSelect={handleEventClick} />
+                </div>
+              </div>
+            </div>
+
+            {/* Calendar Views */}
+            {currentView === 'week' ? (
+              <div className="min-h-0 flex-1">
+                <WeekView
+                  currentDate={currentDate}
+                  events={events}
+                  onEventClick={handleEventClick}
+                  onTimeSlotClick={handleTimeSlotClick}
+                  onEventResize={handleEventResize}
+                  onEventRightClick={handleEventRightClick}
+                />
+              </div>
+            ) : currentView === 'day' ? (
+              <div className="min-h-0 flex-1">
+                <DayView
+                  currentDate={currentDate}
+                  events={events}
+                  onEventClick={handleEventClick}
+                  onTimeSlotClick={handleTimeSlotClick}
+                  onEventResize={handleEventResize}
+                  onEventRightClick={handleEventRightClick}
+                />
+              </div>
+            ) : currentView === 'agenda' ? (
+              <div className="min-h-0 flex-1">
+                <AgendaView
+                  currentDate={currentDate}
+                  events={events}
+                  onEventClick={handleEventClick}
+                />
+              </div>
+            ) : (
+              <div className="flex-1 overflow-auto">
+                <div className="flex h-full min-w-[900px] flex-col">
+                  {/* Week days header */}
+                  <div className="z-10 grid shrink-0 grid-cols-7 border-b border-[#2a2a2a] bg-[#1a1a1a]">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                      <div
+                        key={day}
+                        className="border-r border-[#2a2a2a] p-4 text-xs font-medium text-[#6b6b6b] last:border-r-0"
+                      >
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar weeks - now flex-1 to fill remaining space */}
+                  <div className="flex flex-1 flex-col">
+                    {weeks.map((week, weekIdx) => (
+                      <div
+                        key={weekIdx}
+                        className="grid flex-1 grid-cols-7 border-b border-[#2a2a2a]"
+                      >
+                        {week.map((day, dayIdx) => {
+                          const dayEvents = getEventsForDate(day.date)
+
+                          return (
+                            <div
+                              key={dayIdx}
+                              className={cn(
+                                'cursor-pointer border-r border-[#2a2a2a] p-2 last:border-r-0 hover:bg-[#202020]',
+                                !day.isCurrentMonth && 'bg-[#151515]'
+                              )}
+                              onClick={() => handleDayClick(day.date)}
+                              onDrop={(e) => handleDrop(e, day.date)}
+                              onDragOver={handleDragOver}
+                              // Add right-click handler for selection
+                              onContextMenu={(e) => handleSelectionRightClick(e)}
+                            >
+                              <div
+                                className={cn(
+                                  'mb-2 text-xs',
+                                  day.isCurrentMonth ? 'text-[#d0d0d0]' : 'text-[#5a5a5a]'
+                                )}
+                              >
+                                {day.day}
+                              </div>
+                              <div className="space-y-1">
+                                {dayEvents.map((event, idx) => {
+                                  const isSelected = selectedEvents.includes(event.id)
+
+                                  return (
+                                    <div
+                                      key={idx}
+                                      onContextMenu={(e) => handleEventRightClick(e, event)}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleEventClickWithSelection(e, event)
+                                      }}
+                                      onMouseEnter={(e) => handleEventMouseEnter(e, event)}
+                                      onMouseLeave={handleEventMouseLeave}
+                                    >
+                                      <DraggableEvent
+                                        event={event}
+                                        onClick={() => {}}
+                                        onDragStart={handleDragStart}
+                                        onDragEnd={handleDragEnd}
+                                        className={cn(
+                                          'rounded px-2 py-1 text-left text-xs transition-all',
+                                          event.color && `bg-[${event.color}]/60`,
+                                          event.type === 'holiday' &&
+                                            !event.color &&
+                                            'bg-event-holiday/40 text-success-foreground',
+                                          event.type === 'info' &&
+                                            !event.color &&
+                                            'bg-muted text-muted-foreground',
+                                          !event.type &&
+                                            !event.color &&
+                                            event.time &&
+                                            'text-foreground bg-event-default/60',
+                                          isSelected &&
+                                            'scale-105 ring-2 ring-blue-500 ring-offset-2 ring-offset-[#1a1a1a]'
+                                        )}
+                                        style={
+                                          event.color
+                                            ? { backgroundColor: `${event.color}99` }
+                                            : undefined
+                                        }
+                                      >
+                                        {event.time && (
+                                          <span className="text-[#8a8a8a]">{event.time} </span>
+                                        )}
+                                        {event.title}
+                                      </DraggableEvent>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-            </div>
-            {/* Collapse button */}
-            <button
-              onClick={() => setRightSidebarCollapsed(true)}
-              className="absolute top-1/2 -left-3 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-full p-1 border border-[#3a3a3a]"
-              title="Collapse sidebar"
-            >
-              <PanelRightClose className="w-3 h-3" />
-            </button>
-          </ResizablePanel>
-        </>
-      )}
-      
-      {/* Expand button when collapsed */}
-      {(showWelcome || selectedPerson) && rightSidebarCollapsed && (
-        <button
-          onClick={() => setRightSidebarCollapsed(false)}
-          className="fixed right-0 top-1/2 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-l-lg p-2 border border-r-0 border-[#3a3a3a]"
-          title="Expand sidebar"
-        >
-          <PanelRightOpen className="w-4 h-4" />
-        </button>
-      )}
-    </ResizablePanelGroup>
+        </ResizablePanel>
+
+        {/* Right Sidebar */}
+        {(showWelcome || selectedPerson) && !rightSidebarCollapsed && (
+          <>
+            <ResizableHandle withHandle className="w-0.5 bg-[#2a2a2a] hover:bg-[#3a3a3a]" />
+            <ResizablePanel defaultSize={25} minSize={15} maxSize={40} className="relative">
+              <div className="h-full overflow-auto border-l border-[#2a2a2a] bg-[#1c1c1c]">
+                <div className="p-6">
+                  {showWelcome && !selectedPerson ? (
+                    <>
+                      {/* Welcome Screen */}
+                      <div className="mb-6 flex items-start justify-between">
+                        <h2 className="text-sm font-medium">Welcome to Notion Calendar</h2>
+                        <button
+                          onClick={() => setShowWelcome(false)}
+                          className="rounded p-1 hover:bg-[#2a2a2a]"
+                        >
+                          <X className="h-4 w-4 text-[#6b6b6b]" />
+                        </button>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="space-y-3 text-sm text-[#9a9a9a]">
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 h-4 w-4 shrink-0">
+                              <div className="h-4 w-4 rounded-full border-2 border-[#4a4a4a]"></div>
+                            </div>
+                            <span>Use ⌘K command palette</span>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 h-4 w-4 shrink-0">
+                              <div className="h-4 w-4 rounded-full border-2 border-[#4a4a4a]"></div>
+                            </div>
+                            <span>Connect another calendar</span>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 h-4 w-4 shrink-0">
+                              <div className="h-4 w-4 rounded-full border-2 border-[#4a4a4a]"></div>
+                            </div>
+                            <span>Connect Notion workspace</span>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 h-4 w-4 shrink-0">
+                              <div className="h-4 w-4 rounded-full border-2 border-[#4a4a4a]"></div>
+                            </div>
+                            <span>Create scheduling link</span>
+                          </div>
+                        </div>
+
+                        <div className="mt-6 border-t border-[#2a2a2a] pt-6">
+                          <div className="mb-4 flex items-start justify-between">
+                            <h3 className="text-sm font-medium">Invite to Notion Calendar</h3>
+                            <button className="rounded p-1 hover:bg-[#2a2a2a]">
+                              <X className="h-4 w-4 text-[#6b6b6b]" />
+                            </button>
+                          </div>
+                          <p className="mb-4 text-sm text-[#9a9a9a]">
+                            Who else would benefit from Notion Calendar?
+                          </p>
+                          <button className="flex w-full items-center justify-between rounded bg-[#2a2a2a] px-3 py-2 text-sm text-[#9a9a9a] hover:bg-[#3a3a3a] hover:text-white">
+                            <span>Invite friend or teammate</span>
+                            <span className="rounded bg-[#3a3a3a] px-1.5 py-0.5 text-xs">⌘</span>
+                          </button>
+                        </div>
+
+                        <div className="border-t border-[#2a2a2a] pt-6">
+                          <h3 className="mb-3 text-sm font-medium">Useful shortcuts</h3>
+                          <div className="space-y-2 text-sm text-[#9a9a9a]">
+                            <div className="flex items-center justify-between">
+                              <span>Command menu</span>
+                              <span className="rounded bg-[#2a2a2a] px-2 py-1 text-xs">⌘ K</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span>Toggle sidebar</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span>Go to date</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span>All keyboard shortcuts</span>
+                              <span className="text-xs">→</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Person Details */}
+                      <div className="mb-6 flex items-start justify-between">
+                        <h2 className="text-sm font-medium text-[#9a9a9a]">Page</h2>
+                        <button
+                          onClick={handleClosePersonDetails}
+                          className="rounded p-1 hover:bg-[#2a2a2a]"
+                        >
+                          <X className="h-4 w-4 text-[#6b6b6b]" />
+                        </button>
+                      </div>
+
+                      <div className="space-y-6 border-0">
+                        <h3 className="mb-6 text-lg font-semibold">{selectedPerson}</h3>
+
+                        {personnelData[0].items
+                          .filter((p) => p.name === selectedPerson)
+                          .map((person) => (
+                            <div key={person.id} className="space-y-4">
+                              <div className="pb-4">
+                                <div className="mb-2 text-xs text-[#6b6b6b]">Created At</div>
+                                <div className="text-sm text-[#d0d0d0]">7:33 PM</div>
+                                <div className="mt-1 text-xs text-[#8a8a8a]">
+                                  <span className="inline-flex items-center gap-1">
+                                    <span>→</span>
+                                    <span className="text-[#6b6b6b]">7:33 PM</span>
+                                    <span className="text-[#6b6b6b]">0 min</span>
+                                  </span>
+                                </div>
+                                <div className="mt-1 text-xs text-[#6b6b6b]">Sat Oct 18</div>
+                              </div>
+
+                              <div className="pb-4">
+                                <div className="mb-1 text-xs text-[#6b6b6b]">All-day</div>
+                                <div className="text-xs text-[#6b6b6b]">Time zone</div>
+                              </div>
+
+                              <div className="border-t border-[#2a2a2a] pt-4">
+                                <div className="mb-4 flex items-center gap-2">
+                                  <span className="text-xs">👥</span>
+                                  {/* Replace text-blue-400 with text-info-foreground */}
+                                  <span className="text-info-foreground text-sm">
+                                    Personnel Roster
+                                  </span>
+                                  <span className="text-xs text-[#6b6b6b]">All Properties</span>
+                                </div>
+
+                                <div className="space-y-2.5">
+                                  {Object.entries(person.properties).map(([key, value]) => (
+                                    <div key={key} className="flex items-center gap-3 text-sm">
+                                      {typeof value === 'boolean' ? (
+                                        <>
+                                          <div
+                                            className={cn(
+                                              'flex h-4 w-4 shrink-0 items-center justify-center rounded border',
+                                              value ? 'bg-info border-info' : 'border-[#4a4a4a]'
+                                            )}
+                                          >
+                                            {value && (
+                                              <span className="text-[10px] font-bold">✓</span>
+                                            )}
+                                          </div>
+                                          <span className="text-[#9a9a9a]">{key}</span>
+                                          {value && (
+                                            <span className="bg-info ml-auto flex h-4 w-4 items-center justify-center rounded">
+                                              <span className="text-[10px] font-bold">✓</span>
+                                            </span>
+                                          )}
+                                        </>
+                                      ) : key === 'Certification Level' ? (
+                                        <>
+                                          <span className="flex-1 text-[#9a9a9a]">{key}</span>
+                                          {/* Replace badge colors with semantic tokens */}
+                                          <span className="bg-badge-green text-badge-green-foreground rounded px-3 py-1 text-xs font-medium">
+                                            {value}
+                                          </span>
+                                        </>
+                                      ) : key === 'Shift' ? (
+                                        <>
+                                          <span className="flex-1 text-[#9a9a9a]">{key}</span>
+                                          {/* Replace bg-pink-900/50 text-pink-400 with semantic tokens */}
+                                          <span className="bg-badge-pink text-badge-pink-foreground flex h-7 w-7 items-center justify-center rounded-full px-3 py-1 text-xs font-medium">
+                                            {value}
+                                          </span>
+                                        </>
+                                      ) : key === 'Last Hold Date' ? (
+                                        <>
+                                          <span className="flex-1 text-[#9a9a9a]">{key}</span>
+                                          <span className="text-xs text-[#6b6b6b] italic">
+                                            Empty
+                                          </span>
+                                        </>
+                                      ) : (
+                                        <span className="text-[#6b6b6b]">
+                                          {key}: {String(value)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <div className="border-t border-[#2a2a2a] pt-4">
+                                <div className="mb-2 text-xs text-[#6b6b6b]">Updated At</div>
+                                <div className="text-sm text-[#d0d0d0]">{person.time}</div>
+                              </div>
+
+                              <div className="border-t border-[#2a2a2a] pt-4">
+                                <button className="flex w-full items-center justify-between rounded bg-[#2a2a2a] px-3 py-2 text-sm text-[#9a9a9a] hover:bg-[#3a3a3a] hover:text-white">
+                                  <span>Manage in Notion</span>
+                                  <span className="rounded bg-[#3a3a3a] px-1.5 py-0.5 text-xs">
+                                    ⌘
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              {/* Collapse button */}
+              <button
+                onClick={() => setRightSidebarCollapsed(true)}
+                className="absolute top-1/2 -left-3 z-10 rounded-full border border-[#3a3a3a] bg-[#2a2a2a] p-1 hover:bg-[#3a3a3a]"
+                title="Collapse sidebar"
+              >
+                <PanelRightClose className="h-3 w-3" />
+              </button>
+            </ResizablePanel>
+          </>
+        )}
+
+        {/* Expand button when collapsed */}
+        {(showWelcome || selectedPerson) && rightSidebarCollapsed && (
+          <button
+            onClick={() => setRightSidebarCollapsed(false)}
+            className="fixed top-1/2 right-0 z-10 rounded-l-lg border border-r-0 border-[#3a3a3a] bg-[#2a2a2a] p-2 hover:bg-[#3a3a3a]"
+            title="Expand sidebar"
+          >
+            <PanelRightOpen className="h-4 w-4" />
+          </button>
+        )}
+      </ResizablePanelGroup>
 
       {/* Modals */}
       <EventCreateModal
@@ -2374,13 +2533,13 @@ export default function CalendarPage() {
         isOpen={showEventSeriesModal}
         onClose={() => setShowEventSeriesModal(false)}
         onChoice={(choice) => {
-          if (eventSeriesAction === "edit" && selectedEvent) {
+          if (eventSeriesAction === 'edit' && selectedEvent) {
             handleEditEventChoice(choice, selectedEvent)
           } else {
             handleDeleteEventChoice(choice)
           }
         }}
-        title={selectedEvent?.title || ""}
+        title={selectedEvent?.title || ''}
         action={eventSeriesAction}
       />
 
@@ -2414,9 +2573,9 @@ export default function CalendarPage() {
         onSave={(newSettings) => {
           setSettings(newSettings)
           addToast({
-            type: "success",
-            title: "Settings Saved",
-            message: "Your preferences have been updated",
+            type: 'success',
+            title: 'Settings Saved',
+            message: 'Your preferences have been updated',
           })
         }}
       />
@@ -2425,54 +2584,60 @@ export default function CalendarPage() {
 
       {/* Database Modal */}
       {showDatabaseModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#1c1c1c] rounded-lg w-[900px] max-h-[80vh] overflow-hidden flex">
-            <div className="w-[400px] p-6 flex flex-col">
-              <h2 className="text-lg font-semibold mb-2">Add databases to Calendar</h2>
-              <p className="text-sm text-[#9a9a9a] mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="flex max-h-[80vh] w-[900px] overflow-hidden rounded-lg bg-[#1c1c1c]">
+            <div className="flex w-[400px] flex-col p-6">
+              <h2 className="mb-2 text-lg font-semibold">Add databases to Calendar</h2>
+              <p className="mb-6 text-sm text-[#9a9a9a]">
                 Use databases directly in Notion Calendar. Easily track upcoming tasks and events.
               </p>
 
               <div className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="mb-3 flex items-center gap-2">
                   <span className="text-sm">📋</span>
                   <span className="text-sm">Griffin Long's Notion</span>
                 </div>
               </div>
 
               <div className="flex-1 overflow-auto">
-                <div className="flex items-center justify-between mb-3">
+                <div className="mb-3 flex items-center justify-between">
                   <h3 className="text-sm font-medium">Suggested databases</h3>
                   {/* Replace text-blue-400 hover:text-blue-300 with semantic tokens */}
-                  <button className="text-sm text-info-foreground hover:text-info">View all</button>
+                  <button className="text-info-foreground hover:text-info text-sm">View all</button>
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex items-center gap-3 p-2 hover:bg-[#2a2a2a] rounded">
+                  <div className="flex items-center gap-3 rounded p-2 hover:bg-[#2a2a2a]">
                     {/* Replace bg-blue-500 with bg-info */}
-                    <div className="w-5 h-5 bg-info rounded flex items-center justify-center text-xs">🤖</div>
+                    <div className="bg-info flex h-5 w-5 items-center justify-center rounded text-xs">
+                      🤖
+                    </div>
                     <div className="flex-1">
                       <div className="text-sm text-[#d0d0d0]">AI Models Catalog</div>
                     </div>
-                    <input type="checkbox" className="w-4 h-4" />
+                    <input type="checkbox" className="h-4 w-4" />
                   </div>
 
-                  <div className="flex items-center gap-3 p-2 hover:bg-[#2a2a2a] rounded">
+                  <div className="flex items-center gap-3 rounded p-2 hover:bg-[#2a2a2a]">
                     {/* Replace bg-green-500 with bg-success */}
-                    <div className="w-5 h-5 bg-success rounded flex items-center justify-center text-xs">✓</div>
+                    <div className="bg-success flex h-5 w-5 items-center justify-center rounded text-xs">
+                      ✓
+                    </div>
                     <div className="flex-1">
                       <div className="text-sm text-[#d0d0d0]">Task Tracker</div>
                     </div>
-                    <input type="checkbox" className="w-4 h-4" defaultChecked />
+                    <input type="checkbox" className="h-4 w-4" defaultChecked />
                   </div>
 
-                  <div className="flex items-center gap-3 p-2 hover:bg-[#2a2a2a] rounded">
+                  <div className="flex items-center gap-3 rounded p-2 hover:bg-[#2a2a2a]">
                     {/* Replace bg-red-500 with bg-destructive */}
-                    <div className="w-5 h-5 bg-destructive rounded flex items-center justify-center text-xs">👥</div>
+                    <div className="bg-destructive flex h-5 w-5 items-center justify-center rounded text-xs">
+                      👥
+                    </div>
                     <div className="flex-1">
                       <div className="text-sm text-[#d0d0d0]">Personnel Roster</div>
                     </div>
-                    <input type="checkbox" className="w-4 h-4" defaultChecked />
+                    <input type="checkbox" className="h-4 w-4" defaultChecked />
                   </div>
                 </div>
               </div>
@@ -2481,24 +2646,24 @@ export default function CalendarPage() {
                 <button
                   onClick={() => {
                     setShowDatabaseModal(false)
-                    setLeftSidebarView("database")
+                    setLeftSidebarView('database')
                     setShowWelcome(false)
                   }}
-                  className="w-full bg-info hover:bg-info/90 text-info-foreground py-2 px-4 rounded text-sm font-medium"
+                  className="bg-info hover:bg-info/90 text-info-foreground w-full rounded px-4 py-2 text-sm font-medium"
                 >
                   Connect 3 databases
                 </button>
                 <button
                   onClick={() => setShowDatabaseModal(false)}
-                  className="w-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white py-2 px-4 rounded text-sm"
+                  className="w-full rounded bg-[#2a2a2a] px-4 py-2 text-sm text-white hover:bg-[#3a3a3a]"
                 >
                   Maybe later
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 bg-[#151515] p-6 flex items-center justify-center">
-              <div className="text-center text-[#6b6b6b] text-sm">
+            <div className="flex flex-1 items-center justify-center bg-[#151515] p-6">
+              <div className="text-center text-sm text-[#6b6b6b]">
                 <div className="mb-2">Database Preview</div>
                 <div className="text-xs">Connect databases to see them here</div>
               </div>
@@ -2618,31 +2783,37 @@ export default function CalendarPage() {
           onShare={handleShareCalendar}
           onRevoke={handleRevokeShare}
           onGenerateLink={handleGenerateShareLink}
-          existingShares={calendarShares.filter((s) => s.calendarId === selectedCalendarForShare.id)}
+          existingShares={calendarShares.filter(
+            (s) => s.calendarId === selectedCalendarForShare.id
+          )}
         />
       )}
 
       {showSchedulingLinks && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card border border-border rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground">Scheduling Links</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card border-border max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg border">
+            <div className="bg-card border-border sticky top-0 flex items-center justify-between border-b p-4">
+              <h2 className="text-foreground text-lg font-semibold">Scheduling Links</h2>
               <button
                 onClick={() => setShowSchedulingLinks(false)}
                 className="text-muted-foreground hover:text-foreground"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-muted-foreground text-sm">
                   Create booking links that let people schedule time with you
                 </p>
                 <div className="flex gap-2">
-                  <Button onClick={() => setShowAvailabilitySettings(true)} variant="outline" size="sm">
-                    <Clock className="w-4 h-4 mr-2" />
+                  <Button
+                    onClick={() => setShowAvailabilitySettings(true)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Clock className="mr-2 h-4 w-4" />
                     Set Availability
                   </Button>
                   <Button
@@ -2653,7 +2824,7 @@ export default function CalendarPage() {
                     size="sm"
                     className="bg-info hover:bg-info/90"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="mr-2 h-4 w-4" />
                     New Link
                   </Button>
                 </div>
@@ -2681,27 +2852,30 @@ export default function CalendarPage() {
       />
 
       {showAvailabilitySettings && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card border border-border rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground">Weekly Availability</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card border-border max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg border">
+            <div className="bg-card border-border sticky top-0 flex items-center justify-between border-b p-4">
+              <h2 className="text-foreground text-lg font-semibold">Weekly Availability</h2>
               <button
                 onClick={() => setShowAvailabilitySettings(false)}
                 className="text-muted-foreground hover:text-foreground"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="p-6">
-              <p className="text-sm text-muted-foreground mb-6">
-                Set your regular working hours. These times will be available for booking across all your scheduling
-                links.
+              <p className="text-muted-foreground mb-6 text-sm">
+                Set your regular working hours. These times will be available for booking across all
+                your scheduling links.
               </p>
 
-              <AvailabilityEditor availability={weeklyAvailability} onChange={setWeeklyAvailability} />
+              <AvailabilityEditor
+                availability={weeklyAvailability}
+                onChange={setWeeklyAvailability}
+              />
 
-              <div className="flex justify-end gap-2 mt-6 pt-6 border-t border-border">
+              <div className="border-border mt-6 flex justify-end gap-2 border-t pt-6">
                 <Button onClick={() => setShowAvailabilitySettings(false)} variant="outline">
                   Cancel
                 </Button>
@@ -2709,9 +2883,9 @@ export default function CalendarPage() {
                   onClick={() => {
                     setShowAvailabilitySettings(false)
                     addToast({
-                      type: "success",
-                      title: "Availability Updated",
-                      message: "Your weekly hours have been saved",
+                      type: 'success',
+                      title: 'Availability Updated',
+                      message: 'Your weekly hours have been saved',
                     })
                   }}
                   className="bg-info hover:bg-info/90"

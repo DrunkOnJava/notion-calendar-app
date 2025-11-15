@@ -1,10 +1,10 @@
-import { Analytics } from '@vercel/analytics/next';
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
+import { Analytics } from '@vercel/analytics/next'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const _geist = Geist({ subsets: ['latin'] })
+const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased m-0 p-0 overflow-hidden" style={{ height: '100vh' }}>
+      <body className="m-0 overflow-hidden p-0 font-sans antialiased" style={{ height: '100vh' }}>
         {children}
         <Analytics />
       </body>

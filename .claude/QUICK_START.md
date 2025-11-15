@@ -5,6 +5,7 @@ You now have **7 tabs** open at [claude.ai/code](https://claude.ai/code).
 ## 🎯 Just Copy & Paste These (One Per Tab)
 
 Go through each tab and:
+
 1. Select repository: `DrunkOnJava/notion-calendar-app`
 2. Copy the command below
 3. Paste into the text box
@@ -13,36 +14,43 @@ Go through each tab and:
 ---
 
 ### Tab 1 → Copy This:
+
 ```
 /fix-metadata
 ```
 
 ### Tab 2 → Copy This:
+
 ```
 /fix-color-system
 ```
 
 ### Tab 3 → Copy This:
+
 ```
 /refactor-database-card
 ```
 
 ### Tab 4 → Copy This:
+
 ```
 /setup-environment
 ```
 
 ### Tab 5 → Copy This:
+
 ```
 /add-error-boundaries
 ```
 
 ### Tab 6 → Copy This:
+
 ```
 /add-prettier
 ```
 
 ### Tab 7 → Copy This:
+
 ```
 /setup-github-actions
 ```

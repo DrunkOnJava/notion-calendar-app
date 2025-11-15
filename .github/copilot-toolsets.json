@@ -18,7 +18,7 @@
         "Import the cn helper from @/lib/utils for className composition.",
         "Use react-hook-form with zod for forms and date-fns for date math.",
         "Run pnpm lint and pnpm type-check before opening a PR.",
-        "Keep components focused and extract shared UI into components/ui." 
+        "Keep components focused and extract shared UI into components/ui."
       ],
       "commands": [
         {
@@ -34,17 +34,17 @@
         {
           "name": "Run lint",
           "command": "pnpm lint",
-          "description": "Execute ESLint with project rules." 
+          "description": "Execute ESLint with project rules."
         },
         {
           "name": "Run type check",
           "command": "pnpm type-check",
-          "description": "Run the TypeScript compiler in noEmit mode." 
+          "description": "Run the TypeScript compiler in noEmit mode."
         },
         {
           "name": "Build production bundle",
           "command": "pnpm build",
-          "description": "Create an optimized production build." 
+          "description": "Create an optimized production build."
         }
       ],
       "fileGroups": [

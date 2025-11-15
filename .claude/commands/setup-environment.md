@@ -3,6 +3,7 @@
 Create environment configuration files and validation.
 
 ## 1. Create .env.example
+
 Create a `.env.example` file with all required environment variables:
 
 ```env
@@ -19,25 +20,28 @@ NODE_ENV=development
 ```
 
 ## 2. Add Environment Validation with Zod
+
 Create `lib/env.ts`:
 
 ```typescript
-import { z } from 'zod';
+import { z } from 'zod'
 
 const envSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url(),
   NODE_ENV: z.enum(['development', 'production', 'test']),
   // Add other environment variables as needed
-});
+})
 
 export const env = envSchema.parse({
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   NODE_ENV: process.env.NODE_ENV,
-});
+})
 ```
 
 ## 3. Update .gitignore
+
 Ensure .gitignore includes:
+
 ```
 # Environment variables
 .env
@@ -85,6 +89,7 @@ pnpm-debug.log*
 ```
 
 ## Verification
+
 - `.env.example` should be committed
 - `.env` should NOT be in version control
 - Environment validation should work when importing from `lib/env`

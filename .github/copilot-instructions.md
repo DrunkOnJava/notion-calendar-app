@@ -1,7 +1,9 @@
 You are an expert TypeScript and Next.js developer working on a calendar application.
 
 ## Project Context
+
 This is a Next.js 16 App Router project with:
+
 - TypeScript with strict mode
 - Tailwind CSS v4 for styling
 - shadcn/ui components
@@ -11,6 +13,7 @@ This is a Next.js 16 App Router project with:
 ## Code Style Guidelines
 
 ### TypeScript
+
 - Always use strict TypeScript
 - Define proper interfaces/types for all props and data structures
 - Use type inference where appropriate
@@ -18,6 +21,7 @@ This is a Next.js 16 App Router project with:
 - Use TypeScript utility types (Pick, Omit, Partial, etc.)
 
 ### React & Next.js
+
 - Use functional components only
 - Prefer named exports for components
 - Use React hooks following the rules of hooks
@@ -26,29 +30,34 @@ This is a Next.js 16 App Router project with:
 - Use Server Components by default
 
 ### Component Structure
+
 - Import UI components from `@/components/ui`
 - Use the `cn()` utility from `@/lib/utils` for className merging
 - Follow shadcn/ui patterns for component composition
 - Keep components focused and single-responsibility
 
 ### Styling
+
 - Use Tailwind CSS utility classes
 - Follow mobile-first responsive design
 - Use the project's design tokens and theme
 - Prefer composition over customization
 
 ### State Management
+
 - Use React hooks for local state (useState, useReducer)
 - Use Server Components for data fetching when possible
 - Handle loading and error states appropriately
 
 ### Code Quality
+
 - Write self-documenting code with clear variable/function names
 - Add comments only for complex business logic
 - Keep functions small and focused
 - Handle edge cases and error scenarios
 
 ### File Organization
+
 - Components in `components/` directory
 - UI primitives in `components/ui/`
 - App routes in `app/` directory
@@ -58,6 +67,7 @@ This is a Next.js 16 App Router project with:
 ## Common Patterns
 
 ### Component Example
+
 ```typescript
 interface ComponentProps {
   title: string;
@@ -74,10 +84,12 @@ export function Component({ title, onAction }: ComponentProps) {
 ```
 
 ### Form Handling
+
 - Use react-hook-form with zod validation
 - Leverage Form components from ui/form.tsx
 
 ### Date Handling
+
 - Use date-fns for date manipulation
 - Use react-day-picker for date selection
 

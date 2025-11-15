@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { cn } from "@/lib/utils"
-import { MapPin, Users, Video } from "lucide-react"
+import { cn } from '@/lib/utils'
+import { MapPin, Users, Video } from 'lucide-react'
 
 interface AgendaViewProps {
   currentDate: Date
@@ -19,7 +19,7 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
   const dateRange: Date[] = []
 
   for (let d = new Date(currentDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    const dateStr = d.toISOString().split("T")[0]
+    const dateStr = d.toISOString().split('T')[0]
     dateRange.push(new Date(d))
     groupedEvents[dateStr] = events.filter((event) => event.date === dateStr)
   }
@@ -30,49 +30,62 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
 
   return (
     <div className="flex-1 overflow-auto">
-      <div className="max-w-[900px] mx-auto p-6">
+      <div className="mx-auto max-w-[900px] p-6">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-2">Agenda</h2>
+          <h2 className="mb-2 text-2xl font-semibold">Agenda</h2>
           <p className="text-sm text-[#9a9a9a]">
-            {currentDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} -
-            {endDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+            {currentDate.toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}{' '}
+            -
+            {endDate.toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </p>
         </div>
 
         {sortedDates.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-[#6b6b6b] text-lg mb-2">No upcoming events</div>
+          <div className="py-12 text-center">
+            <div className="mb-2 text-lg text-[#6b6b6b]">No upcoming events</div>
             <p className="text-sm text-[#9a9a9a]">Your calendar is clear for the next 30 days</p>
           </div>
         ) : (
           <div className="space-y-6">
             {sortedDates.map((dateStr) => {
-              const date = new Date(dateStr + "T00:00:00")
+              const date = new Date(dateStr + 'T00:00:00')
               const dayEvents = groupedEvents[dateStr]
               const isToday = date.toDateString() === new Date().toDateString()
 
               return (
                 <div key={dateStr} className="border-l-2 border-[#2a2a2a] pl-6">
                   {/* Date Header */}
-                  <div className="flex items-center gap-3 mb-4 -ml-[29px]">
+                  <div className="mb-4 -ml-[29px] flex items-center gap-3">
                     <div
                       className={cn(
-                        "w-12 h-12 rounded-full flex flex-col items-center justify-center",
-                        isToday ? "bg-today text-today-foreground" : "bg-[#2a2a2a] text-[#d0d0d0]",
+                        'flex h-12 w-12 flex-col items-center justify-center rounded-full',
+                        isToday ? 'bg-today text-today-foreground' : 'bg-[#2a2a2a] text-[#d0d0d0]'
                       )}
                     >
                       <div className="text-xs font-medium">
-                        {date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase()}
+                        {date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
                       </div>
                       <div className="text-lg font-bold">{date.getDate()}</div>
                     </div>
                     <div>
                       <div className="text-sm font-medium text-[#d0d0d0]">
-                        {date.toLocaleDateString("en-US", { weekday: "long" })}
+                        {date.toLocaleDateString('en-US', { weekday: 'long' })}
                       </div>
                       <div className="text-xs text-[#9a9a9a]">
-                        {date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                        {date.toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
                       </div>
                     </div>
                   </div>
@@ -83,23 +96,25 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
                       <div
                         key={idx}
                         onClick={() => onEventClick(event)}
-                        className="bg-[#1c1c1c] hover:bg-[#252525] border border-[#2a2a2a] rounded-lg p-4 cursor-pointer transition-colors"
+                        className="cursor-pointer rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] p-4 transition-colors hover:bg-[#252525]"
                       >
-                        <div className="flex items-start justify-between mb-2">
+                        <div className="mb-2 flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="mb-1 flex items-center gap-2">
                               <div
                                 className={cn(
-                                  "w-1 h-8 rounded-full",
-                                  event.type === "holiday"
-                                    ? "bg-success"
-                                    : event.type === "info"
-                                      ? "bg-muted-foreground"
-                                      : "bg-info",
+                                  'h-8 w-1 rounded-full',
+                                  event.type === 'holiday'
+                                    ? 'bg-success'
+                                    : event.type === 'info'
+                                      ? 'bg-muted-foreground'
+                                      : 'bg-info'
                                 )}
                               ></div>
                               <div>
-                                <h3 className="text-sm font-semibold text-[#d0d0d0]">{event.title}</h3>
+                                <h3 className="text-sm font-semibold text-[#d0d0d0]">
+                                  {event.title}
+                                </h3>
                                 {event.isAllDay ? (
                                   <div className="text-xs text-[#9a9a9a]">All day</div>
                                 ) : event.startTime && event.endTime ? (
@@ -115,9 +130,10 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
                           {event.type && (
                             <span
                               className={cn(
-                                "text-xs px-2 py-1 rounded",
-                                event.type === "holiday" && "bg-event-holiday/30 text-success-foreground",
-                                event.type === "info" && "bg-muted/30 text-muted-foreground",
+                                'rounded px-2 py-1 text-xs',
+                                event.type === 'holiday' &&
+                                  'bg-event-holiday/30 text-success-foreground',
+                                event.type === 'info' && 'bg-muted/30 text-muted-foreground'
                               )}
                             >
                               {event.type}
@@ -130,19 +146,19 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
                           <div className="ml-3 space-y-1.5 text-xs text-[#9a9a9a]">
                             {event.location && (
                               <div className="flex items-center gap-2">
-                                <MapPin className="w-3 h-3" />
+                                <MapPin className="h-3 w-3" />
                                 <span>{event.location}</span>
                               </div>
                             )}
                             {event.attendees && event.attendees.length > 0 && (
                               <div className="flex items-center gap-2">
-                                <Users className="w-3 h-3" />
+                                <Users className="h-3 w-3" />
                                 <span>{event.attendees.length} attendees</span>
                               </div>
                             )}
                             {event.videoLink && (
                               <div className="flex items-center gap-2">
-                                <Video className="w-3 h-3" />
+                                <Video className="h-3 w-3" />
                                 <span className="text-info-foreground">Video call</span>
                               </div>
                             )}
@@ -150,7 +166,9 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
                         )}
 
                         {event.description && (
-                          <div className="ml-3 mt-2 text-xs text-[#9a9a9a] line-clamp-2">{event.description}</div>
+                          <div className="mt-2 ml-3 line-clamp-2 text-xs text-[#9a9a9a]">
+                            {event.description}
+                          </div>
                         )}
                       </div>
                     ))}

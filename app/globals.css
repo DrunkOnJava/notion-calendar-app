@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -147,8 +147,8 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --font-sans: 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -260,10 +260,10 @@
   /* Responsive Grid System - Maintains proportions across scales */
   .responsive-grid-4col {
     display: grid;
-    grid-template-columns: 
-      minmax(0, 2fr)    /* Name - Priority content */
-      minmax(0, 1fr)    /* Station - Secondary */
-      minmax(0, 1.5fr)  /* Date - Tertiary */
+    grid-template-columns:
+      minmax(0, 2fr) /* Name - Priority content */
+      minmax(0, 1fr) /* Station - Secondary */
+      minmax(0, 1.5fr) /* Date - Tertiary */
       minmax(0, 0.8fr); /* Shift - Compact */
     gap: clamp(4px, 1vw, 12px);
     align-items: center;
@@ -279,29 +279,63 @@
   }
 
   /* Responsive spacing system - 8px grid */
-  .spacing-xs { padding: clamp(2px, 0.25vh, 4px); }
-  .spacing-sm { padding: clamp(4px, 0.5vh, 8px); }
-  .spacing-md { padding: clamp(8px, 1vh, 16px); }
-  .spacing-lg { padding: clamp(12px, 1.5vh, 24px); }
-  .spacing-xl { padding: clamp(16px, 2vh, 32px); }
+  .spacing-xs {
+    padding: clamp(2px, 0.25vh, 4px);
+  }
+  .spacing-sm {
+    padding: clamp(4px, 0.5vh, 8px);
+  }
+  .spacing-md {
+    padding: clamp(8px, 1vh, 16px);
+  }
+  .spacing-lg {
+    padding: clamp(12px, 1.5vh, 24px);
+  }
+  .spacing-xl {
+    padding: clamp(16px, 2vh, 32px);
+  }
 
   /* Gap variants */
-  .gap-xs { gap: clamp(2px, 0.25vw, 4px); }
-  .gap-sm { gap: clamp(4px, 0.5vw, 8px); }
-  .gap-md { gap: clamp(8px, 1vw, 16px); }
-  .gap-lg { gap: clamp(12px, 1.5vw, 24px); }
+  .gap-xs {
+    gap: clamp(2px, 0.25vw, 4px);
+  }
+  .gap-sm {
+    gap: clamp(4px, 0.5vw, 8px);
+  }
+  .gap-md {
+    gap: clamp(8px, 1vw, 16px);
+  }
+  .gap-lg {
+    gap: clamp(12px, 1.5vw, 24px);
+  }
 
   /* Fluid typography scale */
-  .text-fluid-xs { font-size: clamp(9px, 0.65vw, 11px); }
-  .text-fluid-sm { font-size: clamp(10px, 0.7vw, 12px); }
-  .text-fluid-base { font-size: clamp(11px, 0.75vw, 13px); }
-  .text-fluid-md { font-size: clamp(12px, 0.8vw, 14px); }
-  .text-fluid-lg { font-size: clamp(14px, 0.9vw, 16px); }
+  .text-fluid-xs {
+    font-size: clamp(9px, 0.65vw, 11px);
+  }
+  .text-fluid-sm {
+    font-size: clamp(10px, 0.7vw, 12px);
+  }
+  .text-fluid-base {
+    font-size: clamp(11px, 0.75vw, 13px);
+  }
+  .text-fluid-md {
+    font-size: clamp(12px, 0.8vw, 14px);
+  }
+  .text-fluid-lg {
+    font-size: clamp(14px, 0.9vw, 16px);
+  }
 
   /* Responsive height constraints */
-  .row-height-sm { min-height: clamp(24px, 3vh, 32px); }
-  .row-height-md { min-height: clamp(32px, 4vh, 48px); }
-  .row-height-lg { min-height: clamp(40px, 5vh, 60px); }
+  .row-height-sm {
+    min-height: clamp(24px, 3vh, 32px);
+  }
+  .row-height-md {
+    min-height: clamp(32px, 4vh, 48px);
+  }
+  .row-height-lg {
+    min-height: clamp(40px, 5vh, 60px);
+  }
 
   /* Badge system with responsive sizing */
   .badge-responsive {
@@ -317,17 +351,17 @@
   }
 
   /* Icon sizing with viewport units */
-  .icon-sm { 
-    width: clamp(12px, 1vw, 16px); 
-    height: clamp(12px, 1vw, 16px); 
+  .icon-sm {
+    width: clamp(12px, 1vw, 16px);
+    height: clamp(12px, 1vw, 16px);
   }
-  .icon-md { 
-    width: clamp(16px, 1.25vw, 20px); 
-    height: clamp(16px, 1.25vw, 20px); 
+  .icon-md {
+    width: clamp(16px, 1.25vw, 20px);
+    height: clamp(16px, 1.25vw, 20px);
   }
-  .icon-lg { 
-    width: clamp(20px, 1.5vw, 24px); 
-    height: clamp(20px, 1.5vw, 24px); 
+  .icon-lg {
+    width: clamp(20px, 1.5vw, 24px);
+    height: clamp(20px, 1.5vw, 24px);
   }
 
   /* Responsive container wrapper */
@@ -357,7 +391,7 @@
     --spacing-scale: 0.75;
     --font-scale: 0.85;
   }
-  
+
   /* Ultra-compact mode for narrow viewports */
   .responsive-grid-4col {
     gap: clamp(4px, 1vw, 8px) !important;
@@ -382,7 +416,7 @@
 @media (max-width: 400px) {
   /* Allow extremely small fonts to prevent horizontal scroll */
   .single-line-text,
-  [style*="whitespace-nowrap"] {
+  [style*='whitespace-nowrap'] {
     font-size: clamp(8px, 2.5vw, 12px) !important;
   }
 }
@@ -395,7 +429,7 @@
       gap: 4px !important;
     }
   }
-  
+
   @container (inline-size >= 350px) and (inline-size < 450px) {
     .responsive-grid-4col {
       grid-template-columns: 2fr 0.9fr 1.2fr 0.7fr !important;
@@ -405,7 +439,7 @@
 
 /* Fallback: Enable minimal horizontal scroll if content absolutely cannot fit */
 @media (max-width: 320px) {
-  [style*="overflow: visible"] {
+  [style*='overflow: visible'] {
     min-width: max-content;
   }
 }
@@ -426,4 +460,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-
