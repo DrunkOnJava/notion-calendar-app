@@ -33,6 +33,7 @@ import { NotificationCenter, type Notification } from '@/components/notification
 import { generateRecurringDates } from '@/components/recurrence-editor'
 import { SearchBar } from '@/components/search-bar'
 import type { Event, RecurrenceRule } from '@/types/event'
+import type { DatabaseItem } from '@/types/calendar'
 import { SelectionContextMenu } from '@/components/selection-context-menu'
 import { SettingsModal, type Settings } from '@/components/settings-modal'
 import { ToastContainer } from '@/components/toast-notification'
@@ -1066,7 +1067,8 @@ export default function CalendarPage() {
     setExpandedPersonnel((prev) => ({ ...prev, [name]: !prev[name] }))
   }
 
-  const handleSelectPerson = (name: string) => {
+  const handleSelectPerson = (item: DatabaseItem | string) => {
+    const name = typeof item === 'string' ? item : item.name
     setSelectedPerson(name)
     setRightSidebarCollapsed(false)
   }
@@ -1620,7 +1622,7 @@ export default function CalendarPage() {
   const handleExportCalendar = (calendarId: string, format: 'ics' | 'csv') => {
     // Export events to ICS/CSV format
     const calendar = calendars.find((c) => c.id === calendarId)
-    const calendarEvents = events.filter((e) => e.calendarId === calendarId || !e.calendarId)
+    const calendarEvents = events.filter((e) => e.calendar === calendarId || !e.calendar)
 
     if (format === 'ics') {
       // Generate ICS content

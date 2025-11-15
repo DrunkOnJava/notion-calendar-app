@@ -14,7 +14,8 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { RecurrenceEditor, type RecurrenceRule } from '@/components/recurrence-editor'
+import { RecurrenceEditor } from '@/components/recurrence-editor'
+import type { RecurrenceRule } from '@/types/event'
 
 interface EventCreateModalProps {
   isOpen: boolean
@@ -513,7 +514,7 @@ function getRecurrenceSummary(rule: RecurrenceRule): string {
       summary += rule.interval === 1 ? 'week' : 'weeks'
       if (rule.byWeekday && rule.byWeekday.length > 0) {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-        summary += ' on ' + rule.byWeekday.map((d) => days[d]).join(', ')
+        summary += ' on ' + rule.byWeekday.map((d: number) => days[d]).join(', ')
       }
       break
     case 'monthly':

@@ -75,7 +75,7 @@ export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps
               </td>
               <td className="p-2 font-medium text-[#d0d0d0]">{item.name}</td>
               {properties.slice(0, 5).map((prop) => {
-                const value = item.properties[prop]
+                const value = item.properties?.[prop]
                 return (
                   <td key={prop} className="p-2 text-[#9a9a9a]">
                     {typeof value === 'boolean' ? (
@@ -88,11 +88,11 @@ export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps
                       )
                     ) : prop === 'Certification Level' ? (
                       <span className="bg-success/50 text-success-foreground rounded px-2 py-0.5 text-xs">
-                        {value}
+                        {String(value)}
                       </span>
                     ) : prop === 'Shift' ? (
                       <span className="bg-badge-pink text-badge-pink-foreground rounded-full px-2 py-0.5 text-xs">
-                        {value}
+                        {String(value)}
                       </span>
                     ) : value === null ? (
                       <span className="text-xs text-[#6b6b6b] italic">Empty</span>

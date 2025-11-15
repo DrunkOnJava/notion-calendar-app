@@ -143,7 +143,7 @@ export function AgendaView({ currentDate, events, onEventClick }: AgendaViewProp
                         </div>
 
                         {/* Event Details */}
-                        {(event.location || event.attendees?.length > 0 || event.videoLink) && (
+                        {(event.location || (event.attendees && event.attendees.length > 0) || event.videoLink) && (
                           <div className="ml-3 space-y-1.5 text-xs text-[#9a9a9a]">
                             {event.location && (
                               <div className="flex items-center gap-2">
