@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnpm/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+.turbo/
+
+# Test artifacts
+test-results/
+playwright-report/
+e2e-results/
+.playwright/
+coverage/
+
+# Test fixtures (external code)
+test/fixtures/
+
+# Cache
+.cache/
+**/.next/
+**/.turbo/
+
+# Config files (already configured in eslint.config.mjs)
+*.config.js
+*.config.mjs
+*.config.ts

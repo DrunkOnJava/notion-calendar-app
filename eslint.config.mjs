@@ -14,9 +14,21 @@ export default tseslint.config(
       'out',
       'dist',
       'build',
+      '.pnpm',
       'eslint.config.mjs',
       '**/*.config.{js,cjs,mjs,ts}',
       '**/*.config.*.js',
+      // Test infrastructure
+      'test/fixtures/**',
+      'test-results/**',
+      'playwright-report/**',
+      'e2e-results/**',
+      '.playwright/**',
+      // Cache and build artifacts
+      '**/.next/**',
+      '**/.turbo/**',
+      '**/coverage/**',
+      '**/.cache/**',
     ],
   },
   js.configs.recommended,
@@ -52,6 +64,16 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'warn',
       'no-var': 'error',
+    },
+  },
+  // Relaxed rules for test files
+  {
+    files: ['**/*.spec.{ts,tsx}', '**/*.test.{ts,tsx}', 'e2e/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'react-hooks/exhaustive-deps': 'off',
     },
   }
 )
