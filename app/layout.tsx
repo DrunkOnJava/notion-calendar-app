@@ -1,10 +1,19 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+// Temporarily disabled Google Fonts due to build environment network restrictions
+// Uncomment below when deploying to production:
+// import { Geist, Geist_Mono } from 'next/font/google'
+// const geist = Geist({
+//   subsets: ["latin"],
+//   variable: "--font-sans",
+//   fallback: ['system-ui', 'arial']
+// });
+// const geistMono = Geist_Mono({
+//   subsets: ["latin"],
+//   variable: "--font-mono",
+//   fallback: ['ui-monospace', 'monospace']
+// });
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
-
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -36,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className="font-sans antialiased m-0 p-0 overflow-hidden h-screen">
         {children}
         <Analytics />
       </body>
