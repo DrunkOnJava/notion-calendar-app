@@ -72,14 +72,14 @@ pnpm test:env:clean
 
 ### Services
 
-| Service | Port | Purpose | Credentials |
-|---------|------|---------|-------------|
-| PostgreSQL | 5433 | Relational database | `test_user` / `test_pass_123` |
-| Redis | 6380 | Cache & sessions | Password: `test_redis_pass` |
-| MongoDB | 27018 | NoSQL database | `test_user` / `test_pass_123` |
-| LocalStack | 4566 | AWS services mock | `test` / `test` |
-| MinIO | 9000, 9001 | S3-compatible storage | `test_minio_user` / `test_minio_pass_123` |
-| Mailhog | 1025, 8025 | Email testing | No auth required |
+| Service    | Port       | Purpose               | Credentials                               |
+| ---------- | ---------- | --------------------- | ----------------------------------------- |
+| PostgreSQL | 5433       | Relational database   | `test_user` / `test_pass_123`             |
+| Redis      | 6380       | Cache & sessions      | Password: `test_redis_pass`               |
+| MongoDB    | 27018      | NoSQL database        | `test_user` / `test_pass_123`             |
+| LocalStack | 4566       | AWS services mock     | `test` / `test`                           |
+| MinIO      | 9000, 9001 | S3-compatible storage | `test_minio_user` / `test_minio_pass_123` |
+| Mailhog    | 1025, 8025 | Email testing         | No auth required                          |
 
 ### Network
 
@@ -88,6 +88,7 @@ All services run in an isolated Docker network: `notion-calendar-test-network`
 ### Volumes
 
 Data persists in named volumes:
+
 - `notion-calendar-postgres-test-data`
 - `notion-calendar-redis-test-data`
 - `notion-calendar-mongodb-test-data`
@@ -160,54 +161,54 @@ Dependencies are already included in `package.json`:
 ### Usage in Tests
 
 ```typescript
-import { getTestEnvironment } from './test/utils/testcontainers';
+import { getTestEnvironment } from './test/utils/testcontainers'
 
 describe('Database Tests', () => {
-  let env: TestEnvironment;
+  let env: TestEnvironment
 
   beforeAll(async () => {
-    env = getTestEnvironment();
+    env = getTestEnvironment()
 
     // Start PostgreSQL container
-    await env.startPostgres('test_db', 'test_user', 'test_pass');
+    await env.startPostgres('test_db', 'test_user', 'test_pass')
 
     // Get connection string
-    const dbUrl = env.getConnectionString('postgres', 'postgres');
-    process.env.DATABASE_URL = dbUrl;
-  });
+    const dbUrl = env.getConnectionString('postgres', 'postgres')
+    process.env.DATABASE_URL = dbUrl
+  })
 
   afterAll(async () => {
     // Cleanup all containers
-    await env.cleanup();
-  });
+    await env.cleanup()
+  })
 
   test('should connect to database', async () => {
     // Your test code here
-  });
-});
+  })
+})
 ```
 
 ### Available Methods
 
 ```typescript
 // Start specific containers
-await env.startPostgres(database, username, password);
-await env.startRedis(password);
-await env.startMongoDB(database, username, password);
-await env.startLocalStack(services);
+await env.startPostgres(database, username, password)
+await env.startRedis(password)
+await env.startMongoDB(database, username, password)
+await env.startLocalStack(services)
 
 // Get connection details
-const url = env.getConnectionString('postgres', 'postgres');
+const url = env.getConnectionString('postgres', 'postgres')
 
 // Check status
-const isRunning = env.isRunning('postgres');
-const count = env.getRunningCount();
+const isRunning = env.isRunning('postgres')
+const count = env.getRunningCount()
 
 // Stop specific container
-await env.stopContainer('postgres');
+await env.stopContainer('postgres')
 
 // Stop all containers
-await env.cleanup();
+await env.cleanup()
 ```
 
 ### Custom Containers
@@ -217,11 +218,11 @@ await env.startContainer('my-service', {
   image: 'my-image:latest',
   ports: [8080, 9090],
   env: {
-    MY_VAR: 'value'
+    MY_VAR: 'value',
   },
   waitStrategy: 'log',
-  waitMessage: '.*Server started.*'
-});
+  waitMessage: '.*Server started.*',
+})
 ```
 
 ## Environment Variables
@@ -268,8 +269,8 @@ dotenv -e .env.test -- playwright test
 Or in your test setup:
 
 ```typescript
-import { config } from 'dotenv';
-config({ path: '.env.test' });
+import { config } from 'dotenv'
+config({ path: '.env.test' })
 ```
 
 ## Usage Examples
@@ -277,67 +278,67 @@ config({ path: '.env.test' });
 ### Example 1: PostgreSQL Integration Test
 
 ```typescript
-import { Pool } from 'pg';
+import { Pool } from 'pg'
 
 describe('User Repository', () => {
-  let pool: Pool;
+  let pool: Pool
 
   beforeAll(async () => {
     pool = new Pool({
-      connectionString: process.env.TEST_DATABASE_URL
-    });
-  });
+      connectionString: process.env.TEST_DATABASE_URL,
+    })
+  })
 
   afterAll(async () => {
-    await pool.end();
-  });
+    await pool.end()
+  })
 
   test('should create user', async () => {
     const result = await pool.query(
       'INSERT INTO test_users (email, name) VALUES ($1, $2) RETURNING *',
       ['test@example.com', 'Test User']
-    );
+    )
 
-    expect(result.rows[0]).toHaveProperty('id');
-    expect(result.rows[0].email).toBe('test@example.com');
-  });
-});
+    expect(result.rows[0]).toHaveProperty('id')
+    expect(result.rows[0].email).toBe('test@example.com')
+  })
+})
 ```
 
 ### Example 2: Redis Cache Test
 
 ```typescript
-import { createClient } from 'redis';
+import { createClient } from 'redis'
 
 describe('Cache Service', () => {
-  let redis: ReturnType<typeof createClient>;
+  let redis: ReturnType<typeof createClient>
 
   beforeAll(async () => {
     redis = createClient({
-      url: process.env.TEST_REDIS_URL
-    });
-    await redis.connect();
-  });
+      url: process.env.TEST_REDIS_URL,
+    })
+    await redis.connect()
+  })
 
   afterAll(async () => {
-    await redis.disconnect();
-  });
+    await redis.disconnect()
+  })
 
   test('should cache data', async () => {
-    await redis.set('test-key', 'test-value', { EX: 60 });
-    const value = await redis.get('test-key');
-    expect(value).toBe('test-value');
-  });
-});
+    await redis.set('test-key', 'test-value', { EX: 60 })
+    const value = await redis.get('test-key')
+    expect(value).toBe('test-value')
+  })
+})
 ```
 
 ### Example 3: S3 Mock with LocalStack
 
 ```typescript
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 describe('File Upload Service', () => {
-  let s3: S3Client;
+  let s3: S3Client
 
   beforeAll(() => {
     s3 = new S3Client({
@@ -345,58 +346,58 @@ describe('File Upload Service', () => {
       region: process.env.TEST_AWS_REGION,
       credentials: {
         accessKeyId: process.env.TEST_AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.TEST_AWS_SECRET_ACCESS_KEY!
+        secretAccessKey: process.env.TEST_AWS_SECRET_ACCESS_KEY!,
       },
-      forcePathStyle: true
-    });
-  });
+      forcePathStyle: true,
+    })
+  })
 
   test('should upload file to S3', async () => {
     const command = new PutObjectCommand({
       Bucket: 'test-bucket',
       Key: 'test-file.txt',
-      Body: 'test content'
-    });
+      Body: 'test content',
+    })
 
-    const result = await s3.send(command);
-    expect(result.$metadata.httpStatusCode).toBe(200);
-  });
-});
+    const result = await s3.send(command)
+    expect(result.$metadata.httpStatusCode).toBe(200)
+  })
+})
 ```
 
 ### Example 4: Email Testing with Mailhog
 
 ```typescript
-import nodemailer from 'nodemailer';
-import fetch from 'node-fetch';
+import nodemailer from 'nodemailer'
+import fetch from 'node-fetch'
 
 describe('Email Service', () => {
-  let transporter: nodemailer.Transporter;
+  let transporter: nodemailer.Transporter
 
   beforeAll(() => {
     transporter = nodemailer.createTransport({
       host: process.env.TEST_SMTP_HOST,
       port: parseInt(process.env.TEST_SMTP_PORT!),
-      secure: false
-    });
-  });
+      secure: false,
+    })
+  })
 
   test('should send email', async () => {
     await transporter.sendMail({
       from: 'test@example.com',
       to: 'recipient@example.com',
       subject: 'Test Email',
-      text: 'This is a test'
-    });
+      text: 'This is a test',
+    })
 
     // Verify email was received in Mailhog
-    const response = await fetch('http://localhost:8025/api/v2/messages');
-    const messages = await response.json();
+    const response = await fetch('http://localhost:8025/api/v2/messages')
+    const messages = await response.json()
 
-    expect(messages.items.length).toBeGreaterThan(0);
-    expect(messages.items[0].Content.Headers.Subject[0]).toBe('Test Email');
-  });
-});
+    expect(messages.items.length).toBeGreaterThan(0)
+    expect(messages.items[0].Content.Headers.Subject[0]).toBe('Test Email')
+  })
+})
 ```
 
 ## Troubleshooting
@@ -484,7 +485,7 @@ services:
     environment:
       POSTGRES_MAX_CONNECTIONS: 200
     ports:
-      - '5434:5432'  # Custom port
+      - '5434:5432' # Custom port
 ```
 
 ### Test-Specific Initialization
@@ -507,7 +508,7 @@ Already configured in `test/setup/global-setup.ts`:
 export default defineConfig({
   globalSetup: require.resolve('./test/setup/global-setup.ts'),
   globalTeardown: require.resolve('./test/setup/global-teardown.ts'),
-});
+})
 ```
 
 ## Resources

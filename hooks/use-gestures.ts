@@ -19,9 +19,7 @@ interface GestureOptions {
  * Comprehensive gesture detection hook
  * Handles swipe, pinch, long-press, and double-tap gestures
  */
-export function useGestures<T extends HTMLElement>(
-  options: GestureOptions = {}
-) {
+export function useGestures<T extends HTMLElement>(options: GestureOptions = {}) {
   const {
     onSwipeLeft,
     onSwipeRight,
@@ -202,10 +200,7 @@ export function usePinchZoom(
     )
 
     const scaleChange = currentDistance / initialDistanceRef.current
-    const newScale = Math.min(
-      maxScale,
-      Math.max(minScale, initialScaleRef.current * scaleChange)
-    )
+    const newScale = Math.min(maxScale, Math.max(minScale, initialScaleRef.current * scaleChange))
 
     setScale(newScale)
     onZoomChange(newScale)
@@ -235,10 +230,7 @@ export function usePinchZoom(
 /**
  * Long-press hook
  */
-export function useLongPress(
-  callback: (x: number, y: number) => void,
-  delay: number = 500
-) {
+export function useLongPress(callback: (x: number, y: number) => void, delay: number = 500) {
   const elementRef = useRef<HTMLElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const positionRef = useRef({ x: 0, y: 0 })

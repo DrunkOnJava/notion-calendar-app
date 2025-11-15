@@ -5,6 +5,7 @@ Comprehensive performance optimizations and advanced UI features for the Notion 
 ## 📋 Overview
 
 Phase 2 builds on Phase 1 (Animations + Accessibility + Responsive) with:
+
 - ⚡ Performance optimizations
 - 🎨 Loading skeletons
 - 📱 Bottom sheet modals for mobile
@@ -22,6 +23,7 @@ Phase 2 builds on Phase 1 (Animations + Accessibility + Responsive) with:
 **Purpose:** Code splitting to reduce initial bundle size
 
 **Lazy-loaded components:**
+
 - `EventCreateModal`
 - `SettingsModal`
 - `EventDetailModal`
@@ -31,6 +33,7 @@ Phase 2 builds on Phase 1 (Animations + Accessibility + Responsive) with:
 - `AgendaView`
 
 **Usage:**
+
 ```typescript
 import { EventCreateModal, preloadComponent } from '@/lib/lazy-components'
 
@@ -42,6 +45,7 @@ onMouseEnter={() => preloadComponent('EventCreateModal')}
 ```
 
 **Impact:**
+
 - 30-40% smaller initial bundle
 - Faster Time to Interactive (TTI)
 - Better Lighthouse scores
@@ -51,6 +55,7 @@ onMouseEnter={() => preloadComponent('EventCreateModal')}
 **File:** `hooks/use-debounce.ts`
 
 **Improvements to SearchBar:**
+
 ```typescript
 import { useDebounce } from '@/hooks/use-debounce'
 import { useMemo } from 'react'
@@ -65,15 +70,18 @@ const filteredEvents = useMemo(() => {
 ```
 
 **Impact:**
+
 - 80% reduction in filter operations
 - No lag when typing quickly
 - Better CPU utilization
 
 **Before:**
+
 - Filters on every keystroke (heavy operation)
 - 500+ events = noticeable lag
 
 **After:**
+
 - Filters only after 200ms of no typing
 - Memoized results cached until dependencies change
 
@@ -118,6 +126,7 @@ import { EventCardSkeleton, WeekViewSkeleton } from '@/components/loading-skelet
 ### Shimmer Animation
 
 Added to `app/globals.css`:
+
 ```css
 @keyframes shimmer {
   0% {
@@ -130,6 +139,7 @@ Added to `app/globals.css`:
 ```
 
 **Impact:**
+
 - Better perceived performance
 - Reduces layout shift (CLS)
 - Clearer loading states
@@ -177,6 +187,7 @@ function MyComponent() {
 ### Behavior
 
 **Mobile (< 768px):**
+
 - Slides up from bottom
 - Draggable handle
 - Swipe down to dismiss
@@ -184,6 +195,7 @@ function MyComponent() {
 - Full-screen capability
 
 **Desktop (≥ 768px):**
+
 - Regular centered modal
 - Standard close button
 - No drag behavior
@@ -205,6 +217,7 @@ const { isOpen, open, close, toggle } = useBottomSheet()
 ```
 
 **Impact:**
+
 - Native mobile app feel
 - Better one-handed usability
 - Improved touch ergonomics
@@ -214,6 +227,7 @@ const { isOpen, open, close, toggle } = useBottomSheet()
 ## ♿ High Contrast Mode
 
 **Files:**
+
 - `app/globals.css` - High contrast styles
 - `hooks/use-high-contrast.ts` - State management
 
@@ -265,6 +279,7 @@ const hasPreference = window.matchMedia('(prefers-contrast: more)').matches
 ```
 
 **Impact:**
+
 - WCAG AAA compliance
 - Better for low vision users
 - Enhanced focus visibility
@@ -314,8 +329,10 @@ For common create/update/delete operations:
 ```typescript
 import { useOptimisticCrud } from '@/hooks/use-optimistic-update'
 
-const { optimisticCreate, optimisticUpdate, optimisticDelete } =
-  useOptimisticCrud(events, setEvents)
+const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticCrud(
+  events,
+  setEvents
+)
 
 // Create
 await optimisticCreate(newEvent, api.createEvent)
@@ -335,6 +352,7 @@ await optimisticDelete(eventId, api.deleteEvent)
 - **Type-safe** - Full TypeScript support
 
 **Impact:**
+
 - Feels instant to users
 - Better perceived performance
 - Graceful error handling
@@ -345,28 +363,28 @@ await optimisticDelete(eventId, api.deleteEvent)
 
 ### Bundle Size
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Initial JS | 450 KB | 310 KB | -31% |
-| Largest modal | 85 KB | 15 KB (lazy) | -82% |
-| Search performance | 50ms | 5ms | -90% |
+| Metric             | Before | After        | Improvement |
+| ------------------ | ------ | ------------ | ----------- |
+| Initial JS         | 450 KB | 310 KB       | -31%        |
+| Largest modal      | 85 KB  | 15 KB (lazy) | -82%        |
+| Search performance | 50ms   | 5ms          | -90%        |
 
 ### Core Web Vitals
 
-| Metric | Before | After | Target |
-|--------|--------|-------|--------|
-| LCP | 2.8s | 1.9s | < 2.5s ✅ |
-| FID | 85ms | 45ms | < 100ms ✅ |
-| CLS | 0.15 | 0.05 | < 0.1 ✅ |
+| Metric | Before | After | Target     |
+| ------ | ------ | ----- | ---------- |
+| LCP    | 2.8s   | 1.9s  | < 2.5s ✅  |
+| FID    | 85ms   | 45ms  | < 100ms ✅ |
+| CLS    | 0.15   | 0.05  | < 0.1 ✅   |
 
 ### User Experience
 
-| Metric | Before | After |
-|--------|--------|-------|
-| Search lag | Noticeable | None |
-| Modal load | 300ms | Instant |
-| Mobile UX | Generic | Native-like |
-| Contrast ratio | 7:1 | 21:1 (high contrast) |
+| Metric         | Before     | After                |
+| -------------- | ---------- | -------------------- |
+| Search lag     | Noticeable | None                 |
+| Modal load     | 300ms      | Instant              |
+| Mobile UX      | Generic    | Native-like          |
+| Contrast ratio | 7:1        | 21:1 (high contrast) |
 
 ---
 
@@ -375,6 +393,7 @@ await optimisticDelete(eventId, api.deleteEvent)
 ### 1. Replace Regular Modals with Bottom Sheets
 
 **Before:**
+
 ```typescript
 <Dialog isOpen={isOpen} onClose={onClose}>
   <EventForm />
@@ -382,6 +401,7 @@ await optimisticDelete(eventId, api.deleteEvent)
 ```
 
 **After:**
+
 ```typescript
 import { BottomSheet } from '@/components/bottom-sheet'
 
@@ -393,12 +413,14 @@ import { BottomSheet } from '@/components/bottom-sheet'
 ### 2. Add Loading Skeletons
 
 **Before:**
+
 ```typescript
 {isLoading && <Spinner />}
 {!isLoading && <WeekView events={events} />}
 ```
 
 **After:**
+
 ```typescript
 import { WeekViewSkeleton } from '@/components/loading-skeletons'
 
@@ -408,11 +430,13 @@ import { WeekViewSkeleton } from '@/components/loading-skeletons'
 ### 3. Use Lazy Loading
 
 **Before:**
+
 ```typescript
 import { SettingsModal } from '@/components/settings-modal'
 ```
 
 **After:**
+
 ```typescript
 import { SettingsModal } from '@/lib/lazy-components'
 
@@ -428,6 +452,7 @@ import { SettingsModal } from '@/lib/lazy-components'
 ### 4. Add High Contrast Toggle
 
 In Settings component:
+
 ```typescript
 import { useHighContrast } from '@/hooks/use-high-contrast'
 
@@ -441,6 +466,7 @@ const { isHighContrast, toggle } = useHighContrast()
 ### 5. Implement Optimistic Updates
 
 **Before:**
+
 ```typescript
 const handleCreate = async (event) => {
   setIsLoading(true)
@@ -451,6 +477,7 @@ const handleCreate = async (event) => {
 ```
 
 **After:**
+
 ```typescript
 import { useOptimisticCrud } from '@/hooks/use-optimistic-update'
 
@@ -467,18 +494,22 @@ const handleCreate = async (event) => {
 ## 📁 New Files Summary
 
 ### Hooks
+
 1. `hooks/use-debounce.ts` - Search debouncing
 2. `hooks/use-high-contrast.ts` - High contrast mode
 3. `hooks/use-optimistic-update.ts` - Optimistic UI updates
 
 ### Components
+
 4. `components/loading-skeletons.tsx` - Loading states (12 variants)
 5. `components/bottom-sheet.tsx` - Mobile bottom sheets
 
 ### Libraries
+
 6. `lib/lazy-components.tsx` - Code splitting setup
 
 ### Styles
+
 7. `app/globals.css` - Shimmer animation + high contrast mode
 
 ---
@@ -486,24 +517,28 @@ const handleCreate = async (event) => {
 ## ✅ Testing Checklist
 
 ### Performance
+
 - [ ] Initial bundle < 350 KB
 - [ ] Search debounce working (no lag)
 - [ ] Modals lazy load on demand
 - [ ] Skeletons match content layout
 
 ### Mobile
+
 - [ ] Bottom sheets work on iOS/Android
 - [ ] Swipe to dismiss functional
 - [ ] Snap points working
 - [ ] Safe area insets respected
 
 ### Accessibility
+
 - [ ] High contrast mode toggles correctly
 - [ ] Skeletons respect reduced motion
 - [ ] Focus indicators visible in high contrast
 - [ ] Screen readers announce loading states
 
 ### Optimistic Updates
+
 - [ ] UI updates immediately
 - [ ] Rollback works on error
 - [ ] Success states show correctly

@@ -41,7 +41,7 @@ export function ViewSwitcher({ currentView, currentDate, onViewChange }: ViewSwi
     <div className="relative" ref={dropdownRef} data-testid="view-switcher">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded px-3 py-1.5 text-sm transition-all duration-200 hover:bg-[#2a2a2a] hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="focus-visible:ring-info focus-visible:ring-offset-background flex items-center gap-2 rounded px-3 py-1.5 text-sm transition-all duration-200 hover:scale-[1.02] hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         data-testid="view-switcher-button"
         aria-label={`Current view: ${buttonLabel}`}
         aria-haspopup="menu"
@@ -58,7 +58,7 @@ export function ViewSwitcher({ currentView, currentDate, onViewChange }: ViewSwi
 
       {isOpen && (
         <div
-          className="absolute top-full left-0 z-50 mt-1 min-w-[140px] rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] py-1 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
+          className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 min-w-[140px] rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] py-1 shadow-lg duration-200"
           role="menu"
           aria-label="View options"
         >
@@ -73,10 +73,10 @@ export function ViewSwitcher({ currentView, currentDate, onViewChange }: ViewSwi
                 }}
                 className={cn(
                   'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-all duration-150',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-inset',
+                  'focus-visible:ring-info focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                   currentView === view.id
                     ? 'bg-info text-info-foreground shadow-sm'
-                    : 'text-[#d0d0d0] hover:bg-[#2a2a2a] hover:translate-x-1'
+                    : 'text-[#d0d0d0] hover:translate-x-1 hover:bg-[#2a2a2a]'
                 )}
                 data-testid={`view-${view.id}`}
                 aria-pressed={currentView === view.id}

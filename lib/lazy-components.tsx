@@ -10,7 +10,8 @@ import { Spinner } from '@/components/ui/spinner'
  * Lazy-loaded modals with loading fallback
  */
 export const EventCreateModal = dynamic(
-  () => import('@/components/event-create-modal').then((mod) => ({ default: mod.EventCreateModal })),
+  () =>
+    import('@/components/event-create-modal').then((mod) => ({ default: mod.EventCreateModal })),
   {
     loading: () => (
       <div className="flex items-center justify-center p-8">
@@ -34,7 +35,8 @@ export const SettingsModal = dynamic(
 )
 
 export const EventDetailModal = dynamic(
-  () => import('@/components/event-detail-modal').then((mod) => ({ default: mod.EventDetailModal })),
+  () =>
+    import('@/components/event-detail-modal').then((mod) => ({ default: mod.EventDetailModal })),
   {
     loading: () => (
       <div className="flex items-center justify-center p-8">
@@ -46,7 +48,10 @@ export const EventDetailModal = dynamic(
 )
 
 export const CalendarImportExport = dynamic(
-  () => import('@/components/calendar-import-export').then((mod) => ({ default: mod.CalendarImportExport })),
+  () =>
+    import('@/components/calendar-import-export').then((mod) => ({
+      default: mod.CalendarImportExport,
+    })),
   {
     loading: () => (
       <div className="flex items-center justify-center p-8">
@@ -73,7 +78,8 @@ export const FindTimeModal = dynamic(
  * Lazy-loaded heavy components
  */
 export const DatabaseBoardView = dynamic(
-  () => import('@/components/database-board-view').then((mod) => ({ default: mod.DatabaseBoardView })),
+  () =>
+    import('@/components/database-board-view').then((mod) => ({ default: mod.DatabaseBoardView })),
   {
     loading: () => (
       <div className="flex items-center justify-center p-8">

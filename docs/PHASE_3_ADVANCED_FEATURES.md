@@ -5,6 +5,7 @@ Elite-level enhancements that transform the Notion Calendar into a power-user pr
 ## 📋 Overview
 
 Phase 3 adds professional-grade features for:
+
 - ⚡ **Virtual scrolling** - Handle 10,000+ events effortlessly
 - 👆 **Advanced gestures** - Pinch, long-press, double-tap
 - 🎯 **Drag and drop** - Intuitive event reordering
@@ -17,6 +18,7 @@ Phase 3 adds professional-grade features for:
 ## ⚡ Virtual Scrolling
 
 **Files:**
+
 - `hooks/use-virtual-scroll.ts`
 - `components/virtualized-agenda.tsx`
 
@@ -26,11 +28,11 @@ Render thousands of events without performance degradation by only rendering vis
 
 ### Performance Impact
 
-| Event Count | Standard Render | Virtual Scroll | Improvement |
-|-------------|----------------|----------------|-------------|
-| 100 events | 50ms | 5ms | **10x faster** |
-| 1,000 events | 800ms | 8ms | **100x faster** |
-| 10,000 events | Crashes | 12ms | **∞ better** |
+| Event Count   | Standard Render | Virtual Scroll | Improvement     |
+| ------------- | --------------- | -------------- | --------------- |
+| 100 events    | 50ms            | 5ms            | **10x faster**  |
+| 1,000 events  | 800ms           | 8ms            | **100x faster** |
+| 10,000 events | Crashes         | 12ms           | **∞ better**    |
 
 ### Usage
 
@@ -72,17 +74,15 @@ const { visibleItems, containerRef, totalHeight } = useVirtualGrid(items, {
 ```typescript
 import { useInfiniteScroll } from '@/hooks/use-virtual-scroll'
 
-const { containerRef, isFetching } = useInfiniteScroll(
-  () => loadMoreEvents(),
-  {
-    threshold: 200, // px from bottom
-    isLoading,
-    hasMore,
-  }
-)
+const { containerRef, isFetching } = useInfiniteScroll(() => loadMoreEvents(), {
+  threshold: 200, // px from bottom
+  isLoading,
+  hasMore,
+})
 ```
 
 **Impact:**
+
 - Handles 10,000+ events smoothly
 - Constant memory usage
 - 60fps scrolling
@@ -168,11 +168,13 @@ const ref = useLongPress(
 ### Haptic Feedback
 
 All gestures include haptic feedback:
+
 - Light vibration on swipe
 - Medium vibration on successful drop
 - Heavy vibration on long-press
 
 **Impact:**
+
 - Native app feel
 - Improved touch UX
 - Better mobile engagement
@@ -243,13 +245,10 @@ const {
 ```typescript
 import { useSortable } from '@/hooks/use-drag-and-drop'
 
-const { items, getDragHandleProps, getItemProps } = useSortable(
-  initialItems,
-  (reorderedItems) => {
-    // Handle reordered items
-    updateEvents(reorderedItems)
-  }
-)
+const { items, getDragHandleProps, getItemProps } = useSortable(initialItems, (reorderedItems) => {
+  // Handle reordered items
+  updateEvents(reorderedItems)
+})
 ```
 
 ### Drag to Calendar
@@ -285,6 +284,7 @@ const {
 ```
 
 **Impact:**
+
 - Intuitive reordering
 - Better productivity
 - Native desktop feel
@@ -352,6 +352,7 @@ applyTheme({
 ```
 
 **Impact:**
+
 - User personalization
 - Brand customization
 - Better engagement
@@ -365,12 +366,14 @@ applyTheme({
 ### Vim Keys
 
 **Movement (hjkl):**
+
 - `h` - Navigate left
 - `j` - Navigate down
 - `k` - Navigate up
 - `l` - Navigate right
 
 **Actions:**
+
 - `i` or `a` - Insert/Add event
 - `e` - Edit current event
 - `d` (shift) - Delete event
@@ -418,24 +421,25 @@ useAdvancedShortcuts({
 
 ### Complete Shortcut Map
 
-| Key | Action | Description |
-|-----|--------|-------------|
-| `h/j/k/l` | Navigate | Vim-style movement |
-| `i/a` | Insert | Create new event |
-| `e` | Edit | Edit selected event |
-| `D` | Delete | Delete selected event |
-| `/` | Search | Focus search |
-| `t` | Today | Jump to today |
-| `:` | Command | Open command palette |
-| `v` | View | Toggle calendar view |
-| `]` / `[` | Day | Next/previous day |
-| `}` / `{` | Week | Next/previous week |
-| `⌘D` | Duplicate | Duplicate event |
-| `⌘B` | Sidebar | Toggle sidebar |
-| `⌘M` | Mini Cal | Toggle mini calendar |
-| `⌘1/2/3` | Filter | Quick filters |
+| Key       | Action    | Description           |
+| --------- | --------- | --------------------- |
+| `h/j/k/l` | Navigate  | Vim-style movement    |
+| `i/a`     | Insert    | Create new event      |
+| `e`       | Edit      | Edit selected event   |
+| `D`       | Delete    | Delete selected event |
+| `/`       | Search    | Focus search          |
+| `t`       | Today     | Jump to today         |
+| `:`       | Command   | Open command palette  |
+| `v`       | View      | Toggle calendar view  |
+| `]` / `[` | Day       | Next/previous day     |
+| `}` / `{` | Week      | Next/previous week    |
+| `⌘D`      | Duplicate | Duplicate event       |
+| `⌘B`      | Sidebar   | Toggle sidebar        |
+| `⌘M`      | Mini Cal  | Toggle mini calendar  |
+| `⌘1/2/3`  | Filter    | Quick filters         |
 
 **Impact:**
+
 - 10x faster for power users
 - No mouse needed
 - Professional productivity tool
@@ -497,13 +501,12 @@ const nextLikelyRoutes = getPredictions()
 ```typescript
 import { useIdlePrefetch } from '@/hooks/use-prefetch'
 
-useIdlePrefetch([
-  () => fetchNextWeekEvents(),
-  () => preloadHeavyComponent(),
-  () => cacheUserSettings(),
-], {
-  timeout: 2000 // Wait 2s of idle time
-})
+useIdlePrefetch(
+  [() => fetchNextWeekEvents(), () => preloadHeavyComponent(), () => cacheUserSettings()],
+  {
+    timeout: 2000, // Wait 2s of idle time
+  }
+)
 ```
 
 ### Caching
@@ -511,16 +514,13 @@ useIdlePrefetch([
 ```typescript
 import { usePrefetch } from '@/hooks/use-prefetch'
 
-const { prefetch, getCachedData, invalidateCache } = usePrefetch(
-  () => fetchExpensiveData(),
-  {
-    delay: 300,
-    cacheTime: 5 * 60 * 1000, // 5 minutes
-  }
-)
+const { prefetch, getCachedData, invalidateCache } = usePrefetch(() => fetchExpensiveData(), {
+  delay: 300,
+  cacheTime: 5 * 60 * 1000, // 5 minutes
+})
 
 // Trigger prefetch
-onMouseEnter={prefetch}
+onMouseEnter = { prefetch }
 
 // Get cached data (if valid)
 const cached = getCachedData()
@@ -530,6 +530,7 @@ invalidateCache()
 ```
 
 **Impact:**
+
 - Instant navigation
 - Reduced loading times
 - Better perceived performance
@@ -540,21 +541,21 @@ invalidateCache()
 
 ### Virtual Scrolling
 
-| Metric | Before | After (Virtual) |
-|--------|--------|-----------------|
-| **Initial Render** | 800ms (1000 events) | 8ms |
-| **Scroll FPS** | 15-20 fps | 60 fps |
-| **Memory Usage** | 150 MB | 15 MB |
-| **Max Events** | ~500 | 100,000+ |
+| Metric             | Before              | After (Virtual) |
+| ------------------ | ------------------- | --------------- |
+| **Initial Render** | 800ms (1000 events) | 8ms             |
+| **Scroll FPS**     | 15-20 fps           | 60 fps          |
+| **Memory Usage**   | 150 MB              | 15 MB           |
+| **Max Events**     | ~500                | 100,000+        |
 
 ### Prefetching
 
-| Metric | Before | After (Prefetch) |
-|--------|--------|------------------|
-| **Route Change** | 400ms | 50ms |
-| **Data Fetch** | On-demand | Predicted |
-| **Cache Hits** | 0% | 70-80% |
-| **User Wait Time** | 2-3s | < 200ms |
+| Metric             | Before    | After (Prefetch) |
+| ------------------ | --------- | ---------------- |
+| **Route Change**   | 400ms     | 50ms             |
+| **Data Fetch**     | On-demand | Predicted        |
+| **Cache Hits**     | 0%        | 70-80%           |
+| **User Wait Time** | 2-3s      | < 200ms          |
 
 ---
 
@@ -816,12 +817,14 @@ function CalendarPage() {
 ## ✅ Production Checklist
 
 ### Virtual Scrolling
+
 - [ ] Tested with 10,000+ items
 - [ ] Smooth 60fps scrolling
 - [ ] Memory usage stable
 - [ ] Infinite scroll working
 
 ### Gestures
+
 - [ ] All 4 swipe directions work
 - [ ] Pinch zoom functional
 - [ ] Long-press triggers context
@@ -829,6 +832,7 @@ function CalendarPage() {
 - [ ] Haptic feedback on iOS/Android
 
 ### Drag and Drop
+
 - [ ] Mouse drag works
 - [ ] Touch drag works
 - [ ] Visual feedback clear
@@ -836,6 +840,7 @@ function CalendarPage() {
 - [ ] Reordering persists
 
 ### Theme Builder
+
 - [ ] All presets work
 - [ ] Custom colors apply
 - [ ] Export/import functional
@@ -843,6 +848,7 @@ function CalendarPage() {
 - [ ] Live preview accurate
 
 ### Vim Navigation
+
 - [ ] All hjkl keys work
 - [ ] Insert mode detected
 - [ ] Shortcuts don't conflict
@@ -850,6 +856,7 @@ function CalendarPage() {
 - [ ] Advanced shortcuts work
 
 ### Prefetching
+
 - [ ] Hover prefetch working
 - [ ] Adjacent dates cached
 - [ ] Predictions accurate
@@ -872,12 +879,14 @@ function CalendarPage() {
 ## 🏆 Achievements
 
 ### Performance
+
 ✅ Handle 10,000+ events smoothly
 ✅ 60fps scrolling always
 ✅ 90% reduction in memory usage
 ✅ 70-80% cache hit rate
 
 ### UX
+
 ✅ Native mobile gestures
 ✅ Drag-and-drop reordering
 ✅ Custom themes
@@ -885,6 +894,7 @@ function CalendarPage() {
 ✅ Instant navigation
 
 ### Professional
+
 ✅ Production-grade performance
 ✅ Enterprise-ready features
 ✅ Power-user optimizations

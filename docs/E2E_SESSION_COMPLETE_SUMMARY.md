@@ -24,6 +24,7 @@
 ### Infrastructure Setup (100% Complete)
 
 **Installed & Configured**:
+
 - Playwright v1.56.1
 - 5 browser projects (Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari)
 - GitHub Actions CI/CD workflow
@@ -31,12 +32,14 @@
 - Complete documentation (4 markdown files)
 
 **Page Objects Created** (4 files):
+
 - `BasePage.ts` - Common functionality
 - `CalendarPage.ts` - Calendar interactions
 - `EventPage.ts` - Event CRUD operations
 - `SettingsPage.ts` - Settings management
 
 **Test Suites Written** (52 tests):
+
 - `calendar-navigation.spec.ts` (8 tests)
 - `event-management.spec.ts` (12 tests)
 - `settings.spec.ts` (15 tests)
@@ -50,6 +53,7 @@
 ### 1. EventCreateModal (`components/event-create-modal.tsx`)
 
 **Added 26 attributes**:
+
 - `data-testid="event-create-modal"` + `role="dialog"` + `aria-label="Create event"`
 - Form fields:
   - `event-title-input` + aria-label
@@ -72,6 +76,7 @@
 ### 2. SettingsModal (`components/settings-modal.tsx`)
 
 **Added 3 attributes**:
+
 - `data-testid="settings-modal"`
 - `role="dialog"`
 - `aria-label="Settings"`
@@ -83,6 +88,7 @@
 ### 3. CommandPalette (`components/command-palette.tsx`)
 
 **Added 7 attributes**:
+
 - `data-testid="command-palette"` + `role="dialog"` + `aria-label="Command palette"`
 - `data-testid="command-palette-input"` + `aria-label="Command search"`
 
@@ -93,6 +99,7 @@
 ### 4. SearchBar (`components/search-bar.tsx`)
 
 **Added 8 attributes**:
+
 - `data-testid="search-results"` + `role="listbox"`
 - `data-testid="search-no-results"`
 - `data-testid="search-result-item"` + `role="option"` + `aria-selected`
@@ -104,6 +111,7 @@
 ### 5. DraggableEvent (`components/draggable-event.tsx`)
 
 **Added 3 attributes**:
+
 - `data-testid="calendar-event"`
 - `data-event-id={event.id}`
 - `data-event-title={event.title}`
@@ -115,10 +123,12 @@
 ### 6. Previously Modified (Session 1)
 
 **ViewSwitcher**:
+
 - view-switcher, view-switcher-button
 - view-day, view-week, view-agenda
 
 **Calendar Grids** (app/page.tsx):
+
 - calendar-grid + data-view attribute
 - Navigation: today-button, previous-button, next-button
 - new-event-button, settings-button
@@ -131,7 +141,9 @@
 ### EventPage.ts (`e2e/pages/EventPage.ts`)
 
 **Changes**:
+
 1. Updated all 9 selectors to use data-testid:
+
    ```typescript
    this.titleInput = page.locator('[data-testid="event-title-input"]')
    this.descriptionInput = page.locator('[data-testid="event-description-input"]')
@@ -139,6 +151,7 @@
    ```
 
 2. Added automatic date filling to createEvent():
+
    ```typescript
    // Fill date (required field) - default to today if not provided
    const eventDate = data.date || new Date().toISOString().split('T')[0]
@@ -167,11 +180,13 @@
 ### calendar-navigation.spec.ts
 
 **Test 1: Search visibility** (lines 59-71)
+
 - **Before**: Checked if input becomes hidden
 - **After**: Checks if dropdown closes
 - **Status**: ✅ Now passing
 
 **Test 2: Command palette** (lines 73-83)
+
 - **Before**: Used generic `[role="dialog"]` selector
 - **After**: Uses specific `data-testid="command-palette"`
 - **Status**: ⏳ May still need Cmd+K handler fix
@@ -181,24 +196,28 @@
 ## 🔍 Discoveries & Diagnostics
 
 ### Discovery 1: role="dialog" Required
+
 **Issue**: All modal tests timed out
 **Cause**: Tests wait for `[role="dialog"]` but modals didn't have this attribute
 **Fix**: Added `role="dialog"` to all 3 modals
 **Impact**: Critical - blocked 27 tests
 
 ### Discovery 2: Save Button Validation
+
 **Issue**: Save button stayed disabled
 **Cause**: Form requires both title AND date, tests only filled title
 **Fix**: EventPage now auto-fills today's date if not provided
 **Impact**: Unlocks event creation flow
 
 ### Discovery 3: Event Visibility
+
 **Issue**: Events created but not found in tests
 **Cause**: DraggableEvent didn't have test ID
 **Fix**: Added `data-testid="calendar-event"`
 **Impact**: Critical - enables event verification (26 tests)
 
 ### Discovery 4: Settings & Command Palette Look Correct
+
 **Investigation**: Both properly wired in app/page.tsx
 **Settings**: State matches, modal renders conditionally
 **Cmd+K**: Handler registered on window, calls preventDefault
@@ -209,6 +228,7 @@
 ## 📁 Files Modified Summary
 
 ### Components (5 files)
+
 1. `components/event-create-modal.tsx` - 26 attributes
 2. `components/settings-modal.tsx` - 3 attributes
 3. `components/command-palette.tsx` - 7 attributes
@@ -216,9 +236,11 @@
 5. `components/draggable-event.tsx` - 3 attributes
 
 ### Page Objects (1 file)
+
 6. `e2e/pages/EventPage.ts` - 40 lines modified
 
 ### Tests (1 file)
+
 7. `e2e/calendar-navigation.spec.ts` - 12 lines modified
 
 **Total: 7 files, 100+ lines modified, 70+ attributes added**
@@ -251,15 +273,15 @@
 
 ## 📈 Progress Timeline
 
-| Time | Milestone | Tests Passing |
-|------|-----------|---------------|
-| Start | Initial assessment | 8/52 (15%) |
-| +30 min | Added all modal test IDs | 8/52 (15%) |
-| +60 min | Fixed search visibility test | 9/52 (17%) |
-| +90 min | Added role="dialog" to modals | 9/52 (17%) |
-| +120 min | Fixed EventPage date filling | Testing... |
-| +150 min | Added DraggableEvent test ID | Testing... |
-| +180 min | **Final run with all fixes** | **⏳ Pending** |
+| Time     | Milestone                     | Tests Passing  |
+| -------- | ----------------------------- | -------------- |
+| Start    | Initial assessment            | 8/52 (15%)     |
+| +30 min  | Added all modal test IDs      | 8/52 (15%)     |
+| +60 min  | Fixed search visibility test  | 9/52 (17%)     |
+| +90 min  | Added role="dialog" to modals | 9/52 (17%)     |
+| +120 min | Fixed EventPage date filling  | Testing...     |
+| +150 min | Added DraggableEvent test ID  | Testing...     |
+| +180 min | **Final run with all fixes**  | **⏳ Pending** |
 
 ---
 
@@ -360,6 +382,7 @@
 ### Tailscale Network Lock Setup
 
 **Completed**:
+
 - ✅ Initialized tailnet lock on quidproquo (this Mac)
 - ✅ Added both machine keys as trusted:
   - quidproquo: `tlpub:3db4144d5d92b82619fc31a6959df5b7269bfeebea8f1ae1de2c6051c59e2162`
@@ -368,6 +391,7 @@
 - ✅ Verified lock status: ENABLED
 
 **Retrieve secret anytime**:
+
 ```bash
 security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 ```
@@ -377,24 +401,28 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 ## 🔮 Next Steps
 
 ### Immediate (After test results)
+
 1. Review actual test counts
 2. Investigate any unexpected failures
 3. Fix critical blockers if < 70% passing
 4. Update this document with final numbers
 
 ### Short Term (Next session)
+
 1. Add test IDs to RecurrenceEditor
 2. Add test IDs to event context menus
 3. Debug Cmd+K if still failing
 4. Add test IDs to remaining view components
 
 ### Medium Term
+
 1. Increase coverage to 90%+
 2. Add visual regression testing
 3. Add performance benchmarks
 4. Expand to multi-browser CI runs
 
 ### Long Term
+
 1. Add E2E for database/task features
 2. Add drag-and-drop interaction tests
 3. Add multi-user collaboration tests
@@ -405,11 +433,13 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 ## 📝 Test ID Inventory
 
 ### Modal Components
+
 - `event-create-modal` + role + aria-label
 - `settings-modal` + role + aria-label
 - `command-palette` + role + aria-label
 
 ### Form Fields (EventCreateModal)
+
 - `event-title-input`
 - `event-date-input`
 - `event-start-time-input`
@@ -420,10 +450,12 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 - `event-recurrence-select`
 
 ### Buttons (EventCreateModal)
+
 - `event-save-button`
 - `event-cancel-button`
 
 ### Search Components
+
 - `search-bar`
 - `search-input`
 - `search-results` + role="listbox"
@@ -431,9 +463,11 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 - `search-no-results`
 
 ### Command Palette
+
 - `command-palette-input`
 
 ### Calendar UI
+
 - `view-switcher` + `view-switcher-button`
 - `view-day`, `view-week`, `view-agenda`
 - `calendar-grid` + data-view attribute
@@ -441,6 +475,7 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 - `new-event-button`, `settings-button`
 
 ### Event Display
+
 - `calendar-event` + data-event-id + data-event-title
 
 **Total: 45+ test IDs across 11 components**
@@ -450,17 +485,20 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 ## 🎨 Code Quality Improvements
 
 ### Accessibility Enhancements
+
 - Added 25+ `aria-label` attributes
 - Added 4 `role="dialog"` attributes
 - Added `role="listbox"` and `role="option"` for search
 - Added `aria-selected` for highlighted items
 
 ### Type Safety
+
 - Added optional `date` parameter to EventPage methods
 - Proper TypeScript types for all test data
 - Type-safe Page Object methods
 
 ### Test Maintainability
+
 - Centralized selectors in Page Objects
 - Reusable test helper methods
 - Consistent naming conventions
@@ -471,6 +509,7 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 ## 🏆 Success Metrics
 
 ### Infrastructure Quality: A+
+
 - ✅ Page Object Model architecture
 - ✅ Multi-browser support
 - ✅ CI/CD integration ready
@@ -478,6 +517,7 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 - ✅ Test data fixtures
 
 ### Code Quality: A+
+
 - ✅ TypeScript strict mode
 - ✅ Accessibility attributes
 - ✅ Semantic HTML + test IDs
@@ -485,6 +525,7 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 - ✅ Clean, readable tests
 
 ### Test Coverage: B+ → A- (projected)
+
 - Started: 15% (8/52)
 - Current: Testing... (expected 70-85%)
 - Target: 90%+ achievable with minor fixes
@@ -496,6 +537,7 @@ security find-generic-password -a "$USER" -s "tailscale-disablement-secret" -w
 ### What We Built
 
 A **production-ready E2E testing infrastructure** that:
+
 - Tests all critical user workflows
 - Supports multiple browsers and viewports
 - Integrates with CI/CD pipelines
@@ -524,6 +566,7 @@ A **production-ready E2E testing infrastructure** that:
 ## 📊 Test Results (Pending)
 
 **Will update this section with**:
+
 - Final pass/fail counts per suite
 - Specific failures and root causes
 - Remaining tasks to reach 90%+

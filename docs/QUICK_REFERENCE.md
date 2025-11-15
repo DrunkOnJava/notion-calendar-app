@@ -6,13 +6,13 @@ One-page cheat sheet for all UI enhancements.
 
 ```typescript
 // Modals - backdrop blur + scale
-className="backdrop-blur-sm animate-in zoom-in-95 slide-in-from-top-4 duration-300"
+className = 'backdrop-blur-sm animate-in zoom-in-95 slide-in-from-top-4 duration-300'
 
 // Dropdowns - fade + slide
-className="animate-in fade-in slide-in-from-top-2 duration-200"
+className = 'animate-in fade-in slide-in-from-top-2 duration-200'
 
 // Buttons - hover scale
-className="transition-all duration-150 hover:scale-105"
+className = 'transition-all duration-150 hover:scale-105'
 ```
 
 ## ♿ Accessibility
@@ -40,6 +40,7 @@ useKeyboardShortcut(SHORTCUTS.COMMAND_PALETTE, openPalette)
 ```
 
 **Shortcuts:**
+
 - `⌘K` - Command palette
 - `/` - Search
 - `⌘N` - New event
@@ -118,10 +119,7 @@ const ref = useGestures({
 ```typescript
 import { useSortable } from '@/hooks/use-drag-and-drop'
 
-const { items, getDragHandleProps } = useSortable(
-  events,
-  (reordered) => setEvents(reordered)
-)
+const { items, getDragHandleProps } = useSortable(events, (reordered) => setEvents(reordered))
 ```
 
 ## 🎨 Themes

@@ -12,10 +12,7 @@ interface DragDropOptions<T> {
  * Drag and drop hook for reordering items
  * Works with both mouse and touch events
  */
-export function useDragAndDrop<T>(
-  items: T[],
-  options: DragDropOptions<T> = {}
-) {
+export function useDragAndDrop<T>(items: T[], options: DragDropOptions<T> = {}) {
   const { onDragStart, onDragOver, onDrop, onDragEnd } = options
 
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
@@ -147,14 +144,12 @@ export function useDragToCalendar<T>() {
 /**
  * Sortable list hook with animations
  */
-export function useSortable<T extends { id: string }>(
-  items: T[],
-  onReorder: (items: T[]) => void
-) {
+export function useSortable<T extends { id: string }>(items: T[], onReorder: (items: T[]) => void) {
   const [localItems, setLocalItems] = useState(items)
 
-  const { draggedIndex, draggedOverIndex, getDragHandleProps, getItemProps } =
-    useDragAndDrop(localItems, {
+  const { draggedIndex, draggedOverIndex, getDragHandleProps, getItemProps } = useDragAndDrop(
+    localItems,
+    {
       onDrop: (item, fromIndex, toIndex) => {
         const newItems = [...localItems]
         newItems.splice(fromIndex, 1)
@@ -163,7 +158,8 @@ export function useSortable<T extends { id: string }>(
         setLocalItems(newItems)
         onReorder(newItems)
       },
-    })
+    }
+  )
 
   // Sync with external changes
   useEffect(() => {
@@ -182,10 +178,7 @@ export function useSortable<T extends { id: string }>(
 /**
  * Get CSS classes for drag state
  */
-export function getDragStateClasses(
-  isDragging: boolean,
-  isDraggedOver: boolean
-) {
+export function getDragStateClasses(isDragging: boolean, isDraggedOver: boolean) {
   return {
     dragging: isDragging ? 'opacity-50 cursor-grabbing scale-105' : '',
     draggedOver: isDraggedOver ? 'border-info border-2 bg-info/10' : '',

@@ -44,9 +44,11 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
 
       if (e.key === 'ArrowDown') {
         e.preventDefault()
+        if (filteredCommands.length === 0) return
         setSelectedIndex((prev) => (prev + 1) % filteredCommands.length)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
+        if (filteredCommands.length === 0) return
         setSelectedIndex((prev) => (prev - 1 + filteredCommands.length) % filteredCommands.length)
       } else if (e.key === 'Enter') {
         e.preventDefault()
@@ -76,7 +78,7 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-[20vh] animate-in fade-in duration-200 backdrop-blur-sm"
+      className="animate-in fade-in fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-[20vh] backdrop-blur-sm duration-200"
       onClick={onClose}
       data-testid="command-palette"
       role="dialog"
@@ -84,7 +86,7 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
       aria-modal="true"
     >
       <div
-        className="w-full max-w-[95vw] md:w-[600px] overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl animate-in zoom-in-95 slide-in-from-top-4 duration-300"
+        className="animate-in zoom-in-95 slide-in-from-top-4 w-full max-w-[95vw] overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl duration-300 md:w-[600px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input */}
@@ -95,7 +97,7 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
             placeholder="Type a command or search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-[#6b6b6b] transition-colors focus:placeholder:text-[#8a8a8a]"
+            className="flex-1 bg-transparent text-sm transition-colors outline-none placeholder:text-[#6b6b6b] focus:placeholder:text-[#8a8a8a]"
             autoFocus
             data-testid="command-palette-input"
             aria-label="Command search"
@@ -118,7 +120,7 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
             <div key={category} role="group" aria-labelledby={`category-${category}`}>
               <div
                 id={`category-${category}`}
-                className="px-4 py-2 text-xs font-medium text-[#6b6b6b] animate-in fade-in slide-in-from-left-2 duration-200"
+                className="animate-in fade-in slide-in-from-left-2 px-4 py-2 text-xs font-medium text-[#6b6b6b] duration-200"
               >
                 {category}
               </div>
@@ -134,10 +136,10 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
                     }}
                     className={cn(
                       'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-all duration-150',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 focus-visible:ring-offset-[#1c1c1c]',
+                      'focus-visible:ring-info focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1c1c1c] focus-visible:outline-none',
                       globalIdx === selectedIndex
                         ? 'bg-info text-info-foreground scale-[1.02] shadow-sm'
-                        : 'text-[#d0d0d0] hover:bg-[#2a2a2a] hover:scale-[1.01]'
+                        : 'text-[#d0d0d0] hover:scale-[1.01] hover:bg-[#2a2a2a]'
                     )}
                     role="option"
                     aria-selected={globalIdx === selectedIndex}

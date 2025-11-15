@@ -28,56 +28,61 @@ pnpm test:e2e:ui
 
 ## 📋 Essential Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm test:env:up` | Start all test services |
-| `pnpm test:env:down` | Stop test services (keep data) |
-| `pnpm test:env:clean` | Stop and delete all test data |
-| `pnpm test:env:status` | Check service health |
-| `pnpm test:env:logs` | View live logs |
-| `pnpm test:env:restart` | Restart all services |
-| `pnpm test:e2e` | Run Playwright tests |
-| `pnpm test:e2e:ui` | Run tests with Playwright UI |
-| `pnpm test:e2e:debug` | Debug tests step-by-step |
+| Command                 | Description                    |
+| ----------------------- | ------------------------------ |
+| `pnpm test:env:up`      | Start all test services        |
+| `pnpm test:env:down`    | Stop test services (keep data) |
+| `pnpm test:env:clean`   | Stop and delete all test data  |
+| `pnpm test:env:status`  | Check service health           |
+| `pnpm test:env:logs`    | View live logs                 |
+| `pnpm test:env:restart` | Restart all services           |
+| `pnpm test:e2e`         | Run Playwright tests           |
+| `pnpm test:e2e:ui`      | Run tests with Playwright UI   |
+| `pnpm test:e2e:debug`   | Debug tests step-by-step       |
 
 ## 🔌 Service Endpoints
 
 After running `pnpm test:env:up`:
 
-| Service | Endpoint | Purpose |
-|---------|----------|---------|
-| PostgreSQL | `localhost:5433` | Test database |
-| Redis | `localhost:6380` | Cache/sessions |
-| MongoDB | `localhost:27018` | NoSQL data |
-| MinIO Console | `http://localhost:9001` | S3 storage UI |
-| Mailhog UI | `http://localhost:8025` | Email testing UI |
-| LocalStack | `http://localhost:4566` | AWS services |
+| Service       | Endpoint                | Purpose          |
+| ------------- | ----------------------- | ---------------- |
+| PostgreSQL    | `localhost:5433`        | Test database    |
+| Redis         | `localhost:6380`        | Cache/sessions   |
+| MongoDB       | `localhost:27018`       | NoSQL data       |
+| MinIO Console | `http://localhost:9001` | S3 storage UI    |
+| Mailhog UI    | `http://localhost:8025` | Email testing UI |
+| LocalStack    | `http://localhost:4566` | AWS services     |
 
 ## 🔑 Test Credentials
 
 **PostgreSQL:**
+
 - Host: `localhost:5433`
 - Database: `notion_calendar_test`
 - User: `test_user`
 - Password: `test_pass_123`
 
 **Redis:**
+
 - Host: `localhost:6380`
 - Password: `test_redis_pass`
 
 **MongoDB:**
+
 - Host: `localhost:27018`
 - Database: `notion_calendar_test`
 - User: `test_user`
 - Password: `test_pass_123`
 
 **MinIO:**
+
 - Endpoint: `localhost:9000`
 - Console: `http://localhost:9001`
 - Access Key: `test_minio_user`
 - Secret Key: `test_minio_pass_123`
 
 **AWS (LocalStack):**
+
 - Endpoint: `http://localhost:4566`
 - Access Key: `test`
 - Secret Key: `test`

@@ -3,27 +3,32 @@
 ## ✅ What Was Created
 
 ### 1. Docker Compose Infrastructure
+
 - **File:** `docker-compose.test.yml`
 - **Services:** PostgreSQL, Redis, MongoDB, LocalStack, MinIO, Mailhog
 - **Features:** Health checks, isolated network, persistent volumes
 
 ### 2. Testcontainers Integration
+
 - **File:** `test/utils/testcontainers.ts`
 - **Features:** Programmatic container management, automatic cleanup
 - **Use Case:** For tests requiring dynamic container creation
 
 ### 3. Global Test Setup
+
 - **Files:**
   - `test/setup/global-setup.ts` - Initialize test environment
   - `test/setup/global-teardown.ts` - Cleanup after tests
 - **Integration:** Configured in `playwright.config.ts`
 
 ### 4. Environment Configuration
+
 - **File:** `.env.test`
 - **Contains:** All connection strings and credentials for test services
 - **Security:** Not committed to git (in .gitignore)
 
 ### 5. Management Scripts
+
 - **Location:** `scripts/`
 - **Scripts:**
   - `test-env-up.sh` - Start services
@@ -31,18 +36,22 @@
   - `test-env-status.sh` - Check health
 
 ### 6. Test Fixtures
+
 - **PostgreSQL:** `test/fixtures/db-init/01-init.sql`
 - **MongoDB:** `test/fixtures/mongodb-init/01-init.js`
 - **LocalStack:** `test/fixtures/localstack/init.sh`
 
 ### 7. Documentation
+
 - **Files:**
   - `test/README.md` - Comprehensive guide
   - `test/QUICK_START.md` - Quick reference
   - `TEST_ENVIRONMENT_SUMMARY.md` - This file
 
 ### 8. Package Scripts
+
 Added to `package.json`:
+
 - `test:env:up` - Start test environment
 - `test:env:down` - Stop test environment
 - `test:env:clean` - Stop and remove all data
@@ -67,40 +76,45 @@ Added to `package.json`:
 ## 🎯 Quick Start
 
 ### Step 1: Install Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### Step 2: Start Test Environment
+
 ```bash
 pnpm test:env:up
 ```
 
 ### Step 3: Verify Health
+
 ```bash
 pnpm test:env:status
 ```
 
 ### Step 4: Run Tests
+
 ```bash
 pnpm test:e2e
 ```
 
 ### Step 5: Stop When Done
+
 ```bash
 pnpm test:env:down
 ```
 
 ## 🔌 Available Services
 
-| Service | Port | UI/Console |
-|---------|------|------------|
-| PostgreSQL | 5433 | - |
-| Redis | 6380 | - |
-| MongoDB | 27018 | - |
-| LocalStack | 4566 | - |
-| MinIO | 9000 | http://localhost:9001 |
-| Mailhog | 1025 (SMTP) | http://localhost:8025 |
+| Service    | Port        | UI/Console            |
+| ---------- | ----------- | --------------------- |
+| PostgreSQL | 5433        | -                     |
+| Redis      | 6380        | -                     |
+| MongoDB    | 27018       | -                     |
+| LocalStack | 4566        | -                     |
+| MinIO      | 9000        | http://localhost:9001 |
+| Mailhog    | 1025 (SMTP) | http://localhost:8025 |
 
 ## 📁 File Structure
 
@@ -134,17 +148,20 @@ notion-calendar/
 ## 🚀 Next Steps
 
 1. **Install Dependencies**
+
    ```bash
    pnpm install
    ```
 
 2. **Test the Setup**
+
    ```bash
    pnpm test:env:up
    pnpm test:env:status
    ```
 
 3. **Run Example Test**
+
    ```bash
    pnpm test:e2e
    ```
@@ -161,26 +178,32 @@ notion-calendar/
 ## 🔧 Common Tasks
 
 ### Clean Slate
+
 ```bash
 pnpm test:env:clean
 pnpm test:env:up
 ```
 
 ### Check Logs
+
 ```bash
 pnpm test:env:logs
 ```
 
 ### Connect to Database
+
 ```bash
 PGPASSWORD=test_pass_123 psql -h localhost -p 5433 -U test_user -d notion_calendar_test
 ```
 
 ### View Sent Emails
+
 Open http://localhost:8025 in your browser
 
 ### Access MinIO Console
+
 Open http://localhost:9001 in your browser
+
 - Access Key: `test_minio_user`
 - Secret Key: `test_minio_pass_123`
 

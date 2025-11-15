@@ -3,32 +3,28 @@
  * Provides type-safe container management with automatic cleanup
  */
 
-import {
-  GenericContainer,
-  type StartedTestContainer,
-  Wait,
-} from 'testcontainers';
+import { GenericContainer, type StartedTestContainer, Wait } from 'testcontainers'
 
 export interface TestContainerConfig {
-  image: string;
-  ports: number[];
-  env?: Record<string, string>;
-  waitStrategy?: 'log' | 'healthcheck' | 'port';
-  waitMessage?: string;
-  name?: string;
+  image: string
+  ports: number[]
+  env?: Record<string, string>
+  waitStrategy?: 'log' | 'healthcheck' | 'port'
+  waitMessage?: string
+  name?: string
 }
 
 export class TestEnvironment {
-  private containers: Map<string, StartedTestContainer> = new Map();
-  private static instance: TestEnvironment | null = null;
+  private containers: Map<string, StartedTestContainer> = new Map()
+  private static instance: TestEnvironment | null = null
 
   private constructor() {}
 
   static getInstance(): TestEnvironment {
     if (!TestEnvironment.instance) {
-      TestEnvironment.instance = new TestEnvironment();
+      TestEnvironment.instance = new TestEnvironment()
     }
-    return TestEnvironment.instance;
+    return TestEnvironment.instance
   }
 
   /**
@@ -47,10 +43,10 @@ export class TestEnvironment {
       })
       .withExposedPorts(5432)
       .withWaitStrategy(Wait.forLogMessage(/.*database system is ready to accept connections.*/))
-      .start();
+      .start()
 
-    this.containers.set('postgres', container);
-    return container;
+    this.containers.set('postgres', container)
+    return container
   }
 
   /**
@@ -59,16 +55,12 @@ export class TestEnvironment {
   async startRedis(password?: string): Promise<StartedTestContainer> {
     const container = await new GenericContainer('redis:7-alpine')
       .withExposedPorts(6379)
-      .withCommand(
-        password
-          ? ['redis-server', '--requirepass', password]
-          : ['redis-server']
-      )
+      .withCommand(password ? ['redis-server', '--requirepass', password] : ['redis-server'])
       .withWaitStrategy(Wait.forLogMessage(/.*Ready to accept connections.*/))
-      .start();
+      .start()
 
-    this.containers.set('redis', container);
-    return container;
+    this.containers.set('redis', container)
+    return container
   }
 
   /**
@@ -87,10 +79,10 @@ export class TestEnvironment {
       })
       .withExposedPorts(27017)
       .withWaitStrategy(Wait.forLogMessage(/.*Waiting for connections.*/))
-      .start();
+      .start()
 
-    this.containers.set('mongodb', container);
-    return container;
+    this.containers.set('mongodb', container)
+    return container
   }
 
   /**
@@ -109,73 +101,70 @@ export class TestEnvironment {
       })
       .withExposedPorts(4566)
       .withWaitStrategy(Wait.forLogMessage(/.*Ready.*/))
-      .start();
+      .start()
 
-    this.containers.set('localstack', container);
-    return container;
+    this.containers.set('localstack', container)
+    return container
   }
 
   /**
    * Start a generic container with custom configuration
    */
-  async startContainer(
-    name: string,
-    config: TestContainerConfig
-  ): Promise<StartedTestContainer> {
-    let containerBuilder = new GenericContainer(config.image);
+  async startContainer(name: string, config: TestContainerConfig): Promise<StartedTestContainer> {
+    let containerBuilder = new GenericContainer(config.image)
 
     // Add environment variables
     if (config.env) {
-      containerBuilder = containerBuilder.withEnvironment(config.env);
+      containerBuilder = containerBuilder.withEnvironment(config.env)
     }
 
     // Expose ports
     for (const port of config.ports) {
-      containerBuilder = containerBuilder.withExposedPorts(port);
+      containerBuilder = containerBuilder.withExposedPorts(port)
     }
 
     // Add wait strategy
     if (config.waitStrategy === 'log' && config.waitMessage) {
       containerBuilder = containerBuilder.withWaitStrategy(
         Wait.forLogMessage(new RegExp(config.waitMessage))
-      );
+      )
     } else if (config.waitStrategy === 'healthcheck') {
-      containerBuilder = containerBuilder.withWaitStrategy(Wait.forHealthCheck());
+      containerBuilder = containerBuilder.withWaitStrategy(Wait.forHealthCheck())
     }
 
-    const container = await containerBuilder.start();
-    this.containers.set(name, container);
-    return container;
+    const container = await containerBuilder.start()
+    this.containers.set(name, container)
+    return container
   }
 
   /**
    * Get a running container by name
    */
   getContainer(name: string): StartedTestContainer | undefined {
-    return this.containers.get(name);
+    return this.containers.get(name)
   }
 
   /**
    * Get connection details for a container
    */
   getConnectionString(name: string, type: 'postgres' | 'redis' | 'mongodb'): string | null {
-    const container = this.containers.get(name);
-    if (!container) return null;
+    const container = this.containers.get(name)
+    if (!container) return null
 
-    const host = container.getHost();
+    const host = container.getHost()
     const port = container.getMappedPort(
       type === 'postgres' ? 5432 : type === 'redis' ? 6379 : 27017
-    );
+    )
 
     switch (type) {
       case 'postgres':
-        return `postgresql://test_user:test_pass@${host}:${port}/test_db`;
+        return `postgresql://test_user:test_pass@${host}:${port}/test_db`
       case 'redis':
-        return `redis://:test_pass@${host}:${port}`;
+        return `redis://:test_pass@${host}:${port}`
       case 'mongodb':
-        return `mongodb://test_user:test_pass@${host}:${port}/test_db`;
+        return `mongodb://test_user:test_pass@${host}:${port}/test_db`
       default:
-        return null;
+        return null
     }
   }
 
@@ -183,10 +172,10 @@ export class TestEnvironment {
    * Stop a specific container
    */
   async stopContainer(name: string): Promise<void> {
-    const container = this.containers.get(name);
+    const container = this.containers.get(name)
     if (container) {
-      await container.stop();
-      this.containers.delete(name);
+      await container.stop()
+      this.containers.delete(name)
     }
   }
 
@@ -194,25 +183,23 @@ export class TestEnvironment {
    * Stop all containers and cleanup
    */
   async cleanup(): Promise<void> {
-    const stopPromises = Array.from(this.containers.values()).map((container) =>
-      container.stop()
-    );
-    await Promise.all(stopPromises);
-    this.containers.clear();
+    const stopPromises = Array.from(this.containers.values()).map((container) => container.stop())
+    await Promise.all(stopPromises)
+    this.containers.clear()
   }
 
   /**
    * Get the number of running containers
    */
   getRunningCount(): number {
-    return this.containers.size;
+    return this.containers.size
   }
 
   /**
    * Check if a container is running
    */
   isRunning(name: string): boolean {
-    return this.containers.has(name);
+    return this.containers.has(name)
   }
 }
 
@@ -220,7 +207,7 @@ export class TestEnvironment {
  * Get the singleton test environment instance
  */
 export function getTestEnvironment(): TestEnvironment {
-  return TestEnvironment.getInstance();
+  return TestEnvironment.getInstance()
 }
 
 /**
@@ -230,15 +217,15 @@ export async function waitForContainer(
   container: StartedTestContainer,
   timeoutMs: number = 30000
 ): Promise<void> {
-  const start = Date.now();
+  const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
-      const { exitCode } = await container.exec(['echo', 'healthy']);
-      if (exitCode === 0) return;
+      const { exitCode } = await container.exec(['echo', 'healthy'])
+      if (exitCode === 0) return
     } catch (error) {
       // Container not ready yet
     }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
-  throw new Error(`Container did not become healthy within ${timeoutMs}ms`);
+  throw new Error(`Container did not become healthy within ${timeoutMs}ms`)
 }

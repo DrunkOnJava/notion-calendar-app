@@ -35,6 +35,7 @@ pnpm test:e2e:ui
 ```
 
 Opens Playwright UI with:
+
 - ✨ Visual test runner
 - ⏱️ Time-travel debugging
 - 🔍 Locator picker
@@ -187,6 +188,7 @@ await eventPage.createEvent(randomEvent)
 ## 🔄 CI/CD Integration
 
 Tests automatically run on GitHub Actions:
+
 - ✅ Every push to `main` or `develop`
 - ✅ Every pull request
 - ✅ Parallel execution across browsers
@@ -228,8 +230,8 @@ await page.keyboard.press('Enter')
 await page.keyboard.press('Escape')
 
 // Shortcuts
-await page.keyboard.press('Meta+K')  // Cmd+K on Mac
-await page.keyboard.press('Control+K')  // Ctrl+K on Windows
+await page.keyboard.press('Meta+K') // Cmd+K on Mac
+await page.keyboard.press('Control+K') // Ctrl+K on Windows
 ```
 
 ### File Uploads
@@ -244,6 +246,7 @@ await page.setInputFiles('input[type="file"]', 'path/to/file.pdf')
 
 **Problem**: Tests hang or timeout
 **Solution**:
+
 ```bash
 # Check dev server is running
 pnpm dev
@@ -256,6 +259,7 @@ timeout: 60 * 1000  // 60 seconds
 
 **Problem**: `locator.click: Target closed` or element not found
 **Solution**:
+
 ```bash
 # Use Playwright Inspector to debug
 pnpm test:e2e:debug
@@ -268,6 +272,7 @@ pnpm test:e2e:ui
 
 **Problem**: Tests pass sometimes, fail other times
 **Solution**:
+
 - Remove hard-coded `page.waitForTimeout()` calls
 - Use proper wait conditions: `waitForLoadState('networkidle')`
 - Add `{ strict: true }` to selectors to ensure single match
@@ -276,6 +281,7 @@ pnpm test:e2e:ui
 
 **Problem**: `browserType.launch: Executable doesn't exist`
 **Solution**:
+
 ```bash
 pnpm test:e2e:install
 ```

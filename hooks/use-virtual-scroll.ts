@@ -10,10 +10,7 @@ interface VirtualScrollOptions {
  * Virtual scrolling hook for rendering large lists efficiently
  * Only renders visible items + overscan buffer
  */
-export function useVirtualScroll<T>(
-  items: T[],
-  options: VirtualScrollOptions
-) {
+export function useVirtualScroll<T>(items: T[], options: VirtualScrollOptions) {
   const { itemHeight, containerHeight, overscan = 3 } = options
 
   const [scrollTop, setScrollTop] = useState(0)
@@ -68,14 +65,7 @@ export function useVirtualGrid<T>(
     overscan?: number
   }
 ) {
-  const {
-    rowHeight,
-    columnWidth,
-    columns,
-    containerHeight,
-    containerWidth,
-    overscan = 2,
-  } = options
+  const { rowHeight, columnWidth, columns, containerHeight, containerWidth, overscan = 2 } = options
 
   const [scrollTop, setScrollTop] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
@@ -89,10 +79,16 @@ export function useVirtualGrid<T>(
   const visibleColumns = Math.ceil(containerWidth / columnWidth)
 
   const startRow = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan)
-  const endRow = Math.min(rows - 1, Math.floor((scrollTop + containerHeight) / rowHeight) + overscan)
+  const endRow = Math.min(
+    rows - 1,
+    Math.floor((scrollTop + containerHeight) / rowHeight) + overscan
+  )
 
   const startCol = Math.max(0, Math.floor(scrollLeft / columnWidth) - overscan)
-  const endCol = Math.min(columns - 1, Math.floor((scrollLeft + containerWidth) / columnWidth) + overscan)
+  const endCol = Math.min(
+    columns - 1,
+    Math.floor((scrollLeft + containerWidth) / columnWidth) + overscan
+  )
 
   const visibleItems: Array<{ item: T; row: number; col: number; index: number }> = []
 

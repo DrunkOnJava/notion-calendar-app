@@ -22,23 +22,17 @@ export function VirtualizedAgenda({
   containerHeight = 600,
   itemHeight = 80,
 }: VirtualizedAgendaProps) {
-  const {
-    containerRef,
-    visibleItems,
-    totalHeight,
-    offsetY,
-    startIndex,
-    endIndex,
-  } = useVirtualScroll(events, {
-    itemHeight,
-    containerHeight,
-    overscan: 5,
-  })
+  const { containerRef, visibleItems, totalHeight, offsetY, startIndex, endIndex } =
+    useVirtualScroll(events, {
+      itemHeight,
+      containerHeight,
+      overscan: 5,
+    })
 
   return (
     <div className="relative">
       {/* Scroll stats for debugging */}
-      <div className="mb-2 text-xs text-muted-foreground">
+      <div className="text-muted-foreground mb-2 text-xs">
         Rendering {visibleItems.length} of {events.length} events (items {startIndex}-{endIndex})
       </div>
 
@@ -71,7 +65,7 @@ export function VirtualizedAgenda({
 
       {/* Performance hint */}
       {events.length > 100 && (
-        <div className="mt-2 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-2 text-xs">
           ⚡ Virtual scrolling enabled for optimal performance
         </div>
       )}
@@ -96,20 +90,18 @@ function AgendaItem({
       onClick={onClick}
       className={cn(
         'w-full border-b border-[#2a2a2a] px-4 text-left transition-all duration-150',
-        'hover:bg-[#2a2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-inset',
+        'focus-visible:ring-info hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
         'flex items-start gap-4'
       )}
       style={{ height }}
     >
       {/* Date column */}
       <div className="flex flex-col items-center justify-center gap-1 pt-3" style={{ width: 60 }}>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           {new Date(event.date).toLocaleDateString('en-US', { weekday: 'short' })}
         </div>
-        <div className="text-2xl font-semibold">
-          {new Date(event.date).getDate()}
-        </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-2xl font-semibold">{new Date(event.date).getDate()}</div>
+        <div className="text-muted-foreground text-xs">
           {new Date(event.date).toLocaleDateString('en-US', { month: 'short' })}
         </div>
       </div>
@@ -121,14 +113,14 @@ function AgendaItem({
             <h3 className="truncate font-medium">{event.title}</h3>
 
             {event.time && (
-              <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
                 <Clock className="h-3.5 w-3.5" />
                 <span>{event.time}</span>
               </div>
             )}
 
             {event.location && (
-              <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
                 <MapPin className="h-3.5 w-3.5" />
                 <span className="truncate">{event.location}</span>
               </div>
@@ -137,7 +129,7 @@ function AgendaItem({
 
           {/* Event indicator */}
           <div
-            className="mt-1 h-2 w-2 rounded-full shrink-0"
+            className="mt-1 h-2 w-2 shrink-0 rounded-full"
             style={{ backgroundColor: event.color || 'var(--info)' }}
           />
         </div>
@@ -162,12 +154,7 @@ export function VirtualizedList<T extends { id: string }>({
   itemHeight?: number
   emptyMessage?: string
 }) {
-  const {
-    containerRef,
-    visibleItems,
-    totalHeight,
-    offsetY,
-  } = useVirtualScroll(items, {
+  const { containerRef, visibleItems, totalHeight, offsetY } = useVirtualScroll(items, {
     itemHeight,
     containerHeight,
     overscan: 3,
@@ -176,7 +163,7 @@ export function VirtualizedList<T extends { id: string }>({
   if (items.length === 0) {
     return (
       <div
-        className="flex items-center justify-center rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] text-muted-foreground"
+        className="text-muted-foreground flex items-center justify-center rounded-lg border border-[#2a2a2a] bg-[#1c1c1c]"
         style={{ height: containerHeight }}
       >
         {emptyMessage}

@@ -52,22 +52,23 @@ pnpm test:e2e:debug
 
 ## 📝 Available Test Scripts
 
-| Script | Description |
-|--------|-------------|
-| `pnpm test:e2e` | Run all tests headlessly |
-| `pnpm test:e2e:ui` | Open Playwright UI mode (best for development) |
-| `pnpm test:e2e:headed` | Run tests with browser visible |
-| `pnpm test:e2e:debug` | Run tests in debug mode with Playwright Inspector |
-| `pnpm test:e2e:chromium` | Run tests in Chromium only |
-| `pnpm test:e2e:firefox` | Run tests in Firefox only |
-| `pnpm test:e2e:webkit` | Run tests in WebKit (Safari) only |
-| `pnpm test:e2e:mobile` | Run tests on mobile viewports |
-| `pnpm test:e2e:report` | View last test report |
-| `pnpm test:e2e:codegen` | Generate tests interactively |
+| Script                   | Description                                       |
+| ------------------------ | ------------------------------------------------- |
+| `pnpm test:e2e`          | Run all tests headlessly                          |
+| `pnpm test:e2e:ui`       | Open Playwright UI mode (best for development)    |
+| `pnpm test:e2e:headed`   | Run tests with browser visible                    |
+| `pnpm test:e2e:debug`    | Run tests in debug mode with Playwright Inspector |
+| `pnpm test:e2e:chromium` | Run tests in Chromium only                        |
+| `pnpm test:e2e:firefox`  | Run tests in Firefox only                         |
+| `pnpm test:e2e:webkit`   | Run tests in WebKit (Safari) only                 |
+| `pnpm test:e2e:mobile`   | Run tests on mobile viewports                     |
+| `pnpm test:e2e:report`   | View last test report                             |
+| `pnpm test:e2e:codegen`  | Generate tests interactively                      |
 
 ## 📋 Test Suites
 
 ### Calendar Navigation (`calendar-navigation.spec.ts`)
+
 - ✅ Page loading
 - ✅ View switching (Day/Week/Agenda)
 - ✅ Navigation (Next/Previous/Today)
@@ -76,6 +77,7 @@ pnpm test:e2e:debug
 - ✅ Responsive design
 
 ### Event Management (`event-management.spec.ts`)
+
 - ✅ Create events (simple, all-day, recurring)
 - ✅ Edit events
 - ✅ Delete events
@@ -86,6 +88,7 @@ pnpm test:e2e:debug
 - ✅ Overlapping events
 
 ### Settings (`settings.spec.ts`)
+
 - ✅ Theme switching (Light/Dark/System)
 - ✅ Default view preferences
 - ✅ Calendar settings
@@ -94,6 +97,7 @@ pnpm test:e2e:debug
 - ✅ Keyboard navigation
 
 ### Search and Filters (`search-and-filters.spec.ts`)
+
 - ✅ Search by title
 - ✅ Search by description
 - ✅ Real-time filtering
@@ -142,39 +146,48 @@ const randomEvent = generateRandomEvent()
 ## 🔍 Debugging Tips
 
 ### 1. Use UI Mode (Best Option)
+
 ```bash
 pnpm test:e2e:ui
 ```
+
 - See tests run in real-time
 - Time-travel through each action
 - Edit locators on the fly
 - Great visual debugging
 
 ### 2. Use Debug Mode
+
 ```bash
 pnpm test:e2e:debug
 ```
+
 - Playwright Inspector opens
 - Step through each action
 - Inspect page at any point
 
 ### 3. Run Headed Mode
+
 ```bash
 pnpm test:e2e:headed
 ```
+
 - See browser window
 - Watch tests execute
 - Good for understanding failures
 
 ### 4. Use Codegen to Create Tests
+
 ```bash
 pnpm test:e2e:codegen
 ```
+
 - Record your actions
 - Generate test code automatically
 - Great for learning selectors
 
 ### 5. Add Debug Points in Tests
+
 ```typescript
 test('my test', async ({ page }) => {
   await page.pause() // Pauses execution
@@ -185,6 +198,7 @@ test('my test', async ({ page }) => {
 ## 📸 Screenshots and Videos
 
 Playwright automatically captures:
+
 - **Screenshots** on test failure
 - **Videos** for failed tests (in `test-results/`)
 - **Traces** on first retry (viewable with `playwright show-trace`)
@@ -192,6 +206,7 @@ Playwright automatically captures:
 ## 🌐 Browser Support
 
 Tests run on:
+
 - ✅ Chromium (Chrome, Edge)
 - ✅ Firefox
 - ✅ WebKit (Safari)
@@ -203,6 +218,7 @@ Configure in `playwright.config.ts`.
 ## 🚦 CI/CD Integration
 
 Tests are configured to run in GitHub Actions (see `.github/workflows/e2e.yml`):
+
 - Runs on every PR
 - Parallel execution
 - Test reports uploaded as artifacts
@@ -211,11 +227,13 @@ Tests are configured to run in GitHub Actions (see `.github/workflows/e2e.yml`):
 ## 📐 Writing New Tests
 
 ### 1. Create a new spec file
+
 ```bash
 touch e2e/my-feature.spec.ts
 ```
 
 ### 2. Follow the pattern
+
 ```typescript
 import { test, expect } from '@playwright/test'
 import { CalendarPage } from './pages/CalendarPage'
@@ -235,6 +253,7 @@ test.describe('My Feature', () => {
 ```
 
 ### 3. Run your tests
+
 ```bash
 pnpm test:e2e -- my-feature.spec.ts
 ```
@@ -253,16 +272,19 @@ pnpm test:e2e -- my-feature.spec.ts
 ## 🐛 Common Issues
 
 ### Test Timeout
+
 - Increase timeout in `playwright.config.ts`
 - Check if dev server is running
 - Verify network conditions
 
 ### Element Not Found
+
 - Use Playwright Inspector to check locators
 - Add explicit waits if needed
 - Check if element is in shadow DOM
 
 ### Flaky Tests
+
 - Avoid hard-coded timeouts
 - Use proper wait conditions
 - Check for race conditions
@@ -277,6 +299,7 @@ pnpm test:e2e -- my-feature.spec.ts
 ## 🤝 Contributing
 
 When adding new features:
+
 1. Write E2E tests for critical user workflows
 2. Add Page Objects for new pages/modals
 3. Update this README if adding new patterns
@@ -285,6 +308,7 @@ When adding new features:
 ## 📞 Support
 
 For questions or issues with E2E tests:
+
 - Check Playwright documentation
 - Review existing tests for examples
 - Ask in team chat or create an issue

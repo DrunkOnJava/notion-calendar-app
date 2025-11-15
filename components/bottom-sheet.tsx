@@ -97,12 +97,12 @@ export function BottomSheet({
   if (!isMobile) {
     return (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+        className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm duration-200"
         onClick={onClose}
       >
         <div
           className={cn(
-            'relative w-full max-w-lg rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl animate-in zoom-in-95 slide-in-from-bottom-4 duration-300',
+            'animate-in zoom-in-95 slide-in-from-bottom-4 relative w-full max-w-lg rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl duration-300',
             className
           )}
           onClick={(e) => e.stopPropagation()}
@@ -112,7 +112,7 @@ export function BottomSheet({
               <h2 className="text-lg font-semibold">{title}</h2>
               <button
                 onClick={onClose}
-                className="rounded p-1 transition-colors hover:bg-[#2a2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info"
+                className="focus-visible:ring-info rounded p-1 transition-colors hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:outline-none"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -128,13 +128,13 @@ export function BottomSheet({
   // Mobile bottom sheet
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      className="animate-in fade-in fixed inset-0 z-50 bg-black/50 backdrop-blur-sm duration-200"
       onClick={onClose}
     >
       <div
         ref={sheetRef}
         className={cn(
-          'fixed bottom-0 left-0 right-0 rounded-t-2xl border-t border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl transition-transform duration-300 ease-out',
+          'fixed right-0 bottom-0 left-0 rounded-t-2xl border-t border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl transition-transform duration-300 ease-out',
           'animate-in slide-in-from-bottom duration-300',
           className
         )}
@@ -160,7 +160,7 @@ export function BottomSheet({
             <h2 className="text-lg font-semibold">{title}</h2>
             <button
               onClick={onClose}
-              className="rounded p-1 transition-colors hover:bg-[#2a2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info"
+              className="focus-visible:ring-info rounded p-1 transition-colors hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:outline-none"
               aria-label="Close"
             >
               <X className="h-5 w-5" />
@@ -169,7 +169,10 @@ export function BottomSheet({
         )}
 
         {/* Content */}
-        <div className="overflow-auto px-6 pb-safe" style={{ maxHeight: `calc(${currentSnapPoint * 100}vh - 120px)` }}>
+        <div
+          className="pb-safe overflow-auto px-6"
+          style={{ maxHeight: `calc(${currentSnapPoint * 100}vh - 120px)` }}
+        >
           {children}
         </div>
       </div>

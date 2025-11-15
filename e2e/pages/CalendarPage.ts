@@ -41,9 +41,7 @@ export class CalendarPage extends BasePage {
     this.agendaViewButton = page.locator('[data-testid="view-agenda"]')
 
     this.calendarGrid = page.locator('[data-testid="calendar-grid"]')
-    this.timeSlots = page.locator('[data-testid="time-slot"]').or(
-      page.locator('.time-slot')
-    )
+    this.timeSlots = page.locator('[data-testid="time-slot"]').or(page.locator('.time-slot'))
 
     this.searchButton = page.locator('[data-testid="search-bar"]')
     this.searchInput = page.locator('[data-testid="search-input"]')
@@ -102,9 +100,7 @@ export class CalendarPage extends BasePage {
    * Click on a time slot to create an event
    */
   async clickTimeSlot(hour: number) {
-    const timeSlot = this.page.locator(`[data-hour="${hour}"]`).or(
-      this.timeSlots.nth(hour)
-    )
+    const timeSlot = this.page.locator(`[data-hour="${hour}"]`).or(this.timeSlots.nth(hour))
     await timeSlot.click()
   }
 
@@ -153,9 +149,10 @@ export class CalendarPage extends BasePage {
    * Get all visible events
    */
   async getVisibleEvents() {
-    return this.page.locator('[data-testid="calendar-event"]').or(
-      this.page.locator('.calendar-event, .event-item')
-    ).all()
+    return this.page
+      .locator('[data-testid="calendar-event"]')
+      .or(this.page.locator('.calendar-event, .event-item'))
+      .all()
   }
 
   /**
@@ -166,7 +163,9 @@ export class CalendarPage extends BasePage {
     await this.page.waitForTimeout(500)
 
     // Try multiple strategies to find the event
-    const event = this.page.getByText(title, { exact: false }).first()
+    const event = this.page
+      .getByText(title, { exact: false })
+      .first()
       .or(this.page.locator(`[data-event-title="${title}"]`))
       .or(this.page.locator('[data-testid="calendar-event"]').filter({ hasText: title }))
 

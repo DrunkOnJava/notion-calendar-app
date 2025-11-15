@@ -96,9 +96,7 @@ export function preventPullToRefresh() {
 /**
  * Haptic feedback for touch devices
  */
-export function hapticFeedback(
-  type: 'light' | 'medium' | 'heavy' = 'medium'
-) {
+export function hapticFeedback(type: 'light' | 'medium' | 'heavy' = 'medium') {
   if ('vibrate' in navigator) {
     const patterns = {
       light: 10,
@@ -125,17 +123,9 @@ export function isLandscape(): boolean {
  */
 export function getSafeAreaInsets() {
   return {
-    top: getComputedStyle(document.documentElement).getPropertyValue(
-      '--safe-area-inset-top'
-    ),
-    right: getComputedStyle(document.documentElement).getPropertyValue(
-      '--safe-area-inset-right'
-    ),
-    bottom: getComputedStyle(document.documentElement).getPropertyValue(
-      '--safe-area-inset-bottom'
-    ),
-    left: getComputedStyle(document.documentElement).getPropertyValue(
-      '--safe-area-inset-left'
-    ),
+    top: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top'),
+    right: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-right'),
+    bottom: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom'),
+    left: getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-left'),
   }
 }

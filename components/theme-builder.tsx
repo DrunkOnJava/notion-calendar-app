@@ -13,13 +13,48 @@ interface ColorToken {
 }
 
 const COLOR_TOKENS: ColorToken[] = [
-  { name: 'Primary', variable: '--primary', defaultValue: 'oklch(0.205 0 0)', description: 'Primary brand color' },
-  { name: 'Info', variable: '--info', defaultValue: 'oklch(0.6 0.18 240)', description: 'Info/accent color' },
-  { name: 'Success', variable: '--success', defaultValue: 'oklch(0.6 0.18 145)', description: 'Success states' },
-  { name: 'Warning', variable: '--warning', defaultValue: 'oklch(0.75 0.16 85)', description: 'Warning states' },
-  { name: 'Destructive', variable: '--destructive', defaultValue: 'oklch(0.577 0.245 27.325)', description: 'Error/destructive actions' },
-  { name: 'Background', variable: '--background', defaultValue: 'oklch(1 0 0)', description: 'Main background' },
-  { name: 'Foreground', variable: '--foreground', defaultValue: 'oklch(0.145 0 0)', description: 'Main text color' },
+  {
+    name: 'Primary',
+    variable: '--primary',
+    defaultValue: 'oklch(0.205 0 0)',
+    description: 'Primary brand color',
+  },
+  {
+    name: 'Info',
+    variable: '--info',
+    defaultValue: 'oklch(0.6 0.18 240)',
+    description: 'Info/accent color',
+  },
+  {
+    name: 'Success',
+    variable: '--success',
+    defaultValue: 'oklch(0.6 0.18 145)',
+    description: 'Success states',
+  },
+  {
+    name: 'Warning',
+    variable: '--warning',
+    defaultValue: 'oklch(0.75 0.16 85)',
+    description: 'Warning states',
+  },
+  {
+    name: 'Destructive',
+    variable: '--destructive',
+    defaultValue: 'oklch(0.577 0.245 27.325)',
+    description: 'Error/destructive actions',
+  },
+  {
+    name: 'Background',
+    variable: '--background',
+    defaultValue: 'oklch(1 0 0)',
+    description: 'Main background',
+  },
+  {
+    name: 'Foreground',
+    variable: '--foreground',
+    defaultValue: 'oklch(0.145 0 0)',
+    description: 'Main text color',
+  },
 ]
 
 const PRESET_THEMES = {
@@ -173,32 +208,34 @@ export function ThemeBuilder() {
     <div className="space-y-6">
       {/* Preset Themes */}
       <div>
-        <h3 className="mb-3 text-sm font-medium flex items-center gap-2">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-medium">
           <Palette className="h-4 w-4" />
           Preset Themes
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {Object.entries(PRESET_THEMES).map(([key, preset]) => (
             <button
               key={key}
               onClick={() => applyPreset(key as keyof typeof PRESET_THEMES)}
               className={cn(
                 'rounded-lg border-2 p-3 text-left transition-all duration-200',
-                'hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info',
+                'focus-visible:ring-info hover:scale-105 focus-visible:ring-2 focus-visible:outline-none',
                 selectedPreset === key
                   ? 'border-info bg-info/10 shadow-sm'
-                  : 'border-[#2a2a2a] hover:border-info/50'
+                  : 'hover:border-info/50 border-[#2a2a2a]'
               )}
             >
-              <div className="font-medium text-sm">{preset.name}</div>
+              <div className="text-sm font-medium">{preset.name}</div>
               <div className="mt-2 flex gap-1">
-                {Object.values(preset.colors).slice(0, 5).map((color, i) => (
-                  <div
-                    key={i}
-                    className="h-4 w-4 rounded-full border border-[#2a2a2a]"
-                    style={{ background: color }}
-                  />
-                ))}
+                {Object.values(preset.colors)
+                  .slice(0, 5)
+                  .map((color, i) => (
+                    <div
+                      key={i}
+                      className="h-4 w-4 rounded-full border border-[#2a2a2a]"
+                      style={{ background: color }}
+                    />
+                  ))}
               </div>
             </button>
           ))}
@@ -213,7 +250,7 @@ export function ThemeBuilder() {
             <div key={token.variable} className="space-y-1">
               <label className="flex items-center justify-between text-sm">
                 <span>{token.name}</span>
-                <span className="text-xs text-muted-foreground">{token.description}</span>
+                <span className="text-muted-foreground text-xs">{token.description}</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -221,7 +258,7 @@ export function ThemeBuilder() {
                   value={customColors[token.variable] || token.defaultValue}
                   onChange={(e) => handleColorChange(token.variable, e.target.value)}
                   placeholder={token.defaultValue}
-                  className="flex-1 rounded border border-[#2a2a2a] bg-[#1c1c1c] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info"
+                  className="focus-visible:ring-info flex-1 rounded border border-[#2a2a2a] bg-[#1c1c1c] px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
                 />
                 <div
                   className="h-10 w-10 shrink-0 rounded border border-[#2a2a2a]"
@@ -236,10 +273,10 @@ export function ThemeBuilder() {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-wrap gap-2 pt-4 border-t border-[#2a2a2a]">
+      <div className="flex flex-wrap gap-2 border-t border-[#2a2a2a] pt-4">
         <button
           onClick={resetToDefault}
-          className="flex items-center gap-2 rounded-lg border border-[#2a2a2a] px-4 py-2 text-sm transition-all duration-150 hover:bg-[#2a2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info"
+          className="focus-visible:ring-info flex items-center gap-2 rounded-lg border border-[#2a2a2a] px-4 py-2 text-sm transition-all duration-150 hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:outline-none"
         >
           <RotateCcw className="h-4 w-4" />
           Reset to Default
@@ -247,41 +284,36 @@ export function ThemeBuilder() {
 
         <button
           onClick={exportTheme}
-          className="flex items-center gap-2 rounded-lg border border-[#2a2a2a] px-4 py-2 text-sm transition-all duration-150 hover:bg-[#2a2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info"
+          className="focus-visible:ring-info flex items-center gap-2 rounded-lg border border-[#2a2a2a] px-4 py-2 text-sm transition-all duration-150 hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:outline-none"
         >
           <Download className="h-4 w-4" />
           Export Theme
         </button>
 
-        <label className="flex items-center gap-2 rounded-lg border border-[#2a2a2a] px-4 py-2 text-sm transition-all duration-150 hover:bg-[#2a2a2a] cursor-pointer focus-within:ring-2 focus-within:ring-info">
+        <label className="focus-within:ring-info flex cursor-pointer items-center gap-2 rounded-lg border border-[#2a2a2a] px-4 py-2 text-sm transition-all duration-150 focus-within:ring-2 hover:bg-[#2a2a2a]">
           <Upload className="h-4 w-4" />
           Import Theme
-          <input
-            type="file"
-            accept=".json"
-            onChange={importTheme}
-            className="sr-only"
-          />
+          <input type="file" accept=".json" onChange={importTheme} className="sr-only" />
         </label>
       </div>
 
       {/* Live Preview */}
-      <div className="rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] p-4 space-y-3">
+      <div className="space-y-3 rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] p-4">
         <h4 className="text-sm font-medium">Live Preview</h4>
         <div className="flex flex-wrap gap-2">
-          <button className="rounded bg-primary px-3 py-1.5 text-sm text-primary-foreground transition-transform hover:scale-105">
+          <button className="bg-primary text-primary-foreground rounded px-3 py-1.5 text-sm transition-transform hover:scale-105">
             Primary
           </button>
-          <button className="rounded bg-info px-3 py-1.5 text-sm text-info-foreground transition-transform hover:scale-105">
+          <button className="bg-info text-info-foreground rounded px-3 py-1.5 text-sm transition-transform hover:scale-105">
             Info
           </button>
-          <button className="rounded bg-success px-3 py-1.5 text-sm text-success-foreground transition-transform hover:scale-105">
+          <button className="bg-success text-success-foreground rounded px-3 py-1.5 text-sm transition-transform hover:scale-105">
             Success
           </button>
-          <button className="rounded bg-warning px-3 py-1.5 text-sm text-warning-foreground transition-transform hover:scale-105">
+          <button className="bg-warning text-warning-foreground rounded px-3 py-1.5 text-sm transition-transform hover:scale-105">
             Warning
           </button>
-          <button className="rounded bg-destructive px-3 py-1.5 text-sm text-destructive-foreground transition-transform hover:scale-105">
+          <button className="bg-destructive text-destructive-foreground rounded px-3 py-1.5 text-sm transition-transform hover:scale-105">
             Destructive
           </button>
         </div>

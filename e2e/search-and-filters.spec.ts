@@ -54,10 +54,12 @@ test.describe('Search and Filters', () => {
 
     // Should show empty state or no results message
     const noResults = calendarPage.page.getByText(/no results|not found/i)
-    await expect(noResults).toBeVisible({ timeout: 2000 }).catch(() => {
-      // Alternative: check that no events are visible
-      return Promise.resolve()
-    })
+    await expect(noResults)
+      .toBeVisible({ timeout: 2000 })
+      .catch(() => {
+        // Alternative: check that no events are visible
+        return Promise.resolve()
+      })
   })
 
   test('should clear search and show all events', async () => {
@@ -95,7 +97,9 @@ test.describe('Search and Filters', () => {
     await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K')
 
     // Search should be open (or command palette)
-    const searchOrCommand = calendarPage.page.locator('input[placeholder*="Search"], input[placeholder*="Type a command"]')
+    const searchOrCommand = calendarPage.page.locator(
+      'input[placeholder*="Search"], input[placeholder*="Type a command"]'
+    )
     await expect(searchOrCommand.first()).toBeVisible()
   })
 

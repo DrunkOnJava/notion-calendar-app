@@ -72,9 +72,9 @@ export class SettingsPage extends BasePage {
     // Actions
     this.saveButton = page.getByRole('button', { name: /save/i })
     this.cancelButton = page.getByRole('button', { name: /cancel/i })
-    this.closeButton = page.getByRole('button', { name: /close/i }).or(
-      page.locator('[aria-label*="Close"]')
-    )
+    this.closeButton = page
+      .getByRole('button', { name: /close/i })
+      .or(page.locator('[aria-label*="Close"]'))
   }
 
   /**
@@ -111,9 +111,12 @@ export class SettingsPage extends BasePage {
   async changeTheme(theme: 'light' | 'dark' | 'system') {
     await this.openAppearanceSettings()
 
-    const option = theme === 'light' ? this.lightModeOption :
-                   theme === 'dark' ? this.darkModeOption :
-                   this.systemModeOption
+    const option =
+      theme === 'light'
+        ? this.lightModeOption
+        : theme === 'dark'
+          ? this.darkModeOption
+          : this.systemModeOption
 
     await this.themeSelect.click()
     await option.click()

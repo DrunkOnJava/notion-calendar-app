@@ -8,14 +8,11 @@ import { cn } from '@/lib/utils'
 /**
  * Base skeleton component with shimmer animation
  */
-export function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-muted/50 relative overflow-hidden',
+        'bg-muted/50 relative animate-pulse overflow-hidden rounded-md',
         'before:absolute before:inset-0',
         'before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent',
         'before:animate-[shimmer_2s_infinite]',
@@ -31,7 +28,7 @@ export function Skeleton({
  */
 export function EventCardSkeleton() {
   return (
-    <div className="rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] p-4 space-y-3">
+    <div className="space-y-3 rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] p-4">
       <div className="flex items-start justify-between">
         <Skeleton className="h-5 w-3/4" />
         <Skeleton className="h-4 w-4 rounded-full" />
@@ -117,7 +114,7 @@ export function SearchResultsSkeleton() {
     <div className="space-y-1 py-1">
       {[...Array(4)].map((_, i) => (
         <div key={i} className="flex items-start gap-3 px-4 py-2.5">
-          <Skeleton className="h-4 w-4 mt-0.5 rounded" />
+          <Skeleton className="mt-0.5 h-4 w-4 rounded" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />
@@ -143,7 +140,7 @@ export function ModalSkeleton() {
           </div>
         ))}
       </div>
-      <div className="flex gap-3 justify-end">
+      <div className="flex justify-end gap-3">
         <Skeleton className="h-10 w-24" />
         <Skeleton className="h-10 w-24" />
       </div>

@@ -32,7 +32,8 @@ export const testEvents = {
   },
   longDescription: {
     title: 'Event with Long Description',
-    description: 'This is a very long description that contains multiple sentences. It should test how the application handles longer text content. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description:
+      'This is a very long description that contains multiple sentences. It should test how the application handles longer text content. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   specialChars: {
     title: 'Special Event (Q4)',

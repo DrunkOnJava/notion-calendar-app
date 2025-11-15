@@ -33,7 +33,7 @@ import { NotificationCenter, type Notification } from '@/components/notification
 import { generateRecurringDates } from '@/components/recurrence-editor'
 import { SearchBar } from '@/components/search-bar'
 import type { Event, RecurrenceRule } from '@/types/event'
-import type { DatabaseItem } from '@/types/calendar'
+import type { DatabaseItem, Filter } from '@/types/calendar'
 import { SelectionContextMenu } from '@/components/selection-context-menu'
 import { SettingsModal, type Settings } from '@/components/settings-modal'
 import { ToastContainer } from '@/components/toast-notification'
@@ -64,6 +64,42 @@ import { useEffect, useState } from 'react'
 import { AvailabilityEditor } from '@/components/availability-editor'
 import { SchedulingLinkModal } from '@/components/scheduling-link-modal'
 import { SchedulingLinksList } from '@/components/scheduling-links-list'
+
+// Type definitions
+interface SchedulingLink {
+  id: string
+  name: string
+  duration: number
+  description: string
+  location: string
+  bufferBefore: number
+  bufferAfter: number
+  maxBookingsPerDay: number
+  requireApproval: boolean
+  link: string
+  color: string
+}
+
+interface TimeSlot {
+  start: string
+  end: string
+}
+
+interface DayAvailability {
+  enabled: boolean
+  slots: TimeSlot[]
+}
+
+interface WeekAvailability {
+  [key: string]: DayAvailability
+}
+
+interface CalendarShare {
+  id: string
+  email: string
+  permission: 'view' | 'edit' | 'manage'
+  calendarId?: string
+}
 
 // Personnel/Database types
 interface PersonnelProperties {
@@ -98,6 +134,16 @@ interface PersonnelItem {
 interface PersonnelDatabase {
   name: string
   items: PersonnelItem[]
+}
+
+// Type guard for PersonnelProperties
+const isPersonnelProperties = (props: unknown): props is PersonnelProperties => {
+  if (typeof props !== 'object' || props === null) return false
+  // All property values must be string, boolean, null, or undefined
+  return Object.values(props).every(
+    (val) =>
+      typeof val === 'string' || typeof val === 'boolean' || val === null || val === undefined
+  )
 }
 
 const initialEvents: Event[] = [
@@ -415,18 +461,18 @@ export default function CalendarPage() {
     'Michael Foster': false,
   })
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
-  const [selectedDatabase, setSelectedDatabase] = useState<string | null>('Personnel Roster')
-  const [showDatabaseDropdown, setShowDatabaseDropdown] = useState(false)
-  const [databaseFilter, setDatabaseFilter] = useState<'Personnel Roster' | 'All Properties'>(
+  const [_selectedDatabase, _setSelectedDatabase] = useState<string | null>('Personnel Roster')
+  const [_showDatabaseDropdown, _setShowDatabaseDropdown] = useState(false)
+  const [_databaseFilter, _setDatabaseFilter] = useState<'Personnel Roster' | 'All Properties'>(
     'Personnel Roster'
   )
-  const [draggedEvent, setDraggedEvent] = useState<any>(null)
-  const [filters, setFilters] = useState<any[]>([])
+  const [draggedEvent, setDraggedEvent] = useState<Event | null>(null)
+  const [filters, setFilters] = useState<Filter[]>([])
   const [sort, setSort] = useState<{ property: string; direction: 'asc' | 'desc' } | null>(null)
-  const [showRecurrenceEditor, setShowRecurrenceEditor] = useState(false)
+  const [_showRecurrenceEditor, _setShowRecurrenceEditor] = useState(false)
   const [showEventSeriesModal, setShowEventSeriesModal] = useState(false)
   const [eventSeriesAction, setEventSeriesAction] = useState<'edit' | 'delete'>('edit')
-  const [editingRecurrence, setEditingRecurrence] = useState<RecurrenceRule | null>(null)
+  const [_editingRecurrence, _setEditingRecurrence] = useState<RecurrenceRule | null>(null)
 
   const [currentDate, setCurrentDate] = useState(new Date(2025, 10, 13)) // November 13, 2025
   const [displayYear, setDisplayYear] = useState(2025)
@@ -462,7 +508,14 @@ export default function CalendarPage() {
     },
   ])
   const [showNotificationCenter, setShowNotificationCenter] = useState(false)
-  const [toasts, setToasts] = useState<any[]>([])
+  const [toasts, setToasts] = useState<
+    Array<{
+      id: string
+      type: 'success' | 'error' | 'warning' | 'info'
+      title: string
+      message: string
+    }>
+  >([])
 
   const [showSettings, setShowSettings] = useState(false)
   const [settings, setSettings] = useState<Settings>({
@@ -499,11 +552,11 @@ export default function CalendarPage() {
   // Add scheduling links state
   const [showSchedulingLinks, setShowSchedulingLinks] = useState(false)
   const [showSchedulingLinkModal, setShowSchedulingLinkModal] = useState(false)
-  const [editingSchedulingLink, setEditingSchedulingLink] = useState<any>(null)
-  const [schedulingLinks, setSchedulingLinks] = useState<any[]>([])
+  const [editingSchedulingLink, setEditingSchedulingLink] = useState<SchedulingLink | null>(null)
+  const [schedulingLinks, setSchedulingLinks] = useState<SchedulingLink[]>([])
 
   const [showAvailabilitySettings, setShowAvailabilitySettings] = useState(false)
-  const [weeklyAvailability, setWeeklyAvailability] = useState<any>({
+  const [weeklyAvailability, setWeeklyAvailability] = useState<WeekAvailability>({
     Monday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
     Tuesday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
     Wednesday: { enabled: true, slots: [{ start: '09:00', end: '17:00' }] },
@@ -514,7 +567,7 @@ export default function CalendarPage() {
   })
 
   const [contextMenu, setContextMenu] = useState<{
-    event: any
+    event: Event
     position: { x: number; y: number }
   } | null>(null)
 
@@ -523,7 +576,7 @@ export default function CalendarPage() {
   const [bulkAction, setBulkAction] = useState<'color' | 'calendar'>('color')
 
   const [hoverPreview, setHoverPreview] = useState<{
-    event: any
+    event: Event
     position: { x: number; y: number }
   } | null>(null)
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -570,15 +623,15 @@ export default function CalendarPage() {
   const [showImportExport, setShowImportExport] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [selectedCalendarForShare, setSelectedCalendarForShare] = useState<Calendar | null>(null)
-  const [calendarShares, setCalendarShares] = useState<any[]>([])
+  const [calendarShares, setCalendarShares] = useState<CalendarShare[]>([])
 
   const [calendarContextMenu, setCalendarContextMenu] = useState<{
-    calendar: any
+    calendar: Calendar
     position: { x: number; y: number }
   } | null>(null)
 
   const [databaseItemContextMenu, setDatabaseItemContextMenu] = useState<{
-    item: any
+    item: DatabaseItem
     position: { x: number; y: number }
   } | null>(null)
 
@@ -587,11 +640,11 @@ export default function CalendarPage() {
   } | null>(null)
 
   // State for handling event files
-  const [eventFiles, setEventFiles] = useState<{ [eventId: string]: File[] }>({})
+  const [_eventFiles, _setEventFiles] = useState<{ [eventId: string]: File[] }>({})
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
   const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true)
 
-  const handleCalendarRightClick = (e: React.MouseEvent, calendar: any) => {
+  const handleCalendarRightClick = (e: React.MouseEvent, calendar: Calendar) => {
     e.preventDefault()
     e.stopPropagation()
     setCalendarContextMenu({
@@ -600,7 +653,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleEditCalendar = (calendar: any) => {
+  const handleEditCalendar = (calendar: Calendar) => {
     // Open edit calendar modal
     addToast({
       type: 'info',
@@ -627,7 +680,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleExportCalendarInitial = (calendar: any) => {
+  const handleExportCalendarInitial = (calendar: Calendar) => {
     setShowImportExport(true)
     addToast({
       type: 'info',
@@ -636,7 +689,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleChangeCalendarColor = (calendar: any, color: string) => {
+  const handleChangeCalendarColor = (calendar: Calendar, color: string) => {
     setCalendars(calendars.map((c) => (c.id === calendar.id ? { ...c, color } : c)))
     addToast({
       type: 'success',
@@ -646,7 +699,7 @@ export default function CalendarPage() {
   }
 
   // Add scheduling link handlers
-  const handleSaveSchedulingLink = (link: any) => {
+  const handleSaveSchedulingLink = (link: SchedulingLink) => {
     if (editingSchedulingLink) {
       setSchedulingLinks(schedulingLinks.map((l) => (l.id === link.id ? link : l)))
       addToast({
@@ -666,7 +719,7 @@ export default function CalendarPage() {
     setShowSchedulingLinkModal(false) // Close modal after saving
   }
 
-  const handleEditSchedulingLink = (link: any) => {
+  const handleEditSchedulingLink = (link: SchedulingLink) => {
     setEditingSchedulingLink(link)
     setShowSchedulingLinkModal(true)
   }
@@ -681,7 +734,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleViewBookings = (link: any) => {
+  const handleViewBookings = (link: SchedulingLink) => {
     // Navigate to bookings view
     addToast({
       type: 'info',
@@ -690,7 +743,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleDatabaseItemRightClick = (e: React.MouseEvent, item: any) => {
+  const handleDatabaseItemRightClick = (e: React.MouseEvent, item: DatabaseItem) => {
     e.preventDefault()
     e.stopPropagation()
     setDatabaseItemContextMenu({
@@ -699,7 +752,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleEditDatabaseItem = (item: any) => {
+  const handleEditDatabaseItem = (item: DatabaseItem) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
     addToast({
       type: 'info',
@@ -717,11 +770,12 @@ export default function CalendarPage() {
     })
   }
 
-  const handleDuplicateDatabaseItem = (item: any) => {
-    const newItem = {
-      ...item,
+  const handleDuplicateDatabaseItem = (item: DatabaseItem) => {
+    const newItem: PersonnelItem = {
       id: Date.now().toString(),
       name: `${item.name} (Copy)`,
+      time: item.time || '',
+      properties: isPersonnelProperties(item.properties) ? item.properties : {},
     }
     setPersonnel([...personnel, newItem])
     addToast({
@@ -731,7 +785,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleOpenDatabaseItemInFull = (item: any) => {
+  const handleOpenDatabaseItemInFull = (item: DatabaseItem) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
     setLeftSidebarView('database') // Assuming 'person' is a valid view for the left sidebar, though 'database' is used here
   }
@@ -888,14 +942,18 @@ export default function CalendarPage() {
         const visibleEventIds = events.map((e) => e.id)
         setSelectedEvents(visibleEventIds)
       }
-      // Add right-click handler for selection
-      if (e.type === 'contextmenu' && selectedEvents.length > 0) {
-        handleSelectionRightClick(e as any)
+      // Handle context menu for selected events
+      // Context menu is only triggered by mouse right-click, not keyboard shortcuts
+      // KeyboardEvent 'contextmenu' is not a standard event, so we filter for MouseEvent only
+      // Double type cast needed: native MouseEvent → unknown → React.MouseEvent<HTMLElement>
+      if (e.type === 'contextmenu' && selectedEvents.length > 0 && e instanceof MouseEvent) {
+        handleSelectionRightClick(e as unknown as React.MouseEvent<HTMLElement>)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentView,
     currentDate,
@@ -1048,7 +1106,7 @@ export default function CalendarPage() {
     return events.filter((event) => event.date === dateStr)
   }
 
-  const formatDateForGrid = (date: Date) => {
+  const _formatDateForGrid = (date: Date) => {
     return date.toISOString().split('T')[0]
   }
 
@@ -1064,7 +1122,7 @@ export default function CalendarPage() {
     if (week.length > 0) weeks.push(week)
   }
 
-  const togglePersonnel = (name: string) => {
+  const _togglePersonnel = (name: string) => {
     setExpandedPersonnel((prev) => ({ ...prev, [name]: !prev[name] }))
   }
 
@@ -1178,20 +1236,32 @@ export default function CalendarPage() {
     checkReminders() // Check immediately
 
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events])
 
-  const handleCreateEvent = (eventData: any) => {
-    if (eventData.recurrence) {
-      // Generate recurring events
+  const handleCreateEvent = (
+    eventData: Partial<Event> & { recurrence?: RecurrenceRule; startTime?: string }
+  ) => {
+    if (eventData.recurrence && eventData.date) {
+      // Generate recurring events using spread to preserve all properties
       const dates = generateRecurringDates(eventData.date, eventData.recurrence)
-      const recurringEvents = dates.map((date, idx) => ({
+      const baseEvent = {
         ...eventData,
-        id: `${Date.now()}-${idx}`,
-        date,
-        seriesId: Date.now().toString(),
-        recurrence: eventData.recurrence,
+        title: eventData.title || '',
         time: eventData.startTime ? `${eventData.startTime}` : null,
-      }))
+        endTime: eventData.endTime || null,
+        isAllDay: eventData.isAllDay || false,
+        seriesId: Date.now().toString(),
+      }
+
+      const recurringEvents: Event[] = dates.map(
+        (date, idx) =>
+          ({
+            ...baseEvent,
+            id: `${Date.now()}-${idx}`,
+            date,
+          }) as Event
+      )
       setEvents([...events, ...recurringEvents])
       addToast({
         type: 'success',
@@ -1199,11 +1269,16 @@ export default function CalendarPage() {
         message: `Created ${recurringEvents.length} recurring events`,
       })
     } else {
-      const newEvent = {
+      // Use spread to preserve all properties and override specific ones
+      const newEvent: Event = {
         ...eventData,
         id: Date.now().toString(),
+        title: eventData.title || '',
+        date: eventData.date || '',
         time: eventData.startTime ? `${eventData.startTime}` : null,
-      }
+        endTime: eventData.endTime || null,
+        isAllDay: eventData.isAllDay || false,
+      } as Event
       setEvents([...events, newEvent])
       addToast({
         type: 'success',
@@ -1213,7 +1288,7 @@ export default function CalendarPage() {
     }
   }
 
-  const handleEditEvent = (eventData: any) => {
+  const handleEditEvent = (eventData: Event) => {
     if (eventData.seriesId && eventData.recurrence) {
       // This is a recurring event - show modal to ask which events to edit
       setSelectedEvent(eventData)
@@ -1229,7 +1304,7 @@ export default function CalendarPage() {
     }
   }
 
-  const handleEditEventChoice = (choice: 'this' | 'all' | 'future', eventData: any) => {
+  const handleEditEventChoice = (choice: 'this' | 'all' | 'future', eventData: Event) => {
     if (choice === 'this') {
       // Edit only this instance
       setEvents(
@@ -1309,7 +1384,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleDuplicateEvent = (event: any) => {
+  const handleDuplicateEvent = (event: Event) => {
     const newEvent = {
       ...event,
       id: Date.now().toString(),
@@ -1323,12 +1398,12 @@ export default function CalendarPage() {
     })
   }
 
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: Event) => {
     setSelectedEvent(event)
     setShowEventDetailModal(true)
   }
 
-  const handleEventRightClick = (e: React.MouseEvent, event: any) => {
+  const handleEventRightClick = (e: React.MouseEvent, event: Event) => {
     e.preventDefault()
     e.stopPropagation()
     setContextMenu({
@@ -1341,7 +1416,7 @@ export default function CalendarPage() {
     setContextMenu(null)
   }
 
-  const handleChangeEventColor = (event: any, color: string) => {
+  const handleChangeEventColor = (event: Event, color: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, color } : e)))
     addToast({
       type: 'success',
@@ -1350,7 +1425,7 @@ export default function CalendarPage() {
     })
   }
 
-  const handleMoveToCalendar = (event: any, calendar: string) => {
+  const handleMoveToCalendar = (event: Event, calendar: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar } : e)))
     addToast({
       type: 'success',
@@ -1371,7 +1446,7 @@ export default function CalendarPage() {
     setShowEventCreateModal(true)
   }
 
-  const handleEventResize = (event: any, newStartTime: string, newEndTime: string) => {
+  const handleEventResize = (event: Event, newStartTime: string, newEndTime: string) => {
     setEvents(
       events.map((e) =>
         e.id === event.id
@@ -1415,11 +1490,11 @@ export default function CalendarPage() {
     }
   }
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: Event) => {
     setDraggedEvent(event)
   }
 
-  const handleDragEnd = (event: any, newDate: string) => {
+  const handleDragEnd = (event: Event, newDate: string) => {
     if (draggedEvent && newDate !== draggedEvent.date) {
       const updatedEvent = { ...draggedEvent, date: newDate }
       setEvents(events.map((e) => (e.id === draggedEvent.id ? updatedEvent : e)))
@@ -1464,7 +1539,7 @@ export default function CalendarPage() {
     setDraggedEvent(null) // Ensure draggedEvent is cleared regardless of operation
   }
 
-  const handleEventClickWithSelection = (e: React.MouseEvent, event: any) => {
+  const handleEventClickWithSelection = (e: React.MouseEvent, event: Event) => {
     if (e.metaKey || e.ctrlKey) {
       // Cmd/Ctrl+Click to toggle selection
       e.stopPropagation()
@@ -1521,7 +1596,8 @@ export default function CalendarPage() {
 
     return filters.every((filter) => {
       const value = item.properties[filter.property]
-      const filterValue = filter.value.toLowerCase()
+      // Use nullish coalescing to handle null/undefined gracefully
+      const filterValue = (filter.value ?? '').toString().toLowerCase()
 
       if (filter.operator === 'is') {
         return String(value).toLowerCase() === filterValue
@@ -1551,7 +1627,7 @@ export default function CalendarPage() {
     personnelData[0].items.length > 0 ? Object.keys(personnelData[0].items[0].properties) : []
 
   // Event hover handlers
-  const handleEventMouseEnter = (e: React.MouseEvent, event: any) => {
+  const handleEventMouseEnter = (e: React.MouseEvent, event: Event) => {
     setHoverTimeout(
       setTimeout(() => {
         setHoverPreview({ event, position: { x: e.clientX, y: e.clientY } })
@@ -1609,7 +1685,7 @@ export default function CalendarPage() {
     // Parse ICS/CSV file and import events
     const reader = new FileReader()
     reader.onload = (e) => {
-      const content = e.target?.result as string
+      const _content = e.target?.result as string
       // TODO: Parse ICS format and add events
       addToast({
         type: 'success',
@@ -1706,8 +1782,8 @@ export default function CalendarPage() {
   const [personnel, setPersonnel] = useState(personnelData[0].items)
 
   // New handlers for files
-  const handleFilesAdded = (eventId: string, files: File[]) => {
-    setEventFiles((prev) => ({
+  const _handleFilesAdded = (eventId: string, files: File[]) => {
+    _setEventFiles((prev) => ({
       ...prev,
       [eventId]: [...(prev[eventId] || []), ...files],
     }))
@@ -1718,8 +1794,8 @@ export default function CalendarPage() {
     })
   }
 
-  const handleRemoveFile = (eventId: string, fileIndex: number) => {
-    setEventFiles((prev) => ({
+  const _handleRemoveFile = (eventId: string, fileIndex: number) => {
+    _setEventFiles((prev) => ({
       ...prev,
       [eventId]: (prev[eventId] || []).filter((_, i) => i !== fileIndex),
     }))
@@ -1739,7 +1815,7 @@ export default function CalendarPage() {
   }
 
   // New handler for dragging event to a calendar
-  const handleDragEventToCalendar = (event: any, calendarId: string) => {
+  const _handleDragEventToCalendar = (event: Event, calendarId: string) => {
     setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar: calendarId } : e)))
     const calendar = calendars.find((c) => c.id === calendarId)
     addToast({
@@ -1987,7 +2063,7 @@ export default function CalendarPage() {
                       </div>
 
                       {/* Level 3 - Scalable content area with transform-based responsive scaling */}
-                      {selectedDatabase && leftSidebarView === 'database' && (
+                      {_selectedDatabase && leftSidebarView === 'database' && (
                         <div className="flex flex-1 flex-col overflow-hidden">
                           {/* Scale wrapper - dynamically scales content to prevent overflow */}
                           <div
@@ -2551,7 +2627,19 @@ export default function CalendarPage() {
         }}
       />
 
-      <ToastContainer toasts={toasts} onClose={removeToast} />
+      {/* ToastContainer handles onClose at container level, no need to map it per toast */}
+      <ToastContainer
+        toasts={
+          toasts as Array<{
+            id: string
+            type: 'success' | 'error' | 'warning' | 'info'
+            title: string
+            message: string
+            onClose: (id: string) => void
+          }>
+        }
+        onClose={removeToast}
+      />
 
       {/* Database Modal */}
       {showDatabaseModal && (
@@ -2817,7 +2905,7 @@ export default function CalendarPage() {
           setShowSchedulingLinkModal(false)
           setEditingSchedulingLink(null)
         }}
-        link={editingSchedulingLink}
+        link={editingSchedulingLink ?? undefined}
         onSave={handleSaveSchedulingLink}
       />
 

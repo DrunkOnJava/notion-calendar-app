@@ -21,10 +21,7 @@ interface PrefetchOptions {
  * Smart prefetching hook
  * Preloads data before user needs it
  */
-export function usePrefetch<T>(
-  fetchFn: () => Promise<T>,
-  options: PrefetchOptions = {}
-) {
+export function usePrefetch<T>(fetchFn: () => Promise<T>, options: PrefetchOptions = {}) {
   const { delay = 300, onHoverOnly = true, cacheTime = 5 * 60 * 1000 } = options
 
   const cacheRef = useRef<{
@@ -41,9 +38,7 @@ export function usePrefetch<T>(
   const prefetch = useCallback(async () => {
     // Check if we have valid cached data
     const now = Date.now()
-    const isCacheValid =
-      cacheRef.current.data &&
-      now - cacheRef.current.timestamp < cacheTime
+    const isCacheValid = cacheRef.current.data && now - cacheRef.current.timestamp < cacheTime
 
     if (isCacheValid || isFetchingRef.current) return
 
@@ -78,9 +73,7 @@ export function usePrefetch<T>(
 
   const getCachedData = useCallback((): T | null => {
     const now = Date.now()
-    const isCacheValid =
-      cacheRef.current.data &&
-      now - cacheRef.current.timestamp < cacheTime
+    const isCacheValid = cacheRef.current.data && now - cacheRef.current.timestamp < cacheTime
 
     return isCacheValid ? cacheRef.current.data : null
   }, [cacheTime])
@@ -114,7 +107,7 @@ export function useLinkPrefetch(href: string) {
       // Prefetch the route
       if (typeof window !== 'undefined' && 'next' in window) {
         // Next.js prefetch
-        const router = await import('next/navigation').then(m => m.useRouter)
+        const router = await import('next/navigation').then((m) => m.useRouter)
         // router.prefetch(href)
       }
       return null

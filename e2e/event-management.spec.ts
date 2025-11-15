@@ -120,9 +120,7 @@ test.describe('Event Management', () => {
 
     // Verify the update
     await calendarPage.page.waitForTimeout(500)
-    const updated = await calendarPage.page
-      .getByText('Edited via Context Menu')
-      .isVisible()
+    const updated = await calendarPage.page.getByText('Edited via Context Menu').isVisible()
 
     expect(updated).toBe(true)
   })

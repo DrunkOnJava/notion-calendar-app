@@ -57,10 +57,7 @@ export function formatTimeForScreenReader(time: string): string {
 /**
  * Create ARIA label for calendar views
  */
-export function createViewLabel(
-  view: 'day' | 'week' | 'month' | 'agenda',
-  date: Date
-): string {
+export function createViewLabel(view: 'day' | 'week' | 'month' | 'agenda', date: Date): string {
   const dateStr = formatDateForScreenReader(date)
 
   switch (view) {

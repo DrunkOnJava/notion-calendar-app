@@ -138,7 +138,12 @@ export function EventCreateModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" data-testid="event-create-modal" role="dialog" aria-label="Create event">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        data-testid="event-create-modal"
+        role="dialog"
+        aria-label="Create event"
+      >
         <div className="flex max-h-[90vh] w-[600px] flex-col overflow-hidden rounded-lg bg-[#1c1c1c]">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#2a2a2a] p-4">

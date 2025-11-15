@@ -60,12 +60,12 @@ export class EventPage extends BasePage {
     this.closeButton = page.getByRole('button', { name: /close/i })
 
     // Event detail view
-    this.eventTitle = page.locator('[data-testid="event-title"]').or(
-      page.locator('.event-title, h2')
-    )
-    this.eventDescription = page.locator('[data-testid="event-description"]').or(
-      page.locator('.event-description')
-    )
+    this.eventTitle = page
+      .locator('[data-testid="event-title"]')
+      .or(page.locator('.event-title, h2'))
+    this.eventDescription = page
+      .locator('[data-testid="event-description"]')
+      .or(page.locator('.event-description'))
     this.eventTime = page.locator('[data-testid="event-time"]')
     this.eventLocation = page.locator('[data-testid="event-location"]')
 
@@ -158,11 +158,7 @@ export class EventPage extends BasePage {
   /**
    * Edit an existing event
    */
-  async editEvent(updates: {
-    title?: string
-    description?: string
-    location?: string
-  }) {
+  async editEvent(updates: { title?: string; description?: string; location?: string }) {
     if (updates.title) {
       await this.titleInput.clear()
       await this.titleInput.fill(updates.title)
@@ -214,11 +210,7 @@ export class EventPage extends BasePage {
   /**
    * Verify event details
    */
-  async verifyEventDetails(expected: {
-    title?: string
-    description?: string
-    location?: string
-  }) {
+  async verifyEventDetails(expected: { title?: string; description?: string; location?: string }) {
     if (expected.title) {
       await expect(this.eventTitle).toContainText(expected.title)
     }

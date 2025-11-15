@@ -10,9 +10,11 @@
 ## Test Results by Suite
 
 ### ✅ Calendar Navigation: 7/8 (88%)
+
 Strong performance in core navigation features.
 
 **Passing:**
+
 - Load calendar page successfully
 - Navigate to next/previous periods
 - Navigate back to today
@@ -22,18 +24,22 @@ Strong performance in core navigation features.
 - View persistence across reloads
 
 **Failing:**
+
 - Command palette keyboard shortcut (Cmd+K) - handler exists but Playwright doesn't trigger it
 
 ### ⚠️ Event Management: 4/12 (33%)
+
 Event creation works; interaction with created events fails.
 
 **Passing:**
+
 - Create new event ✅
 - Create all-day event ✅
 - Cancel event creation ✅
 - Handle overlapping events ✅
 
 **Failing:**
+
 - Create recurring event (RecurrenceEditor opens modal instead of dropdown)
 - Edit existing event (clickEvent() can't find events)
 - Delete event (clickEvent() can't find events)
@@ -44,17 +50,22 @@ Event creation works; interaction with created events fails.
 - Display event details on click (clickEvent() can't find events)
 
 ### ✅ Test Environment: 2/3 (67%)
+
 **Passing:**
+
 - Environment variables configured
 - Navigate to application
 
 **Failing:**
+
 - Access to test services (Docker services not used in tests)
 
 ### ⚠️ Search and Filters: 10/14 (71%) - IMPROVED
+
 **Recent Fix**: Search strict mode violations resolved by scoping selectors to search dropdown.
 
 **Passing:**
+
 - Search by title ✅ NEW
 - Search by description ✅ NEW
 - Show no results for non-matching search
@@ -67,13 +78,16 @@ Event creation works; interaction with created events fails.
 - Search across all calendar views
 
 **Failing:**
+
 - Filter events in real-time (no events created in this test)
 - Close search with Escape key (implementation issue)
 - Search case-insensitively (no events created)
 - Handle special characters in search (no events created)
 
 ### ⚠️ Settings Management: 2/15 (13%)
+
 **Passing:**
+
 - Open/close settings modal
 - Switch between settings tabs
 
@@ -83,9 +97,11 @@ All 13 other tests fail because the UI doesn't have actual form controls (theme 
 ## 🔑 Critical Fix Applied
 
 ### Problem
+
 Playwright's `.fill()` method sets input values but doesn't trigger React's synthetic onChange events for controlled components. This caused the date state to remain `null` even after filling the input, keeping the save button disabled.
 
 ### Solution
+
 ```typescript
 // e2e/pages/EventPage.ts (lines 94-97, 139-142)
 await this.startDateInput.fill(eventDate)
@@ -95,6 +111,7 @@ await this.startDateInput.dispatchEvent('blur')
 ```
 
 ### Impact
+
 - Enabled event creation functionality
 - Unlocked 2 additional passing tests
 - Potential to unlock 10+ more tests once event clicking is fixed
@@ -131,9 +148,11 @@ await this.startDateInput.dispatchEvent('blur')
 ## Remaining Issues & Recommendations
 
 ### Issue #1: Event Clicking Fails (8 tests blocked)
+
 **Problem**: After creating events, tests can't click them for edit/delete operations.
 
 **Current Implementation**:
+
 ```typescript
 // e2e/pages/CalendarPage.ts:164-176
 async clickEvent(title: string) {
@@ -149,15 +168,18 @@ async clickEvent(title: string) {
 ```
 
 **Recommendations**:
+
 1. Debug event rendering - check if events are actually visible in the DOM
 2. Try simpler selector: `page.locator('[data-testid="calendar-event"]').filter({ hasText: title }).first()`
 3. Add console.log/screenshot to see what's being rendered
 4. Consider if events need time to "settle" after creation (longer timeout?)
 
 ### Issue #2: Settings Form Controls Missing (13 tests blocked)
+
 **Problem**: Settings modal UI doesn't have actual interactive form controls.
 
 **What's Missing**:
+
 - Theme dropdown/selector (light/dark/system options)
 - Dark mode toggle switch
 - Default view selector (day/week/month/agenda)
@@ -170,9 +192,11 @@ async clickEvent(title: string) {
 **Recommendation**: This requires significant UI implementation work. Not a testing issue - the features don't exist yet.
 
 ### Issue #3: Missing Test IDs (3 tests blocked)
+
 **Quick Wins** - These can be added easily:
 
 **Time Slots** (1 test):
+
 ```tsx
 // Find the calendar grid time slot rendering code
 <div
@@ -183,6 +207,7 @@ async clickEvent(title: string) {
 ```
 
 **Context Menus** (2 tests):
+
 ```tsx
 // Find the event context menu rendering
 <div role="menu" data-testid="event-context-menu">
@@ -193,9 +218,11 @@ async clickEvent(title: string) {
 ```
 
 ### Issue #4: Command Palette Cmd+K (1 test)
+
 **Problem**: Keyboard shortcut handler exists in app/page.tsx:787-790 but Playwright doesn't trigger it.
 
 **Possible Causes**:
+
 - Event handler not attached when test runs
 - Playwright keyboard.press() timing issue
 - Need to focus specific element first?
@@ -204,35 +231,40 @@ async clickEvent(title: string) {
 
 ## Progress Timeline
 
-| Milestone | Tests Passing | Improvement |
-|-----------|---------------|-------------|
-| Initial state | 22/52 (42%) | Baseline |
-| After date fix | 23/52 (44%) | +1 test (+2%) |
-| After search fix | 25/52 (48%) | +2 tests (+4%) (estimated) |
+| Milestone        | Tests Passing | Improvement                |
+| ---------------- | ------------- | -------------------------- |
+| Initial state    | 22/52 (42%)   | Baseline                   |
+| After date fix   | 23/52 (44%)   | +1 test (+2%)              |
+| After search fix | 25/52 (48%)   | +2 tests (+4%) (estimated) |
 
 ## Next Steps
 
 ### Immediate (Quick Wins)
+
 1. ✅ Fix search strict mode - COMPLETED
 2. Add time slot test IDs (1 test unlock)
 3. Add context menu test IDs (2 tests unlock)
 4. Debug event clicking (8 tests unlock)
 
 ### Short Term
+
 5. Implement RecurrenceEditor interaction (1 test)
 6. Fix validation test logic (1 test)
 7. Add manual command palette trigger (1 test)
 
 ### Long Term
+
 8. Implement settings form controls (13 tests)
 9. Add event creation to search tests (4 tests)
 
 ### Potential: 38-42/52 (73-81%) achievable
+
 With the immediate and short-term fixes, the project could reach 38-42 passing tests without major feature implementation.
 
 ## Test Infrastructure Quality
 
 ### Strengths
+
 ✅ Playwright properly configured with multi-browser support
 ✅ Page Object Model pattern correctly implemented
 ✅ Docker Compose test environment setup
@@ -241,6 +273,7 @@ With the immediate and short-term fixes, the project could reach 38-42 passing t
 ✅ Parallel test execution working
 
 ### Areas for Improvement
+
 - Add visual regression testing
 - Implement test fixtures for common data
 - Add performance testing

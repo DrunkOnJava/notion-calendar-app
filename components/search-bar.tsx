@@ -28,7 +28,7 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
     const searchLower = debouncedSearch.toLowerCase()
     return events.filter(
       (event) =>
-        event.title.toLowerCase().includes(searchLower) ||
+        event.title?.toLowerCase().includes(searchLower) ||
         event.location?.toLowerCase().includes(searchLower) ||
         event.description?.toLowerCase().includes(searchLower)
     )
@@ -56,9 +56,11 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
 
       if (e.key === 'ArrowDown') {
         e.preventDefault()
+        if (filteredEvents.length === 0) return
         setSelectedIndex((prev) => (prev + 1) % filteredEvents.length)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
+        if (filteredEvents.length === 0) return
         setSelectedIndex((prev) => (prev - 1 + filteredEvents.length) % filteredEvents.length)
       } else if (e.key === 'Enter') {
         e.preventDefault()
@@ -91,7 +93,7 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
             setSelectedIndex(0)
           }}
           onFocus={() => setIsOpen(true)}
-          className="w-full max-w-[280px] md:w-[280px] bg-transparent py-1.5 pr-20 pl-9 text-sm outline-none placeholder:text-[#8a8a8a] transition-all duration-200 focus:placeholder:text-[#9a9a9a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
+          className="focus-visible:ring-info focus-visible:ring-offset-background w-full max-w-[280px] rounded bg-transparent py-1.5 pr-20 pl-9 text-sm transition-all duration-200 outline-none placeholder:text-[#8a8a8a] focus:placeholder:text-[#9a9a9a] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-[280px]"
           data-testid="search-input"
           aria-label="Search events"
           aria-autocomplete="list"
@@ -105,7 +107,7 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
               setSearch('')
               setIsOpen(false)
             }}
-            className="absolute top-1/2 right-14 -translate-y-1/2 rounded p-1 transition-all duration-150 hover:bg-[#3a3a3a] hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info animate-in fade-in zoom-in-95 duration-200"
+            className="focus-visible:ring-info animate-in fade-in zoom-in-95 absolute top-1/2 right-14 -translate-y-1/2 rounded p-1 transition-all duration-150 duration-200 hover:scale-110 hover:bg-[#3a3a3a] focus-visible:ring-2 focus-visible:outline-none"
             aria-label="Clear search"
           >
             <X className="h-3 w-3 text-[#6b6b6b]" />
@@ -119,14 +121,19 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
       {isOpen && search && (
         <div
           ref={dropdownRef}
-          className="absolute top-full right-0 left-0 z-50 mt-2 max-h-[400px] overflow-auto rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
+          className="animate-in fade-in slide-in-from-top-2 absolute top-full right-0 left-0 z-50 mt-2 max-h-[400px] overflow-auto rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-lg duration-200"
           data-testid="search-results"
           id="search-results-list"
           role="listbox"
           aria-label="Search results"
         >
           {filteredEvents.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-[#6b6b6b]" data-testid="search-no-results">No events found</div>
+            <div
+              className="px-4 py-8 text-center text-sm text-[#6b6b6b]"
+              data-testid="search-no-results"
+            >
+              No events found
+            </div>
           ) : (
             <div className="py-1">
               {filteredEvents.map((event, idx) => (
@@ -139,10 +146,10 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
                   }}
                   className={cn(
                     'flex w-full items-start gap-3 px-4 py-2.5 text-left transition-all duration-150',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-inset',
+                    'focus-visible:ring-info focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                     idx === selectedIndex
-                      ? 'bg-info text-info-foreground shadow-sm scale-[1.01]'
-                      : 'text-[#d0d0d0] hover:bg-[#2a2a2a] hover:translate-x-1'
+                      ? 'bg-info text-info-foreground scale-[1.01] shadow-sm'
+                      : 'text-[#d0d0d0] hover:translate-x-1 hover:bg-[#2a2a2a]'
                   )}
                   data-testid="search-result-item"
                   data-event-id={event.id}

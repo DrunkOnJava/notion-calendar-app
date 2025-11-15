@@ -124,10 +124,7 @@ export function useOptimisticCrud<T extends { id: string }>(
   }
 
   // Update
-  const optimisticUpdate = async (
-    updatedItem: T,
-    mutate: (item: T) => Promise<T>
-  ) => {
+  const optimisticUpdate = async (updatedItem: T, mutate: (item: T) => Promise<T>) => {
     const previousItems = items
     setItems(items.map((item) => (item.id === updatedItem.id ? updatedItem : item)))
 
