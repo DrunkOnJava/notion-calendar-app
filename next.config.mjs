@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // Image optimization disabled for static export compatibility
   images: {
     unoptimized: true,
   },
