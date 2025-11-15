@@ -135,6 +135,15 @@ interface PersonnelDatabase {
   items: PersonnelItem[]
 }
 
+// Type guard for PersonnelProperties
+const isPersonnelProperties = (props: unknown): props is PersonnelProperties => {
+  if (typeof props !== 'object' || props === null) return false
+  // All property values must be string, boolean, null, or undefined
+  return Object.values(props).every(
+    (val) => typeof val === 'string' || typeof val === 'boolean' || val === null || val === undefined
+  )
+}
+
 const initialEvents: Event[] = [
   { id: '1', date: '2025-10-31', title: 'Halloween', type: 'holiday' },
   { id: '2', date: '2025-11-02', title: 'Daylight Saving Time ends', type: 'info' },
@@ -757,7 +766,7 @@ export default function CalendarPage() {
       id: Date.now().toString(),
       name: `${item.name} (Copy)`,
       time: item.time || '',
-      properties: (item.properties as PersonnelProperties) || {},
+      properties: isPersonnelProperties(item.properties) ? item.properties : {},
     }
     setPersonnel([...personnel, newItem])
     addToast({
@@ -924,8 +933,10 @@ export default function CalendarPage() {
         const visibleEventIds = events.map((e) => e.id)
         setSelectedEvents(visibleEventIds)
       }
-      // Add right-click handler for selection
-      // Note: Context menu from keyboard not supported - requires mouse event
+      // Handle context menu for selected events
+      // Context menu is only triggered by mouse right-click, not keyboard shortcuts
+      // KeyboardEvent 'contextmenu' is not a standard event, so we filter for MouseEvent only
+      // Double type cast needed: native MouseEvent → unknown → React.MouseEvent<HTMLElement>
       if (e.type === 'contextmenu' && selectedEvents.length > 0 && e instanceof MouseEvent) {
         handleSelectionRightClick(e as unknown as React.MouseEvent<HTMLElement>)
       }
@@ -1221,31 +1232,22 @@ export default function CalendarPage() {
 
   const handleCreateEvent = (eventData: Partial<Event> & { recurrence?: RecurrenceRule; startTime?: string }) => {
     if (eventData.recurrence && eventData.date) {
-      // Generate recurring events
+      // Generate recurring events using spread to preserve all properties
       const dates = generateRecurringDates(eventData.date, eventData.recurrence)
-      const recurringEvents: Event[] = dates.map((date, idx) => ({
-        id: `${Date.now()}-${idx}`,
+      const baseEvent = {
+        ...eventData,
         title: eventData.title || '',
-        date,
         time: eventData.startTime ? `${eventData.startTime}` : null,
-        startTime: eventData.startTime,
         endTime: eventData.endTime || null,
         isAllDay: eventData.isAllDay || false,
-        timezone: eventData.timezone,
-        calendar: eventData.calendar,
-        color: eventData.color,
-        location: eventData.location,
-        description: eventData.description,
-        attendees: eventData.attendees,
-        reminders: eventData.reminders,
-        attachments: eventData.attachments,
-        tags: eventData.tags,
-        status: eventData.status,
-        visibility: eventData.visibility,
         seriesId: Date.now().toString(),
-        recurrence: eventData.recurrence,
-        createdAt: eventData.createdAt,
-      }))
+      }
+
+      const recurringEvents: Event[] = dates.map((date, idx) => ({
+        ...baseEvent,
+        id: `${Date.now()}-${idx}`,
+        date,
+      } as Event))
       setEvents([...events, ...recurringEvents])
       addToast({
         type: 'success',
@@ -1253,29 +1255,16 @@ export default function CalendarPage() {
         message: `Created ${recurringEvents.length} recurring events`,
       })
     } else {
+      // Use spread to preserve all properties and override specific ones
       const newEvent: Event = {
+        ...eventData,
         id: Date.now().toString(),
         title: eventData.title || '',
         date: eventData.date || '',
         time: eventData.startTime ? `${eventData.startTime}` : null,
-        startTime: eventData.startTime,
         endTime: eventData.endTime || null,
         isAllDay: eventData.isAllDay || false,
-        timezone: eventData.timezone,
-        calendar: eventData.calendar,
-        color: eventData.color,
-        location: eventData.location,
-        description: eventData.description,
-        attendees: eventData.attendees,
-        reminders: eventData.reminders,
-        attachments: eventData.attachments,
-        tags: eventData.tags,
-        status: eventData.status,
-        visibility: eventData.visibility,
-        seriesId: eventData.seriesId,
-        recurrence: eventData.recurrence,
-        createdAt: eventData.createdAt,
-      }
+      } as Event
       setEvents([...events, newEvent])
       addToast({
         type: 'success',
@@ -1593,7 +1582,8 @@ export default function CalendarPage() {
 
     return filters.every((filter) => {
       const value = item.properties[filter.property]
-      const filterValue = String(filter.value).toLowerCase()
+      // Use nullish coalescing to handle null/undefined gracefully
+      const filterValue = (filter.value ?? '').toString().toLowerCase()
 
       if (filter.operator === 'is') {
         return String(value).toLowerCase() === filterValue
@@ -2598,7 +2588,8 @@ export default function CalendarPage() {
         }}
       />
 
-      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} onClose={removeToast} />
+      {/* ToastContainer handles onClose at container level, no need to map it per toast */}
+      <ToastContainer toasts={toasts as Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string; onClose: (id: string) => void }>} onClose={removeToast} />
 
       {/* Database Modal */}
       {showDatabaseModal && (
