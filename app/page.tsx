@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import type { Event } from "@/types/event"
 
 import { AgendaView } from "@/components/agenda-view"
 import { BulkActionModal } from "@/components/bulk-action-modal"
@@ -58,7 +59,7 @@ import { AvailabilityEditor } from "@/components/availability-editor"
 import { SchedulingLinkModal } from "@/components/scheduling-link-modal"
 import { SchedulingLinksList } from "@/components/scheduling-links-list"
 
-const initialEvents = [
+const initialEvents: Event[] = [
   { id: "1", date: "2025-10-31", title: "Halloween", type: "holiday" },
   { id: "2", date: "2025-11-02", title: "Daylight Saving Time ends", type: "info" },
   { id: "3", date: "2025-11-03", title: "Election Day", type: "info" },
@@ -1414,7 +1415,7 @@ export default function CalendarPage() {
     if (filters.length === 0) return true
 
     return filters.every((filter) => {
-      const value = item.properties[filter.property]
+      const value = (item.properties as Record<string, any>)[filter.property]
       const filterValue = filter.value.toLowerCase()
 
       if (filter.operator === "is") {
@@ -1430,8 +1431,8 @@ export default function CalendarPage() {
 
   const sortedPersonnel = sort
     ? [...filteredPersonnel].sort((a, b) => {
-        const aValue = a.properties[sort.property]
-        const bValue = b.properties[sort.property]
+        const aValue = (a.properties as Record<string, any>)[sort.property]
+        const bValue = (b.properties as Record<string, any>)[sort.property]
 
         if (sort.direction === "asc") {
           return String(aValue).localeCompare(String(bValue))
