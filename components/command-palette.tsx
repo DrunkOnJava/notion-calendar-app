@@ -76,11 +76,15 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-[20vh]"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-[20vh] animate-in fade-in duration-200 backdrop-blur-sm"
       onClick={onClose}
+      data-testid="command-palette"
+      role="dialog"
+      aria-label="Command palette"
+      aria-modal="true"
     >
       <div
-        className="w-[600px] overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl"
+        className="w-full max-w-[95vw] md:w-[600px] overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-2xl animate-in zoom-in-95 slide-in-from-top-4 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input */}
@@ -91,17 +95,33 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
             placeholder="Type a command or search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-[#6b6b6b]"
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-[#6b6b6b] transition-colors focus:placeholder:text-[#8a8a8a]"
             autoFocus
+            data-testid="command-palette-input"
+            aria-label="Command search"
+            aria-autocomplete="list"
+            aria-controls="command-list"
+            role="combobox"
+            aria-expanded="true"
           />
           <kbd className="rounded bg-[#2a2a2a] px-2 py-1 text-xs text-[#9a9a9a]">ESC</kbd>
         </div>
 
         {/* Commands List */}
-        <div className="max-h-[400px] overflow-auto">
+        <div
+          className="max-h-[400px] overflow-auto"
+          id="command-list"
+          role="listbox"
+          aria-label="Available commands"
+        >
           {Object.entries(groupedCommands).map(([category, cmds]) => (
-            <div key={category}>
-              <div className="px-4 py-2 text-xs font-medium text-[#6b6b6b]">{category}</div>
+            <div key={category} role="group" aria-labelledby={`category-${category}`}>
+              <div
+                id={`category-${category}`}
+                className="px-4 py-2 text-xs font-medium text-[#6b6b6b] animate-in fade-in slide-in-from-left-2 duration-200"
+              >
+                {category}
+              </div>
               {cmds.map((cmd, idx) => {
                 const globalIdx = filteredCommands.findIndex((c) => c.id === cmd.id)
                 const Icon = cmd.icon
@@ -113,11 +133,14 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
                       onClose()
                     }}
                     className={cn(
-                      'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm',
+                      'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-all duration-150',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 focus-visible:ring-offset-[#1c1c1c]',
                       globalIdx === selectedIndex
-                        ? 'bg-info text-info-foreground'
-                        : 'text-[#d0d0d0] hover:bg-[#2a2a2a]'
+                        ? 'bg-info text-info-foreground scale-[1.02] shadow-sm'
+                        : 'text-[#d0d0d0] hover:bg-[#2a2a2a] hover:scale-[1.01]'
                     )}
+                    role="option"
+                    aria-selected={globalIdx === selectedIndex}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{cmd.label}</span>
