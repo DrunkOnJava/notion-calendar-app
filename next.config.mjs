@@ -4,6 +4,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Explicitly set the turbopack root to silence warnings
+  turbopack: {
+    root: process.cwd(),
+  },
 }
 
 export default nextConfig
