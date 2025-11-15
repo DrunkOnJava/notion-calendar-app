@@ -44,9 +44,11 @@ export function CommandPalette({ isOpen, onClose, onCommand }: CommandPalettePro
 
       if (e.key === 'ArrowDown') {
         e.preventDefault()
+        if (filteredCommands.length === 0) return
         setSelectedIndex((prev) => (prev + 1) % filteredCommands.length)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
+        if (filteredCommands.length === 0) return
         setSelectedIndex((prev) => (prev - 1 + filteredCommands.length) % filteredCommands.length)
       } else if (e.key === 'Enter') {
         e.preventDefault()

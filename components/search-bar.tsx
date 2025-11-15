@@ -19,7 +19,7 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
 
   const filteredEvents = events.filter(
     (event) =>
-      event.title.toLowerCase().includes(search.toLowerCase()) ||
+      event.title?.toLowerCase().includes(search.toLowerCase()) ||
       event.location?.toLowerCase().includes(search.toLowerCase()) ||
       event.description?.toLowerCase().includes(search.toLowerCase())
   )
@@ -46,9 +46,11 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
 
       if (e.key === 'ArrowDown') {
         e.preventDefault()
+        if (filteredEvents.length === 0) return
         setSelectedIndex((prev) => (prev + 1) % filteredEvents.length)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
+        if (filteredEvents.length === 0) return
         setSelectedIndex((prev) => (prev - 1 + filteredEvents.length) % filteredEvents.length)
       } else if (e.key === 'Enter') {
         e.preventDefault()
