@@ -11,11 +11,9 @@ const nextConfig = {
     fullUrl: true,
   },
 
-  // Turbopack configuration with verbose logging
+  // Turbopack configuration
   turbopack: {
     root: process.cwd(),
-    logLevel: 'info',
-    logDetail: true,
   },
 
   // TypeScript error handling
@@ -24,13 +22,7 @@ const nextConfig = {
     tsconfigPath: './tsconfig.json',
   },
 
-  // ESLint configuration
-  eslint: {
-    // Show all linting errors during build
-    ignoreDuringBuilds: false,
-  },
-
-  // Webpack configuration for production builds
+  // Webpack configuration for production builds with verbose stats
   webpack: (config, { dev, isServer }) => {
     // Enable detailed build stats in development
     if (dev) {
@@ -39,11 +31,8 @@ const nextConfig = {
     return config
   },
 
-  // Enable experimental features for better debugging
-  experimental: {
-    // Show more detailed error messages
-    typedRoutes: true,
-  },
+  // Enable typed routes for better error messages
+  typedRoutes: true,
 }
 
 export default nextConfig
