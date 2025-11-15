@@ -1,0 +1,4 @@
+# pnpm configuration
+
+# Enable script execution for approved packages (reviewed for security)
+enable-pre-post-scripts=true
