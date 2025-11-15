@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' next build",
+    "dev": "NODE_OPTIONS='--max-old-space-size=8192' next dev",
     "lint": "eslint .",
     "start": "next start",
     "type-check": "tsc --noEmit",

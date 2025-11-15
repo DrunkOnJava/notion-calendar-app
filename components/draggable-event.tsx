@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 interface DraggableEventProps {
   event: any
@@ -12,6 +12,7 @@ interface DraggableEventProps {
   onDragEnd: (event: any, newDate: string) => void
   onDuplicate?: (event: any) => void
   className?: string
+  style?: React.CSSProperties
   children: React.ReactNode
 }
 
@@ -22,6 +23,7 @@ export function DraggableEvent({
   onDragEnd,
   onDuplicate,
   className,
+  style,
   children,
 }: DraggableEventProps) {
   const [isDragging, setIsDragging] = useState(false)
@@ -51,6 +53,7 @@ export function DraggableEvent({
         onClick(event)
       }}
       className={cn("cursor-move", isDragging && "opacity-50", isDuplicating && "cursor-copy", className)}
+      style={style}
     >
       {children}
     </div>
