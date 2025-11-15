@@ -1,8 +1,23 @@
-node_modules
-.next
-out
-dist
-build
-*.log
-.DS_Store
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Package manager files
 pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Environment files
+.env*
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
