@@ -462,3 +462,48 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* High contrast mode for better accessibility */
+.high-contrast {
+  --background: oklch(0 0 0); /* Pure black */
+  --foreground: oklch(1 0 0); /* Pure white */
+  --border: oklch(1 0 0); /* White borders */
+  --input: oklch(0.15 0 0);
+  --muted: oklch(0.2 0 0);
+  --muted-foreground: oklch(0.9 0 0);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.15 0 0);
+  --secondary-foreground: oklch(1 0 0);
+  --accent: oklch(1 0 0);
+  --accent-foreground: oklch(0 0 0);
+  --destructive: oklch(0.7 0.3 30); /* Brighter red */
+  --destructive-foreground: oklch(0 0 0);
+  --info: oklch(0.8 0.25 240); /* Brighter blue */
+  --info-foreground: oklch(0 0 0);
+  --success: oklch(0.8 0.25 145); /* Brighter green */
+  --success-foreground: oklch(0 0 0);
+  --warning: oklch(0.9 0.25 85); /* Brighter yellow */
+  --warning-foreground: oklch(0 0 0);
+}
+
+/* Force higher contrast on all elements */
+.high-contrast * {
+  border-width: 2px;
+}
+
+/* Enhanced focus indicators in high contrast mode */
+.high-contrast *:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
