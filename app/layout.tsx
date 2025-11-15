@@ -7,9 +7,11 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Notion Calendar - Modern Calendar & Event Management',
+  description: 'Feature-rich calendar application with multiple views, drag-and-drop events, recurring events, database views, scheduling links, and smart time finding',
+  keywords: ['calendar', 'scheduling', 'events', 'notion', 'productivity', 'time management'],
+  authors: [{ name: 'Your Name' }],
+  creator: 'Your Name',
   icons: {
     icon: [
       {
