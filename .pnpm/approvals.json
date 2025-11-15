@@ -1,0 +1,5 @@
+{
+  "cpu-features": "6.0.5",
+  "protobufjs": "7.4.0",
+  "ssh2": "1.17.0"
+}

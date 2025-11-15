@@ -1,0 +1,19 @@
+#!/bin/sh
+
+echo "🔍 Running pre-commit checks..."
+
+# Type checking (full project)
+echo "📝 Type checking..."
+pnpm type-check || {
+  echo "❌ Type check failed. Fix errors before committing."
+  exit 1
+}
+
+# Linting and formatting (staged files only)
+echo "🧹 Linting and formatting staged files..."
+pnpm lint-staged || {
+  echo "❌ Lint-staged failed. Fix errors before committing."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"
