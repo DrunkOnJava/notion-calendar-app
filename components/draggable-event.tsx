@@ -60,6 +60,9 @@ export function DraggableEvent({
         className
       )}
       style={style}
+      data-testid="calendar-event"
+      data-event-id={event.id}
+      data-event-title={event.title}
     >
       {children}
     </div>

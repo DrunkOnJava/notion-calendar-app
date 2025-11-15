@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  # PostgreSQL for database testing
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: notion-calendar-postgres-test
+    environment:
+      POSTGRES_DB: notion_calendar_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass_123
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8'
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+      - ./test/fixtures/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test_user -d notion_calendar_test']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # Redis for caching/session testing
+  redis-test:
+    image: redis:7-alpine
+    container_name: notion-calendar-redis-test
+    ports:
+      - '6380:6379'
+    command: redis-server --appendonly yes --requirepass test_redis_pass
+    volumes:
+      - redis-test-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # LocalStack for AWS service mocking (S3, SQS, etc.)
+  localstack:
+    image: localstack/localstack:latest
+    container_name: notion-calendar-localstack
+    environment:
+      SERVICES: s3,sqs,dynamodb,secretsmanager
+      DEBUG: 1
+      DATA_DIR: /tmp/localstack/data
+      PERSISTENCE: 1
+      DOCKER_HOST: unix:///var/run/docker.sock
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    ports:
+      - '4566:4566'
+      - '4510-4559:4510-4559'
+    volumes:
+      - localstack-data:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./test/fixtures/localstack:/etc/localstack/init/ready.d:ro
+    healthcheck:
+      test: ['CMD', 'awslocal', 's3', 'ls']
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - test-network
+
+  # Mailhog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: notion-calendar-mailhog
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # Web UI
+    environment:
+      MH_STORAGE: maildir
+      MH_MAILDIR_PATH: /tmp/mailhog
+    volumes:
+      - mailhog-data:/tmp/mailhog
+    networks:
+      - test-network
+
+  # MinIO for S3-compatible storage testing
+  minio:
+    image: minio/minio:latest
+    container_name: notion-calendar-minio
+    environment:
+      MINIO_ROOT_USER: test_minio_user
+      MINIO_ROOT_PASSWORD: test_minio_pass_123
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ':9001'
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # MongoDB for NoSQL testing (if needed)
+  mongodb-test:
+    image: mongo:7-jammy
+    container_name: notion-calendar-mongodb-test
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: test_user
+      MONGO_INITDB_ROOT_PASSWORD: test_pass_123
+      MONGO_INITDB_DATABASE: notion_calendar_test
+    ports:
+      - '27018:27017'
+    volumes:
+      - mongodb-test-data:/data/db
+      - ./test/fixtures/mongodb-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+    name: notion-calendar-test-network
+
+volumes:
+  postgres-test-data:
+    name: notion-calendar-postgres-test-data
+  redis-test-data:
+    name: notion-calendar-redis-test-data
+  localstack-data:
+    name: notion-calendar-localstack-data
+  mailhog-data:
+    name: notion-calendar-mailhog-data
+  minio-data:
+    name: notion-calendar-minio-data
+  mongodb-test-data:
+    name: notion-calendar-mongodb-test-data

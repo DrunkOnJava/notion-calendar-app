@@ -38,17 +38,30 @@ export function ViewSwitcher({ currentView, currentDate, onViewChange }: ViewSwi
     currentView === 'month' ? format(currentDate, 'MMMM yyyy') : (activeView?.label ?? currentView)
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef} data-testid="view-switcher">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded px-3 py-1.5 text-sm hover:bg-[#2a2a2a]"
+        className="focus-visible:ring-info focus-visible:ring-offset-background flex items-center gap-2 rounded px-3 py-1.5 text-sm transition-all duration-200 hover:scale-[1.02] hover:bg-[#2a2a2a] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        data-testid="view-switcher-button"
+        aria-label={`Current view: ${buttonLabel}`}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
       >
         <span className="capitalize">{buttonLabel}</span>
-        <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
+        <ChevronDown
+          className={cn(
+            'h-4 w-4 transition-transform duration-300 ease-out',
+            isOpen && 'rotate-180'
+          )}
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-1 min-w-[140px] rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] py-1 shadow-lg">
+        <div
+          className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 min-w-[140px] rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] py-1 shadow-lg duration-200"
+          role="menu"
+          aria-label="View options"
+        >
           {views.map((view) => {
             const Icon = view.icon
             return (
@@ -59,11 +72,16 @@ export function ViewSwitcher({ currentView, currentDate, onViewChange }: ViewSwi
                   setIsOpen(false)
                 }}
                 className={cn(
-                  'flex w-full items-center gap-2 px-3 py-2 text-left text-sm',
+                  'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-all duration-150',
+                  'focus-visible:ring-info focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                   currentView === view.id
-                    ? 'bg-info text-info-foreground'
-                    : 'text-[#d0d0d0] hover:bg-[#2a2a2a]'
+                    ? 'bg-info text-info-foreground shadow-sm'
+                    : 'text-[#d0d0d0] hover:translate-x-1 hover:bg-[#2a2a2a]'
                 )}
+                data-testid={`view-${view.id}`}
+                aria-pressed={currentView === view.id}
+                role="menuitemradio"
+                aria-checked={currentView === view.id}
               >
                 <Icon className="h-4 w-4" />
                 <span>{view.label}</span>

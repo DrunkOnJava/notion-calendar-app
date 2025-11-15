@@ -9,6 +9,11 @@
 # Testing
 /coverage
 .nyc_output/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+*.webm
+*.mp4
 
 # Next.js
 /.next/
@@ -77,3 +82,8 @@ tmp/
 !.claude/CLAUDE.md
 !.claude/settings.json
 !.claude/commands/
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+screenshots/

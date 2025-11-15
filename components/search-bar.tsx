@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Search, X, Calendar, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Event } from '@/types/calendar'
+import { useDebounce } from '@/hooks/use-debounce'
 
 interface SearchBarProps {
   events: Event[]
@@ -17,12 +18,21 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const filteredEvents = events.filter(
-    (event) =>
-      event.title?.toLowerCase().includes(search.toLowerCase()) ||
-      event.location?.toLowerCase().includes(search.toLowerCase()) ||
-      event.description?.toLowerCase().includes(search.toLowerCase())
-  )
+  // Debounce search to reduce filtering computations
+  const debouncedSearch = useDebounce(search, 200)
+
+  // Memoize filtered results for performance
+  const filteredEvents = useMemo(() => {
+    if (!debouncedSearch) return []
+
+    const searchLower = debouncedSearch.toLowerCase()
+    return events.filter(
+      (event) =>
+        event.title?.toLowerCase().includes(searchLower) ||
+        event.location?.toLowerCase().includes(searchLower) ||
+        event.description?.toLowerCase().includes(searchLower)
+    )
+  }, [events, debouncedSearch])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -69,7 +79,7 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
   }, [isOpen, filteredEvents, selectedIndex, onEventSelect])
 
   return (
-    <div className="relative">
+    <div className="relative" data-testid="search-bar">
       <div className="relative">
         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#6b6b6b]" />
         <input
@@ -83,7 +93,13 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
             setSelectedIndex(0)
           }}
           onFocus={() => setIsOpen(true)}
-          className="w-[280px] bg-transparent py-1.5 pr-20 pl-9 text-sm outline-none placeholder:text-[#8a8a8a]"
+          className="focus-visible:ring-info focus-visible:ring-offset-background w-full max-w-[280px] rounded bg-transparent py-1.5 pr-20 pl-9 text-sm transition-all duration-200 outline-none placeholder:text-[#8a8a8a] focus:placeholder:text-[#9a9a9a] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-[280px]"
+          data-testid="search-input"
+          aria-label="Search events"
+          aria-autocomplete="list"
+          aria-controls="search-results-list"
+          role="combobox"
+          aria-expanded={isOpen && search.length > 0}
         />
         {search && (
           <button
@@ -91,7 +107,8 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
               setSearch('')
               setIsOpen(false)
             }}
-            className="absolute top-1/2 right-14 -translate-y-1/2 rounded p-1 hover:bg-[#3a3a3a]"
+            className="focus-visible:ring-info animate-in fade-in zoom-in-95 absolute top-1/2 right-14 -translate-y-1/2 rounded p-1 transition-all duration-150 duration-200 hover:scale-110 hover:bg-[#3a3a3a] focus-visible:ring-2 focus-visible:outline-none"
+            aria-label="Clear search"
           >
             <X className="h-3 w-3 text-[#6b6b6b]" />
           </button>
@@ -104,10 +121,19 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
       {isOpen && search && (
         <div
           ref={dropdownRef}
-          className="absolute top-full right-0 left-0 z-50 mt-2 max-h-[400px] overflow-auto rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-lg"
+          className="animate-in fade-in slide-in-from-top-2 absolute top-full right-0 left-0 z-50 mt-2 max-h-[400px] overflow-auto rounded-lg border border-[#2a2a2a] bg-[#1c1c1c] shadow-lg duration-200"
+          data-testid="search-results"
+          id="search-results-list"
+          role="listbox"
+          aria-label="Search results"
         >
           {filteredEvents.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-[#6b6b6b]">No events found</div>
+            <div
+              className="px-4 py-8 text-center text-sm text-[#6b6b6b]"
+              data-testid="search-no-results"
+            >
+              No events found
+            </div>
           ) : (
             <div className="py-1">
               {filteredEvents.map((event, idx) => (
@@ -119,11 +145,16 @@ export function SearchBar({ events, onEventSelect }: SearchBarProps) {
                     setSearch('')
                   }}
                   className={cn(
-                    'flex w-full items-start gap-3 px-4 py-2.5 text-left',
+                    'flex w-full items-start gap-3 px-4 py-2.5 text-left transition-all duration-150',
+                    'focus-visible:ring-info focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                     idx === selectedIndex
-                      ? 'bg-info text-info-foreground'
-                      : 'text-[#d0d0d0] hover:bg-[#2a2a2a]'
+                      ? 'bg-info text-info-foreground scale-[1.01] shadow-sm'
+                      : 'text-[#d0d0d0] hover:translate-x-1 hover:bg-[#2a2a2a]'
                   )}
+                  data-testid="search-result-item"
+                  data-event-id={event.id}
+                  role="option"
+                  aria-selected={idx === selectedIndex}
                 >
                   <Calendar className="mt-0.5 h-4 w-4 shrink-0" />
                   <div className="min-w-0 flex-1">

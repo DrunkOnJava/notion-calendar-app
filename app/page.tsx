@@ -55,6 +55,7 @@ import {
   PanelRightOpen,
   Plus,
   Search,
+  Settings2,
   Table,
   X,
 } from 'lucide-react'
@@ -140,7 +141,8 @@ const isPersonnelProperties = (props: unknown): props is PersonnelProperties => 
   if (typeof props !== 'object' || props === null) return false
   // All property values must be string, boolean, null, or undefined
   return Object.values(props).every(
-    (val) => typeof val === 'string' || typeof val === 'boolean' || val === null || val === undefined
+    (val) =>
+      typeof val === 'string' || typeof val === 'boolean' || val === null || val === undefined
   )
 }
 
@@ -506,7 +508,14 @@ export default function CalendarPage() {
     },
   ])
   const [showNotificationCenter, setShowNotificationCenter] = useState(false)
-  const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string }>>([])
+  const [toasts, setToasts] = useState<
+    Array<{
+      id: string
+      type: 'success' | 'error' | 'warning' | 'info'
+      title: string
+      message: string
+    }>
+  >([])
 
   const [showSettings, setShowSettings] = useState(false)
   const [settings, setSettings] = useState<Settings>({
@@ -1230,7 +1239,9 @@ export default function CalendarPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events])
 
-  const handleCreateEvent = (eventData: Partial<Event> & { recurrence?: RecurrenceRule; startTime?: string }) => {
+  const handleCreateEvent = (
+    eventData: Partial<Event> & { recurrence?: RecurrenceRule; startTime?: string }
+  ) => {
     if (eventData.recurrence && eventData.date) {
       // Generate recurring events using spread to preserve all properties
       const dates = generateRecurringDates(eventData.date, eventData.recurrence)
@@ -1243,11 +1254,14 @@ export default function CalendarPage() {
         seriesId: Date.now().toString(),
       }
 
-      const recurringEvents: Event[] = dates.map((date, idx) => ({
-        ...baseEvent,
-        id: `${Date.now()}-${idx}`,
-        date,
-      } as Event))
+      const recurringEvents: Event[] = dates.map(
+        (date, idx) =>
+          ({
+            ...baseEvent,
+            id: `${Date.now()}-${idx}`,
+            date,
+          }) as Event
+      )
       setEvents([...events, ...recurringEvents])
       addToast({
         type: 'success',
@@ -2198,25 +2212,41 @@ export default function CalendarPage() {
                 <button
                   onClick={navigateToToday}
                   className="rounded bg-[#2a2a2a] px-3 py-1.5 text-sm hover:bg-[#3a3a3a]"
+                  data-testid="today-button"
+                  aria-label="Go to today"
                 >
                   Today
                 </button>
-                <button onClick={navigatePrevious} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+                <button
+                  onClick={navigatePrevious}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  data-testid="previous-button"
+                  aria-label="Previous"
+                >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                <button onClick={navigateNext} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+                <button
+                  onClick={navigateNext}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  data-testid="next-button"
+                  aria-label="Next"
+                >
                   <ChevronRight className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setShowDatePicker(true)}
                   className="rounded p-1.5 hover:bg-[#2a2a2a]"
                   title="Go to date (⌘G)"
+                  data-testid="date-picker-button"
+                  aria-label="Go to date"
                 >
                   <CalendarIcon className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setShowEventCreateModal(true)}
                   className="bg-info hover:bg-info/90 text-info-foreground ml-4 flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium"
+                  data-testid="new-event-button"
+                  aria-label="Create new event"
                 >
                   <Plus className="h-4 w-4" />
                   <span>New Event</span>
@@ -2227,12 +2257,21 @@ export default function CalendarPage() {
                 <div className="rounded px-3 py-1.5 hover:bg-[#2a2a2a]">
                   <SearchBar events={events} onEventSelect={handleEventClick} />
                 </div>
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  data-testid="settings-button"
+                  aria-label="Settings"
+                  title="Settings"
+                >
+                  <Settings2 className="h-4 w-4" />
+                </button>
               </div>
             </div>
 
             {/* Calendar Views */}
             {currentView === 'week' ? (
-              <div className="min-h-0 flex-1">
+              <div className="min-h-0 flex-1" data-testid="calendar-grid" data-view="week">
                 <WeekView
                   currentDate={currentDate}
                   events={events}
@@ -2243,7 +2282,7 @@ export default function CalendarPage() {
                 />
               </div>
             ) : currentView === 'day' ? (
-              <div className="min-h-0 flex-1">
+              <div className="min-h-0 flex-1" data-testid="calendar-grid" data-view="day">
                 <DayView
                   currentDate={currentDate}
                   events={events}
@@ -2254,7 +2293,7 @@ export default function CalendarPage() {
                 />
               </div>
             ) : currentView === 'agenda' ? (
-              <div className="min-h-0 flex-1">
+              <div className="min-h-0 flex-1" data-testid="calendar-grid" data-view="agenda">
                 <AgendaView
                   currentDate={currentDate}
                   events={events}
@@ -2262,7 +2301,7 @@ export default function CalendarPage() {
                 />
               </div>
             ) : (
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-auto" data-testid="calendar-grid" data-view="month">
                 <div className="flex h-full min-w-[900px] flex-col">
                   {/* Week days header */}
                   <div className="z-10 grid shrink-0 grid-cols-7 border-b border-[#2a2a2a] bg-[#1a1a1a]">
@@ -2589,7 +2628,18 @@ export default function CalendarPage() {
       />
 
       {/* ToastContainer handles onClose at container level, no need to map it per toast */}
-      <ToastContainer toasts={toasts as Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string; onClose: (id: string) => void }>} onClose={removeToast} />
+      <ToastContainer
+        toasts={
+          toasts as Array<{
+            id: string
+            type: 'success' | 'error' | 'warning' | 'info'
+            title: string
+            message: string
+            onClose: (id: string) => void
+          }>
+        }
+        onClose={removeToast}
+      />
 
       {/* Database Modal */}
       {showDatabaseModal && (

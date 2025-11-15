@@ -5,7 +5,7 @@
   "scripts": {
     "build": "NODE_OPTIONS='--max-old-space-size=8192' next build",
     "build:verbose": "NODE_OPTIONS='--max-old-space-size=8192' NEXT_TELEMETRY_DEBUG=1 next build --debug",
-    "build:analyze": "ANALYZE=true NODE_OPTIONS='--max-old-space-size=8192' next build",
+    "build:analyze": "ANALYZE=true NODE_OPTIONS='--max-old-space-size=8192' next build --no-turbopack",
     "build:profile": "NODE_OPTIONS='--max-old-space-size=8192' next build --profile",
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' next dev",
     "dev:verbose": "NODE_OPTIONS='--max-old-space-size=8192' NEXT_TELEMETRY_DEBUG=1 next dev --debug",
@@ -19,11 +19,30 @@
     "type-check:verbose": "tsc --noEmit --listFiles --explainFiles",
     "type-check:trace": "tsc --noEmit --diagnostics --extendedDiagnostics",
     "build:full-logs": "bash scripts/build-with-logs.sh",
+    "test:env:up": "bash scripts/test-env-up.sh",
+    "test:env:down": "bash scripts/test-env-down.sh",
+    "test:env:clean": "bash scripts/test-env-down.sh --clean",
+    "test:env:restart": "pnpm test:env:down && pnpm test:env:up",
+    "test:env:status": "bash scripts/test-env-status.sh",
+    "test:env:logs": "docker compose -f docker-compose.test.yml logs -f",
+    "test:e2e": "playwright test",
+    "test:e2e:critical": "playwright test e2e/calendar-navigation.spec.ts e2e/examples/test-environment.spec.ts --project=chromium",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:codegen": "playwright codegen http://localhost:3000",
+    "test:e2e:install": "playwright install --with-deps",
     "copilot:chrome:screenshot": "pnpm dlx chrome-devtools-mcp@latest --channel stable --headless true --isolated true --viewport 1920x1080 --chromeArg=--hide-scrollbars",
     "copilot:chrome:audit": "pnpm dlx chrome-devtools-mcp@latest --channel stable --headless true --isolated true --viewport 1280x720 --chromeArg=--enable-logging --chromeArg=--ignore-certificate-errors",
     "copilot:chrome:inspect": "pnpm dlx chrome-devtools-mcp@latest --channel stable --viewport 1440x900",
     "copilot:chrome:debug": "pnpm dlx chrome-devtools-mcp@latest --channel dev --chromeArg=--auto-open-devtools-for-tabs --chromeArg=--remote-debugging-port=9222",
-    "copilot:chrome:evaluate": "pnpm dlx chrome-devtools-mcp@latest --channel canary --headless true --isolated true --no-category-emulation --chromeArg=--disable-gpu"
+    "copilot:chrome:evaluate": "pnpm dlx chrome-devtools-mcp@latest --channel canary --headless true --isolated true --no-category-emulation --chromeArg=--disable-gpu",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -80,22 +99,37 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@next/bundle-analyzer": "^16.0.3",
     "@next/eslint-plugin-next": "^16.0.3",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "tailwindcss": "^4.1.17",
+    "testcontainers": "^11.7.0",
     "tw-animate-css": "1.4.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }

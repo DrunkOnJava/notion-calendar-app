@@ -1,3 +1,10 @@
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: true,
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Image optimization disabled for static export compatibility
@@ -35,4 +42,4 @@ const nextConfig = {
   typedRoutes: true,
 }
 
-export default nextConfig
+export default withBundleAnalyzer(nextConfig)
