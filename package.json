@@ -5,7 +5,7 @@
   "scripts": {
     "build": "NODE_OPTIONS='--max-old-space-size=8192' next build",
     "build:verbose": "NODE_OPTIONS='--max-old-space-size=8192' NEXT_TELEMETRY_DEBUG=1 next build --debug",
-    "build:analyze": "ANALYZE=true NODE_OPTIONS='--max-old-space-size=8192' next build",
+    "build:analyze": "ANALYZE=true NODE_OPTIONS='--max-old-space-size=8192' next build --no-turbopack",
     "build:profile": "NODE_OPTIONS='--max-old-space-size=8192' next build --profile",
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' next dev",
     "dev:verbose": "NODE_OPTIONS='--max-old-space-size=8192' NEXT_TELEMETRY_DEBUG=1 next dev --debug",
@@ -26,6 +26,7 @@
     "test:env:status": "bash scripts/test-env-status.sh",
     "test:env:logs": "docker compose -f docker-compose.test.yml logs -f",
     "test:e2e": "playwright test",
+    "test:e2e:critical": "playwright test e2e/calendar-navigation.spec.ts e2e/examples/test-environment.spec.ts --project=chromium",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
@@ -98,6 +99,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@next/bundle-analyzer": "^16.0.3",
     "@next/eslint-plugin-next": "^16.0.3",
     "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.1.17",
