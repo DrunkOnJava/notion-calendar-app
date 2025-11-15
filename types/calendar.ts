@@ -11,6 +11,6 @@ export interface DatabaseItem {
 
 export interface Filter {
   property: string
-  operator: string
-  value: unknown
+  operator: 'is' | 'is-not' | 'contains' | 'greater' | 'less'
+  value: string
 }
