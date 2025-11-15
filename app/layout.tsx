@@ -3,18 +3,15 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist"
-});
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono"
-});
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Notion Calendar',
-  description: 'Modern, feature-rich calendar application built with Next.js, React, and TypeScript',
+  title: 'Notion Calendar - Modern Calendar & Event Management',
+  description: 'Feature-rich calendar application with multiple views, drag-and-drop events, recurring events, database views, scheduling links, and smart time finding',
+  keywords: ['calendar', 'scheduling', 'events', 'notion', 'productivity', 'time management'],
+  authors: [{ name: 'Your Name' }],
+  creator: 'Your Name',
   icons: {
     icon: [
       {
@@ -41,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased m-0 p-0 overflow-hidden`} style={{ height: '100vh' }}>
+      <body className="font-sans antialiased m-0 p-0 overflow-hidden" style={{ height: '100vh' }}>
         {children}
         <Analytics />
       </body>

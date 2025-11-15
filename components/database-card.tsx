@@ -19,9 +19,12 @@ export function DatabaseCard({ person, position, isExpanded, onToggle, onSelect 
   return (
     <div
       className={cn(
-        "container-responsive hover:bg-surface-hover transition-colors border-b border-surface-border last:border-b-0",
-        position % 2 === 0 ? "bg-surface" : "bg-transparent"
+        "hover:bg-surface-hover transition-colors border-b border-surface-border/30 last:border-b-0",
+        position % 2 === 0 && "bg-surface"
       )}
+      style={{
+        containerType: 'inline-size',
+      }}
     >
       <div
         onClick={() => {
@@ -31,21 +34,27 @@ export function DatabaseCard({ person, position, isExpanded, onToggle, onSelect 
         className="w-full text-left cursor-pointer"
       >
         {/* Single-line row with position and name */}
-        <div className="grid items-center gap-md py-1 px-2 grid-cols-[auto_1fr] optimal-line-height">
+        <div
+          className="grid items-center py-1 pr-2 pl-2 gap-md"
+          style={{
+            gridTemplateColumns: 'auto 1fr',
+            lineHeight: 1.3,
+          }}
+        >
           {/* Position number */}
-          <div className="text-text-tertiary font-mono tabular-nums text-fluid-sm">
+          <div className="text-text-tertiary font-mono tabular-nums text-fluid-md">
             {position}
           </div>
 
           {/* Name column */}
           <div
-            className="font-medium text-text-secondary whitespace-nowrap flex items-center justify-between text-fluid-base overflow-visible"
+            className="font-medium text-text-primary truncate flex items-center justify-between text-fluid-base"
             title={person.name}
           >
-            <span>{person.name}</span>
+            <span className="truncate">{person.name}</span>
             <ChevronDown
               className={cn(
-                "icon-sm shrink-0 text-text-tertiary transition-transform",
+                "shrink-0 text-text-tertiary transition-transform icon-md",
                 isExpanded && "rotate-180"
               )}
             />
@@ -54,32 +63,41 @@ export function DatabaseCard({ person, position, isExpanded, onToggle, onSelect 
       </div>
 
       {isExpanded && (
-        <div className="pb-2 px-3 pt-1.5 space-y-1.5 bg-surface-active border-t border-surface-border text-fluid-xs">
+        <div
+          className="pb-2 px-3 pt-1.5 space-y-1.5 bg-surface border-t border-surface-border/50 text-fluid-sm"
+        >
           {Object.entries(person.properties).map(([key, value]) => (
-            <div key={key} className="flex items-center whitespace-nowrap gap-sm text-fluid-xs">
+            <div
+              key={key}
+              className="flex items-center whitespace-nowrap gap-sm text-fluid-sm"
+            >
               {typeof value === "boolean" ? (
                 <>
                   <div
                     className={cn(
-                      "icon-sm rounded border flex items-center justify-center shrink-0",
-                      value ? "bg-info border-info" : "border-input-border"
+                      "rounded border flex items-center justify-center shrink-0 icon-md",
+                      value ? "bg-info border-info" : "border-muted",
                     )}
                   >
-                    {value && <span className="text-fluid-xs font-bold">✓</span>}
+                    {value && <span className="font-bold text-fluid-xs">✓</span>}
                   </div>
                   <span className="text-text-secondary">{key}</span>
                 </>
               ) : key === "Certification Level" ? (
                 <>
                   <span className="text-text-secondary">{key}</span>
-                  <span className="badge-responsive ml-auto bg-success/50 text-success-foreground">
+                  <span
+                    className="ml-auto bg-success/50 text-success-foreground rounded font-medium whitespace-nowrap badge-responsive"
+                  >
                     {value}
                   </span>
                 </>
               ) : key === "Shift" ? (
                 <>
                   <span className="text-text-secondary">{key}</span>
-                  <span className="badge-responsive ml-auto bg-badge-pink text-badge-pink-foreground">
+                  <span
+                    className="ml-auto bg-badge-pink text-badge-pink-foreground rounded font-medium whitespace-nowrap badge-responsive"
+                  >
                     {value}
                   </span>
                 </>
