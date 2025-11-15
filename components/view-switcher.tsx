@@ -1,15 +1,17 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { ChevronDown, Calendar, List } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { Calendar, ChevronDown, List } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 interface ViewSwitcherProps {
   currentView: "month" | "week" | "day" | "agenda"
+  currentDate: Date
   onViewChange: (view: "month" | "week" | "day" | "agenda") => void
 }
 
-export function ViewSwitcher({ currentView, onViewChange }: ViewSwitcherProps) {
+export function ViewSwitcher({ currentView, currentDate, onViewChange }: ViewSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -31,13 +33,16 @@ export function ViewSwitcher({ currentView, onViewChange }: ViewSwitcherProps) {
     { id: "agenda" as const, label: "Agenda", icon: List },
   ]
 
+  const activeView = views.find((view) => view.id === currentView)
+  const buttonLabel = currentView === "month" ? format(currentDate, "MMMM yyyy") : activeView?.label ?? currentView
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-sm hover:bg-[#2a2a2a] px-3 py-1.5 rounded"
       >
-        <span className="capitalize">{currentView}</span>
+        <span className="capitalize">{buttonLabel}</span>
         <ChevronDown className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")} />
       </button>
 

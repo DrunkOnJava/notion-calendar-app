@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-import type { Event } from "@/types/event"
 
 import { AgendaView } from "@/components/agenda-view"
 import { BulkActionModal } from "@/components/bulk-action-modal"
@@ -59,7 +58,59 @@ import { AvailabilityEditor } from "@/components/availability-editor"
 import { SchedulingLinkModal } from "@/components/scheduling-link-modal"
 import { SchedulingLinksList } from "@/components/scheduling-links-list"
 
-const initialEvents: Event[] = [
+// Page-specific event type
+interface PageEvent {
+  id: string
+  date: string
+  title: string
+  type?: string
+  time?: string
+  startTime?: string
+  endTime?: string
+  location?: string
+  description?: string
+  color?: string
+  calendarId?: string
+  recurrence?: RecurrenceRule
+  reminders?: string[]
+  seriesId?: string
+}
+
+// Personnel/Database types
+interface PersonnelProperties {
+  [key: string]: string | boolean | null | undefined
+  UTV?: boolean
+  ALS?: boolean
+  Active?: boolean
+  Ambulance?: boolean
+  Available?: boolean
+  BLS?: boolean
+  Boat?: boolean
+  "Brush Truck"?: boolean
+  "Certification Level"?: string
+  Engine?: boolean
+  FTO?: boolean
+  "Last Hold Date"?: string | null
+  "Rescue Squad"?: boolean
+  Shift?: string
+  Station?: string
+  Tanker?: boolean
+  Truck?: boolean
+}
+
+interface PersonnelItem {
+  id: string
+  name: string
+  time: string
+  properties: PersonnelProperties
+}
+
+interface PersonnelDatabase {
+  name: string
+  items: PersonnelItem[]
+}
+
+const initialEvents: PageEvent[] = [
   { id: "1", date: "2025-10-31", title: "Halloween", type: "holiday" },
   { id: "2", date: "2025-11-02", title: "Daylight Saving Time ends", type: "info" },
   { id: "3", date: "2025-11-03", title: "Election Day", type: "info" },
@@ -75,7 +126,7 @@ const initialEvents: Event[] = [
   { id: "13", date: "2025-12-03", title: "Game night!", time: "8 PM", startTime: "20:00", endTime: "22:00" },
 ]
 
-const personnelData = [
+const personnelData: PersonnelDatabase[] = [
   {
     name: "Personnel Roster",
     items: [
@@ -317,13 +368,12 @@ const personnelData = [
 ]
 
 export default function CalendarPage() {
-  const [events, setEvents] = useState(initialEvents)
-  const [showWelcome, setShowWelcome] = useState(true)
+  const [events, setEvents] = useState<PageEvent[]>(initialEvents)
   const [showDatabaseModal, setShowDatabaseModal] = useState(false)
   const [showEventCreateModal, setShowEventCreateModal] = useState(false)
   const [showEventDetailModal, setShowEventDetailModal] = useState(false)
   const [showCommandPalette, setShowCommandPalette] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<any>(null)
+  const [selectedEvent, setSelectedEvent] = useState<PageEvent | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<"month" | "week" | "day" | "agenda">("month")
@@ -332,7 +382,7 @@ export default function CalendarPage() {
   const [expandedPersonnel, setExpandedPersonnel] = useState<{ [key: string]: boolean }>({
     "Michael Foster": false,
   })
-  const [selectedPerson, setSelectedPerson] = useState<string | null>("Michael Foster")
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>("Personnel Roster")
   const [showDatabaseDropdown, setShowDatabaseDropdown] = useState(false)
   const [databaseFilter, setDatabaseFilter] = useState<"Personnel Roster" | "All Properties">("Personnel Roster")
@@ -505,7 +555,7 @@ export default function CalendarPage() {
   // State for handling event files
   const [eventFiles, setEventFiles] = useState<{ [eventId: string]: File[] }>({})
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
-  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false)
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true)
 
   const handleCalendarRightClick = (e: React.MouseEvent, calendar: any) => {
     e.preventDefault()
@@ -650,7 +700,6 @@ export default function CalendarPage() {
   const handleOpenDatabaseItemInFull = (item: any) => {
     setSelectedPerson(item.name) // Assuming item.name is the identifier for the person
     setLeftSidebarView("database") // Assuming 'person' is a valid view for the left sidebar, though 'database' is used here
-    setShowWelcome(false) // Hide welcome screen when viewing details
   }
 
   const handleSelectionRightClick = (e: React.MouseEvent) => {
@@ -977,12 +1026,11 @@ export default function CalendarPage() {
 
   const handleSelectPerson = (name: string) => {
     setSelectedPerson(name)
-    setShowWelcome(false)
+    setRightSidebarCollapsed(false)
   }
 
   const handleClosePersonDetails = () => {
     setSelectedPerson(null)
-    setShowWelcome(true)
   }
 
   const addNotification = (notification: Omit<Notification, "id" | "timestamp" | "read">) => {
@@ -1415,7 +1463,7 @@ export default function CalendarPage() {
     if (filters.length === 0) return true
 
     return filters.every((filter) => {
-      const value = (item.properties as Record<string, any>)[filter.property]
+      const value = item.properties[filter.property]
       const filterValue = filter.value.toLowerCase()
 
       if (filter.operator === "is") {
@@ -1431,8 +1479,8 @@ export default function CalendarPage() {
 
   const sortedPersonnel = sort
     ? [...filteredPersonnel].sort((a, b) => {
-        const aValue = (a.properties as Record<string, any>)[sort.property]
-        const bValue = (b.properties as Record<string, any>)[sort.property]
+        const aValue = a.properties[sort.property]
+        const bValue = b.properties[sort.property]
 
         if (sort.direction === "asc") {
           return String(aValue).localeCompare(String(bValue))
@@ -1517,7 +1565,7 @@ export default function CalendarPage() {
   const handleExportCalendar = (calendarId: string, format: "ics" | "csv") => {
     // Export events to ICS/CSV format
     const calendar = calendars.find((c) => c.id === calendarId)
-    const calendarEvents = events.filter((e) => e.calendar === calendarId || !e.calendar)
+    const calendarEvents = events.filter((e) => e.calendarId === calendarId || !e.calendarId)
 
     if (format === "ics") {
       // Generate ICS content
@@ -1967,13 +2015,13 @@ export default function CalendarPage() {
       )}
 
       {/* Main Calendar Area */}
-      <ResizablePanel defaultSize={showWelcome || selectedPerson ? 60 : 85} minSize={40}>
+      <ResizablePanel defaultSize={selectedPerson ? 60 : 85} minSize={40}>
         <div className="flex-1 flex flex-col min-w-0 h-full">
         {/* Header */}
         <div className="h-14 border-b border-[#2a2a2a] flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-4">
             <span className="text-xs text-[#6b6b6b]">🎨</span>
-            <ViewSwitcher currentView={currentView} onViewChange={setCurrentView} />
+            <ViewSwitcher currentView={currentView} currentDate={currentDate} onViewChange={setCurrentView} />
             <button onClick={navigateToToday} className="text-sm bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-1.5 rounded">
               Today
             </button>
@@ -2127,195 +2175,118 @@ export default function CalendarPage() {
       </ResizablePanel>
 
       {/* Right Sidebar */}
-      {(showWelcome || selectedPerson) && !rightSidebarCollapsed && (
+      {selectedPerson && !rightSidebarCollapsed && (
         <>
           <ResizableHandle withHandle className="bg-[#2a2a2a] hover:bg-[#3a3a3a] w-0.5" />
           <ResizablePanel defaultSize={25} minSize={15} maxSize={40} className="relative">
             <div className="h-full bg-[#1c1c1c] border-l border-[#2a2a2a] overflow-auto">
           <div className="p-6">
-            {showWelcome && !selectedPerson ? (
-              <>
-                {/* Welcome Screen */}
-                <div className="flex items-start justify-between mb-6">
-                  <h2 className="text-sm font-medium">Welcome to Notion Calendar</h2>
-                  <button onClick={() => setShowWelcome(false)} className="hover:bg-[#2a2a2a] p-1 rounded">
-                    <X className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                </div>
+            {/* Person Details */}
+            <div className="flex items-start justify-between mb-6">
+              <h2 className="text-sm font-medium text-[#9a9a9a]">Page</h2>
+              <button onClick={handleClosePersonDetails} className="hover:bg-[#2a2a2a] p-1 rounded">
+                <X className="w-4 h-4 text-[#6b6b6b]" />
+              </button>
+            </div>
 
-                <div className="space-y-4">
-                  <div className="space-y-3 text-sm text-[#9a9a9a]">
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
+            <div className="space-y-6 border-0">
+              <h3 className="text-lg font-semibold mb-6">{selectedPerson}</h3>
+
+              {personnelData[0].items
+                .filter((p) => p.name === selectedPerson)
+                .map((person) => (
+                  <div key={person.id} className="space-y-4">
+                    <div className="pb-4">
+                      <div className="text-xs text-[#6b6b6b] mb-2">Created At</div>
+                      <div className="text-sm text-[#d0d0d0]">7:33 PM</div>
+                      <div className="text-xs text-[#8a8a8a] mt-1">
+                        <span className="inline-flex items-center gap-1">
+                          <span>→</span>
+                          <span className="text-[#6b6b6b]">7:33 PM</span>
+                          <span className="text-[#6b6b6b]">0 min</span>
+                        </span>
                       </div>
-                      <span>Use ⌘K command palette</span>
+                      <div className="text-xs text-[#6b6b6b] mt-1">Sat Oct 18</div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
-                      </div>
-                      <span>Connect another calendar</span>
+
+                    <div className="pb-4">
+                      <div className="text-xs text-[#6b6b6b] mb-1">All-day</div>
+                      <div className="text-xs text-[#6b6b6b]">Time zone</div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
+
+                    <div className="border-t border-[#2a2a2a] pt-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="text-xs">👥</span>
+                        {/* Replace text-blue-400 with text-info-foreground */}
+                        <span className="text-sm text-info-foreground">Personnel Roster</span>
+                        <span className="text-xs text-[#6b6b6b]">All Properties</span>
                       </div>
-                      <span>Connect Notion workspace</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-4 h-4 mt-0.5 shrink-0">
-                        <div className="w-4 h-4 rounded-full border-2 border-[#4a4a4a]"></div>
-                      </div>
-                      <span>Create scheduling link</span>
-                    </div>
-                  </div>
 
-                  <div className="border-t border-[#2a2a2a] pt-6 mt-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-sm font-medium">Invite to Notion Calendar</h3>
-                      <button className="hover:bg-[#2a2a2a] p-1 rounded">
-                        <X className="w-4 h-4 text-[#6b6b6b]" />
-                      </button>
-                    </div>
-                    <p className="text-sm text-[#9a9a9a] mb-4">Who else would benefit from Notion Calendar?</p>
-                    <button className="w-full flex items-center justify-between text-sm text-[#9a9a9a] hover:text-white bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-2 rounded">
-                      <span>Invite friend or teammate</span>
-                      <span className="text-xs bg-[#3a3a3a] px-1.5 py-0.5 rounded">⌘</span>
-                    </button>
-                  </div>
-
-                  <div className="border-t border-[#2a2a2a] pt-6">
-                    <h3 className="text-sm font-medium mb-3">Useful shortcuts</h3>
-                    <div className="space-y-2 text-sm text-[#9a9a9a]">
-                      <div className="flex items-center justify-between">
-                        <span>Command menu</span>
-                        <span className="text-xs bg-[#2a2a2a] px-2 py-1 rounded">⌘ K</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Toggle sidebar</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Go to date</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>All keyboard shortcuts</span>
-                        <span className="text-xs">→</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Person Details */}
-                <div className="flex items-start justify-between mb-6">
-                  <h2 className="text-sm font-medium text-[#9a9a9a]">Page</h2>
-                  <button onClick={handleClosePersonDetails} className="hover:bg-[#2a2a2a] p-1 rounded">
-                    <X className="w-4 h-4 text-[#6b6b6b]" />
-                  </button>
-                </div>
-
-                <div className="space-y-6 border-0">
-                  <h3 className="text-lg font-semibold mb-6">{selectedPerson}</h3>
-
-                  {personnelData[0].items
-                    .filter((p) => p.name === selectedPerson)
-                    .map((person) => (
-                      <div key={person.id} className="space-y-4">
-                        <div className="pb-4">
-                          <div className="text-xs text-[#6b6b6b] mb-2">Created At</div>
-                          <div className="text-sm text-[#d0d0d0]">7:33 PM</div>
-                          <div className="text-xs text-[#8a8a8a] mt-1">
-                            <span className="inline-flex items-center gap-1">
-                              <span>→</span>
-                              <span className="text-[#6b6b6b]">7:33 PM</span>
-                              <span className="text-[#6b6b6b]">0 min</span>
-                            </span>
-                          </div>
-                          <div className="text-xs text-[#6b6b6b] mt-1">Sat Oct 18</div>
-                        </div>
-
-                        <div className="pb-4">
-                          <div className="text-xs text-[#6b6b6b] mb-1">All-day</div>
-                          <div className="text-xs text-[#6b6b6b]">Time zone</div>
-                        </div>
-
-                        <div className="border-t border-[#2a2a2a] pt-4">
-                          <div className="flex items-center gap-2 mb-4">
-                            <span className="text-xs">👥</span>
-                            {/* Replace text-blue-400 with text-info-foreground */}
-                            <span className="text-sm text-info-foreground">Personnel Roster</span>
-                            <span className="text-xs text-[#6b6b6b]">All Properties</span>
-                          </div>
-
-                          <div className="space-y-2.5">
-                            {Object.entries(person.properties).map(([key, value]) => (
-                              <div key={key} className="flex items-center gap-3 text-sm">
-                                {typeof value === "boolean" ? (
-                                  <>
-                                    <div
-                                      className={cn(
-                                        "w-4 h-4 rounded border flex items-center justify-center shrink-0",
-                                        value ? "bg-info border-info" : "border-[#4a4a4a]",
-                                      )}
-                                    >
-                                      {value && <span className="text-[10px] font-bold">✓</span>}
-                                    </div>
-                                    <span className="text-[#9a9a9a]">{key}</span>
-                                    {value && (
-                                      <span className="ml-auto w-4 h-4 rounded bg-info flex items-center justify-center">
-                                        <span className="text-[10px] font-bold">✓</span>
-                                      </span>
-                                    )}
-                                  </>
-                                ) : key === "Certification Level" ? (
-                                  <>
-                                    <span className="text-[#9a9a9a] flex-1">{key}</span>
-                                    {/* Replace badge colors with semantic tokens */}
-                                    <span className="bg-badge-green text-badge-green-foreground px-3 py-1 rounded text-xs font-medium">
-                                      {value}
-                                    </span>
-                                  </>
-                                ) : key === "Shift" ? (
-                                  <>
-                                    <span className="text-[#9a9a9a] flex-1">{key}</span>
-                                    {/* Replace bg-pink-900/50 text-pink-400 with semantic tokens */}
-                                    <span className="bg-badge-pink text-badge-pink-foreground px-3 py-1 rounded-full text-xs font-medium flex items-center justify-center w-7 h-7">
-                                      {value}
-                                    </span>
-                                  </>
-                                ) : key === "Last Hold Date" ? (
-                                  <>
-                                    <span className="text-[#9a9a9a] flex-1">{key}</span>
-                                    <span className="text-[#6b6b6b] text-xs italic">Empty</span>
-                                  </>
-                                ) : (
-                                  <span className="text-[#6b6b6b]">
-                                    {key}: {String(value)}
+                      <div className="space-y-2.5">
+                        {Object.entries(person.properties).map(([key, value]) => (
+                          <div key={key} className="flex items-center gap-3 text-sm">
+                            {typeof value === "boolean" ? (
+                              <>
+                                <div
+                                  className={cn(
+                                    "w-4 h-4 rounded border flex items-center justify-center shrink-0",
+                                    value ? "bg-info border-info" : "border-[#4a4a4a]",
+                                  )}
+                                >
+                                  {value && <span className="text-[10px] font-bold">✓</span>}
+                                </div>
+                                <span className="text-[#9a9a9a]">{key}</span>
+                                {value && (
+                                  <span className="ml-auto w-4 h-4 rounded bg-info flex items-center justify-center">
+                                    <span className="text-[10px] font-bold">✓</span>
                                   </span>
                                 )}
-                              </div>
-                            ))}
+                              </>
+                            ) : key === "Certification Level" ? (
+                              <>
+                                <span className="text-[#9a9a9a] flex-1">{key}</span>
+                                {/* Replace badge colors with semantic tokens */}
+                                <span className="bg-badge-green text-badge-green-foreground px-3 py-1 rounded text-xs font-medium">
+                                  {value}
+                                </span>
+                              </>
+                            ) : key === "Shift" ? (
+                              <>
+                                <span className="text-[#9a9a9a] flex-1">{key}</span>
+                                {/* Replace bg-pink-900/50 text-pink-400 with semantic tokens */}
+                                <span className="bg-badge-pink text-badge-pink-foreground px-3 py-1 rounded-full text-xs font-medium flex items-center justify-center w-7 h-7">
+                                  {value}
+                                </span>
+                              </>
+                            ) : key === "Last Hold Date" ? (
+                              <>
+                                <span className="text-[#9a9a9a] flex-1">{key}</span>
+                                <span className="text-[#6b6b6b] text-xs italic">Empty</span>
+                              </>
+                            ) : (
+                              <span className="text-[#6b6b6b]">
+                                {key}: {String(value)}
+                              </span>
+                            )}
                           </div>
-                        </div>
-
-                        <div className="border-t border-[#2a2a2a] pt-4">
-                          <div className="text-xs text-[#6b6b6b] mb-2">Updated At</div>
-                          <div className="text-sm text-[#d0d0d0]">{person.time}</div>
-                        </div>
-
-                        <div className="border-t border-[#2a2a2a] pt-4">
-                          <button className="w-full flex items-center justify-between text-sm text-[#9a9a9a] hover:text-white bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-2 rounded">
-                            <span>Manage in Notion</span>
-                            <span className="text-xs bg-[#3a3a3a] px-1.5 py-0.5 rounded">⌘</span>
-                          </button>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                </div>
-              </>
-            )}
+                    </div>
+
+                    <div className="border-t border-[#2a2a2a] pt-4">
+                      <div className="text-xs text-[#6b6b6b] mb-2">Updated At</div>
+                      <div className="text-sm text-[#d0d0d0]">{person.time}</div>
+                    </div>
+
+                    <div className="border-t border-[#2a2a2a] pt-4">
+                      <button className="w-full flex items-center justify-between text-sm text-[#9a9a9a] hover:text-white bg-[#2a2a2a] hover:bg-[#3a3a3a] px-3 py-2 rounded">
+                        <span>Manage in Notion</span>
+                        <span className="text-xs bg-[#3a3a3a] px-1.5 py-0.5 rounded">⌘</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
             </div>
             {/* Collapse button */}
@@ -2331,7 +2302,7 @@ export default function CalendarPage() {
       )}
       
       {/* Expand button when collapsed */}
-      {(showWelcome || selectedPerson) && rightSidebarCollapsed && (
+      {selectedPerson && rightSidebarCollapsed && (
         <button
           onClick={() => setRightSidebarCollapsed(false)}
           className="fixed right-0 top-1/2 z-10 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-l-lg p-2 border border-r-0 border-[#3a3a3a]"
@@ -2365,10 +2336,6 @@ export default function CalendarPage() {
         onEdit={handleEditEvent}
         onDelete={handleDeleteEvent}
         onDuplicate={handleDuplicateEvent}
-        // Pass eventFiles and handlers for file operations
-        eventFiles={selectedEvent ? eventFiles[selectedEvent.id] || [] : []}
-        onFilesAdded={(files) => selectedEvent && handleFilesAdded(selectedEvent.id, files)}
-        onRemoveFile={(fileIndex) => selectedEvent && handleRemoveFile(selectedEvent.id, fileIndex)}
       />
 
       <EventSeriesModal
@@ -2483,7 +2450,6 @@ export default function CalendarPage() {
                   onClick={() => {
                     setShowDatabaseModal(false)
                     setLeftSidebarView("database")
-                    setShowWelcome(false)
                   }}
                   className="w-full bg-info hover:bg-info/90 text-info-foreground py-2 px-4 rounded text-sm font-medium"
                 >

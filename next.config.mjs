@@ -4,9 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Enable system TLS certificates for Turbopack (fixes Google Fonts fetch issues)
-  experimental: {
-    turbopackUseSystemTlsCerts: true,
+  // Explicitly set the turbopack root to silence warnings
+  turbopack: {
+    root: process.cwd(),
   },
 }
 

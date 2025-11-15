@@ -3,8 +3,8 @@
 import type React from "react"
 import type { Event } from "@/types/event"
 
-import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 interface DraggableEventProps {
   event: Event

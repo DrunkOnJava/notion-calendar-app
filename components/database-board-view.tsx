@@ -14,7 +14,7 @@ export function DatabaseBoardView({
   onItemClick,
   groupByProperty = "Certification Level",
 }: DatabaseBoardViewProps) {
-  const groups: Record<string, any[]> = items.reduce(
+  const groups = items.reduce(
     (acc, item) => {
       const groupValue = item.properties[groupByProperty] || "No Value"
       if (!acc[groupValue]) acc[groupValue] = []
@@ -32,7 +32,7 @@ export function DatabaseBoardView({
 
   return (
     <div className="flex gap-4 overflow-x-auto p-4">
-      {Object.entries(groups).map(([groupName, groupItems]: [string, any[]]) => (
+      {(Object.entries(groups) as [string, any[]][]).map(([groupName, groupItems]) => (
         <div key={groupName} className="flex-shrink-0 w-[280px]">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#d0d0d0]">
@@ -44,7 +44,7 @@ export function DatabaseBoardView({
           </div>
 
           <div className="space-y-2">
-            {groupItems.map((item: any, idx: number) => (
+            {groupItems.map((item, idx) => (
               <div
                 key={idx}
                 onClick={() => onItemClick(item)}
