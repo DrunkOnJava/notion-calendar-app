@@ -1,6 +1,7 @@
-import { Analytics } from '@vercel/analytics/next';
-import type { Metadata } from 'next';
-import './globals.css';
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import type { Metadata } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Notion Calendar - Modern Calendar & Event Management',
@@ -36,6 +37,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased m-0 p-0 overflow-hidden" style={{ height: '100vh' }}>
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
