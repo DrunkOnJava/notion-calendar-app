@@ -55,6 +55,7 @@ import {
   PanelRightOpen,
   Plus,
   Search,
+  Settings2,
   Table,
   X,
 } from 'lucide-react'
@@ -2135,25 +2136,41 @@ export default function CalendarPage() {
                 <button
                   onClick={navigateToToday}
                   className="rounded bg-[#2a2a2a] px-3 py-1.5 text-sm hover:bg-[#3a3a3a]"
+                  data-testid="today-button"
+                  aria-label="Go to today"
                 >
                   Today
                 </button>
-                <button onClick={navigatePrevious} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+                <button
+                  onClick={navigatePrevious}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  data-testid="previous-button"
+                  aria-label="Previous"
+                >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                <button onClick={navigateNext} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+                <button
+                  onClick={navigateNext}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  data-testid="next-button"
+                  aria-label="Next"
+                >
                   <ChevronRight className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setShowDatePicker(true)}
                   className="rounded p-1.5 hover:bg-[#2a2a2a]"
                   title="Go to date (⌘G)"
+                  data-testid="date-picker-button"
+                  aria-label="Go to date"
                 >
                   <CalendarIcon className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setShowEventCreateModal(true)}
                   className="bg-info hover:bg-info/90 text-info-foreground ml-4 flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium"
+                  data-testid="new-event-button"
+                  aria-label="Create new event"
                 >
                   <Plus className="h-4 w-4" />
                   <span>New Event</span>
@@ -2164,12 +2181,21 @@ export default function CalendarPage() {
                 <div className="rounded px-3 py-1.5 hover:bg-[#2a2a2a]">
                   <SearchBar events={events} onEventSelect={handleEventClick} />
                 </div>
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="rounded p-1.5 hover:bg-[#2a2a2a]"
+                  data-testid="settings-button"
+                  aria-label="Settings"
+                  title="Settings"
+                >
+                  <Settings2 className="h-4 w-4" />
+                </button>
               </div>
             </div>
 
             {/* Calendar Views */}
             {currentView === 'week' ? (
-              <div className="min-h-0 flex-1">
+              <div className="min-h-0 flex-1" data-testid="calendar-grid" data-view="week">
                 <WeekView
                   currentDate={currentDate}
                   events={events}
@@ -2180,7 +2206,7 @@ export default function CalendarPage() {
                 />
               </div>
             ) : currentView === 'day' ? (
-              <div className="min-h-0 flex-1">
+              <div className="min-h-0 flex-1" data-testid="calendar-grid" data-view="day">
                 <DayView
                   currentDate={currentDate}
                   events={events}
@@ -2191,7 +2217,7 @@ export default function CalendarPage() {
                 />
               </div>
             ) : currentView === 'agenda' ? (
-              <div className="min-h-0 flex-1">
+              <div className="min-h-0 flex-1" data-testid="calendar-grid" data-view="agenda">
                 <AgendaView
                   currentDate={currentDate}
                   events={events}
@@ -2199,7 +2225,7 @@ export default function CalendarPage() {
                 />
               </div>
             ) : (
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-auto" data-testid="calendar-grid" data-view="month">
                 <div className="flex h-full min-w-[900px] flex-col">
                   {/* Week days header */}
                   <div className="z-10 grid shrink-0 grid-cols-7 border-b border-[#2a2a2a] bg-[#1a1a1a]">

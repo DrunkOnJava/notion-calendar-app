@@ -69,12 +69,12 @@ export function SettingsModal({
   ] as const
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-label="Settings" data-testid="settings-modal">
       <div className="flex max-h-[85vh] w-[900px] flex-col overflow-hidden rounded-lg bg-[#1c1c1c]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#2a2a2a] p-6">
           <h2 className="text-xl font-semibold">Settings</h2>
-          <button onClick={onClose} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+          <button onClick={onClose} className="rounded p-1.5 hover:bg-[#2a2a2a]" aria-label="Close" data-testid="settings-close-button">
             <X className="h-5 w-5 text-[#6b6b6b]" />
           </button>
         </div>
@@ -82,7 +82,7 @@ export function SettingsModal({
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar */}
           <div className="w-56 overflow-auto border-r border-[#2a2a2a]">
-            <nav className="p-3">
+            <nav className="p-3" role="tablist">
               {sections.map((section) => (
                 <button
                   key={section.id}
@@ -93,6 +93,10 @@ export function SettingsModal({
                       ? 'bg-info text-info-foreground'
                       : 'text-[#d0d0d0] hover:bg-[#2a2a2a]'
                   )}
+                  role="tab"
+                  aria-selected={activeSection === section.id}
+                  aria-controls={`${section.id}-panel`}
+                  data-testid={`settings-${section.id}-tab`}
                 >
                   <span>{section.icon}</span>
                   <span className="flex-1 text-left">{section.label}</span>

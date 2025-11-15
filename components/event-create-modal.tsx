@@ -138,7 +138,7 @@ export function EventCreateModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" data-testid="event-create-modal" role="dialog" aria-label="Create event">
         <div className="flex max-h-[90vh] w-[600px] flex-col overflow-hidden rounded-lg bg-[#1c1c1c]">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#2a2a2a] p-4">
@@ -159,6 +159,8 @@ export function EventCreateModal({
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full border-none bg-transparent text-xl font-semibold outline-none placeholder:text-[#4a4a4a]"
                 autoFocus
+                data-testid="event-title-input"
+                aria-label="Event title"
               />
             </div>
 
@@ -171,6 +173,8 @@ export function EventCreateModal({
                   value={date ? date.toISOString().split('T')[0] : ''}
                   onChange={(e) => setDate(e.target.value ? new Date(e.target.value) : null)}
                   className="w-full rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
+                  data-testid="event-date-input"
+                  aria-label="Event date"
                 />
 
                 <div className="flex items-center gap-2">
@@ -180,6 +184,8 @@ export function EventCreateModal({
                     checked={isAllDay}
                     onChange={(e) => setIsAllDay(e.target.checked)}
                     className="h-4 w-4"
+                    data-testid="event-all-day-checkbox"
+                    aria-label="All day event"
                   />
                   <label htmlFor="allDay" className="text-sm text-[#d0d0d0]">
                     All day
@@ -194,6 +200,8 @@ export function EventCreateModal({
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
                         className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
+                        data-testid="event-start-time-input"
+                        aria-label="Start time"
                       />
                       <span className="text-[#6b6b6b]">to</span>
                       <input
@@ -201,6 +209,8 @@ export function EventCreateModal({
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
                         className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-blue-500"
+                        data-testid="event-end-time-input"
+                        aria-label="End time"
                       />
                     </div>
                     <select
@@ -225,6 +235,8 @@ export function EventCreateModal({
               <button
                 onClick={() => setShowRecurrenceEditor(true)}
                 className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-left text-sm hover:bg-[#3a3a3a]"
+                data-testid="event-recurrence-select"
+                aria-label="Recurrence pattern"
               >
                 {recurrence ? getRecurrenceSummary(recurrence) : 'Does not repeat'}
               </button>
@@ -239,6 +251,8 @@ export function EventCreateModal({
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="flex-1 rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
+                data-testid="event-location-input"
+                aria-label="Event location"
               />
             </div>
 
@@ -306,6 +320,8 @@ export function EventCreateModal({
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 className="flex-1 resize-none rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
+                data-testid="event-description-input"
+                aria-label="Event description"
               />
             </div>
 
@@ -470,6 +486,8 @@ export function EventCreateModal({
             <button
               onClick={onClose}
               className="rounded px-4 py-2 text-sm text-[#d0d0d0] hover:bg-[#2a2a2a]"
+              data-testid="event-cancel-button"
+              aria-label="Cancel"
             >
               Cancel
             </button>
@@ -482,6 +500,8 @@ export function EventCreateModal({
                   ? 'bg-info hover:bg-info/90 text-info-foreground'
                   : 'cursor-not-allowed bg-[#3a3a3a] text-[#6b6b6b]'
               )}
+              data-testid="event-save-button"
+              aria-label="Save event"
             >
               Create Event
             </button>
