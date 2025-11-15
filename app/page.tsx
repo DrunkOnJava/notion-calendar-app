@@ -461,18 +461,11 @@ export default function CalendarPage() {
     'Michael Foster': false,
   })
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
-  const [_selectedDatabase, _setSelectedDatabase] = useState<string | null>('Personnel Roster')
-  const [_showDatabaseDropdown, _setShowDatabaseDropdown] = useState(false)
-  const [_databaseFilter, _setDatabaseFilter] = useState<'Personnel Roster' | 'All Properties'>(
-    'Personnel Roster'
-  )
   const [draggedEvent, setDraggedEvent] = useState<Event | null>(null)
   const [filters, setFilters] = useState<Filter[]>([])
   const [sort, setSort] = useState<{ property: string; direction: 'asc' | 'desc' } | null>(null)
-  const [_showRecurrenceEditor, _setShowRecurrenceEditor] = useState(false)
   const [showEventSeriesModal, setShowEventSeriesModal] = useState(false)
   const [eventSeriesAction, setEventSeriesAction] = useState<'edit' | 'delete'>('edit')
-  const [_editingRecurrence, _setEditingRecurrence] = useState<RecurrenceRule | null>(null)
 
   const [currentDate, setCurrentDate] = useState(new Date(2025, 10, 13)) // November 13, 2025
   const [displayYear, setDisplayYear] = useState(2025)
@@ -639,8 +632,6 @@ export default function CalendarPage() {
     position: { x: number; y: number }
   } | null>(null)
 
-  // State for handling event files
-  const [_eventFiles, _setEventFiles] = useState<{ [eventId: string]: File[] }>({})
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
   const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true)
 
@@ -771,11 +762,21 @@ export default function CalendarPage() {
   }
 
   const handleDuplicateDatabaseItem = (item: DatabaseItem) => {
+    // Validate properties before duplication
+    if (!isPersonnelProperties(item.properties)) {
+      addToast({
+        type: 'error',
+        title: 'Duplication Failed',
+        message: 'Invalid item properties - cannot duplicate this item',
+      })
+      return
+    }
+
     const newItem: PersonnelItem = {
       id: Date.now().toString(),
       name: `${item.name} (Copy)`,
       time: item.time || '',
-      properties: isPersonnelProperties(item.properties) ? item.properties : {},
+      properties: item.properties,
     }
     setPersonnel([...personnel, newItem])
     addToast({
@@ -1106,10 +1107,6 @@ export default function CalendarPage() {
     return events.filter((event) => event.date === dateStr)
   }
 
-  const _formatDateForGrid = (date: Date) => {
-    return date.toISOString().split('T')[0]
-  }
-
   const weeks = []
   for (let i = 0; i < 6; i++) {
     const week = []
@@ -1120,10 +1117,6 @@ export default function CalendarPage() {
       }
     }
     if (week.length > 0) weeks.push(week)
-  }
-
-  const _togglePersonnel = (name: string) => {
-    setExpandedPersonnel((prev) => ({ ...prev, [name]: !prev[name] }))
   }
 
   const handleSelectPerson = (item: DatabaseItem | string) => {
@@ -1245,23 +1238,24 @@ export default function CalendarPage() {
     if (eventData.recurrence && eventData.date) {
       // Generate recurring events using spread to preserve all properties
       const dates = generateRecurringDates(eventData.date, eventData.recurrence)
-      const baseEvent = {
-        ...eventData,
+      const baseEvent: Omit<Event, 'id' | 'date'> = {
         title: eventData.title || '',
         time: eventData.startTime ? `${eventData.startTime}` : null,
         endTime: eventData.endTime || null,
         isAllDay: eventData.isAllDay || false,
         seriesId: Date.now().toString(),
+        recurrence: eventData.recurrence,
+        calendar: eventData.calendar,
+        color: eventData.color,
+        description: eventData.description,
+        location: eventData.location,
       }
 
-      const recurringEvents: Event[] = dates.map(
-        (date, idx) =>
-          ({
-            ...baseEvent,
-            id: `${Date.now()}-${idx}`,
-            date,
-          }) as Event
-      )
+      const recurringEvents: Event[] = dates.map((date, idx) => ({
+        ...baseEvent,
+        id: `${Date.now()}-${idx}`,
+        date,
+      }))
       setEvents([...events, ...recurringEvents])
       addToast({
         type: 'success',
@@ -1269,16 +1263,20 @@ export default function CalendarPage() {
         message: `Created ${recurringEvents.length} recurring events`,
       })
     } else {
-      // Use spread to preserve all properties and override specific ones
+      // Create event with required fields explicitly defined
       const newEvent: Event = {
-        ...eventData,
         id: Date.now().toString(),
         title: eventData.title || '',
         date: eventData.date || '',
         time: eventData.startTime ? `${eventData.startTime}` : null,
         endTime: eventData.endTime || null,
         isAllDay: eventData.isAllDay || false,
-      } as Event
+        calendar: eventData.calendar,
+        color: eventData.color,
+        description: eventData.description,
+        location: eventData.location,
+        recurrence: eventData.recurrence,
+      }
       setEvents([...events, newEvent])
       addToast({
         type: 'success',
@@ -1596,8 +1594,7 @@ export default function CalendarPage() {
 
     return filters.every((filter) => {
       const value = item.properties[filter.property]
-      // Use nullish coalescing to handle null/undefined gracefully
-      const filterValue = (filter.value ?? '').toString().toLowerCase()
+      const filterValue = filter.value.toLowerCase()
 
       if (filter.operator === 'is') {
         return String(value).toLowerCase() === filterValue
@@ -1684,8 +1681,7 @@ export default function CalendarPage() {
   const handleImportCalendar = (file: File) => {
     // Parse ICS/CSV file and import events
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const _content = e.target?.result as string
+    reader.onload = () => {
       // TODO: Parse ICS format and add events
       addToast({
         type: 'success',
@@ -1781,27 +1777,7 @@ export default function CalendarPage() {
   // Dummy personnel and setPersonnel for database item context menu handlers
   const [personnel, setPersonnel] = useState(personnelData[0].items)
 
-  // New handlers for files
-  const _handleFilesAdded = (eventId: string, files: File[]) => {
-    _setEventFiles((prev) => ({
-      ...prev,
-      [eventId]: [...(prev[eventId] || []), ...files],
-    }))
-    addToast({
-      type: 'success',
-      title: 'Files Attached',
-      message: `${files.length} file${files.length > 1 ? 's' : ''} added to event`,
-    })
-  }
-
-  const _handleRemoveFile = (eventId: string, fileIndex: number) => {
-    _setEventFiles((prev) => ({
-      ...prev,
-      [eventId]: (prev[eventId] || []).filter((_, i) => i !== fileIndex),
-    }))
-  }
-
-  // New handler for reordering database items
+  // Handler for reordering database items
   const handleReorderDatabaseItems = (fromIndex: number, toIndex: number) => {
     const newPersonnel = [...personnel]
     const [removed] = newPersonnel.splice(fromIndex, 1)
@@ -1811,17 +1787,6 @@ export default function CalendarPage() {
       type: 'success',
       title: 'Items Reordered',
       message: 'Database items have been reordered',
-    })
-  }
-
-  // New handler for dragging event to a calendar
-  const _handleDragEventToCalendar = (event: Event, calendarId: string) => {
-    setEvents(events.map((e) => (e.id === event.id ? { ...e, calendar: calendarId } : e)))
-    const calendar = calendars.find((c) => c.id === calendarId)
-    addToast({
-      type: 'success',
-      title: 'Event Moved',
-      message: `${event.title} moved to ${calendar?.name}`,
     })
   }
 
@@ -2063,7 +2028,7 @@ export default function CalendarPage() {
                       </div>
 
                       {/* Level 3 - Scalable content area with transform-based responsive scaling */}
-                      {_selectedDatabase && leftSidebarView === 'database' && (
+                      {leftSidebarView === 'database' && (
                         <div className="flex flex-1 flex-col overflow-hidden">
                           {/* Scale wrapper - dynamically scales content to prevent overflow */}
                           <div

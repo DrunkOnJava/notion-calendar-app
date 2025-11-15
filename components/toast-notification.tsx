@@ -86,7 +86,7 @@ export function ToastContainer({
   toasts,
   onClose,
 }: {
-  toasts: ToastNotificationProps[]
+  toasts: Omit<ToastNotificationProps, 'onClose'>[]
   onClose: (id: string) => void
 }) {
   return (
