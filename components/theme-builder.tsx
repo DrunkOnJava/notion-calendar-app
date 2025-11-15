@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Palette, Download, Upload, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { hapticFeedback } from '@/lib/haptics'
 
 interface ColorToken {
   name: string

@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
-import { hapticFeedback } from '@/lib/touch-utils'
+import { hapticFeedback } from '@/lib/haptics'
 
 interface DragDropOptions<T> {
   onDragStart?: (item: T, index: number) => void

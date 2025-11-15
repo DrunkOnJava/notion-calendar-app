@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { hapticFeedback } from '@/lib/touch-utils'
+import { hapticFeedback } from '@/lib/haptics'
 
 interface GestureOptions {
   onSwipeLeft?: () => void
@@ -39,7 +39,7 @@ export function useGestures<T extends HTMLElement>(
   const elementRef = useRef<T>(null)
   const touchStartRef = useRef({ x: 0, y: 0, time: 0 })
   const lastTapRef = useRef(0)
-  const longPressTimerRef = useRef<NodeJS.Timeout>()
+  const longPressTimerRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const initialDistanceRef = useRef(0)
 
   // Swipe detection
@@ -92,7 +92,7 @@ export function useGestures<T extends HTMLElement>(
     }
   }
 
-  const handleTouchEnd = (e: TouchEvent) {
+  const handleTouchEnd = (e: TouchEvent) => {
     // Clear long-press timer
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current)
@@ -240,7 +240,7 @@ export function useLongPress(
   delay: number = 500
 ) {
   const elementRef = useRef<HTMLElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const positionRef = useRef({ x: 0, y: 0 })
 
   const handleStart = (e: TouchEvent | MouseEvent) => {

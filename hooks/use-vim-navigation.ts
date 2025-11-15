@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hapticFeedback } from '@/lib/touch-utils'
+import { hapticFeedback } from '@/lib/haptics'
 
 interface VimNavigationOptions {
   onNavigateUp?: () => void
@@ -210,10 +210,10 @@ export function useAdvancedShortcuts(
 
         const isMatch =
           e.key === shortcut.key &&
-          !!e.shiftKey === !!shortcut.shiftKey &&
-          !!e.metaKey === !!shortcut.metaKey &&
-          !!e.ctrlKey === !!shortcut.ctrlKey &&
-          !!e.altKey === !!shortcut.altKey
+          !!e.shiftKey === !!('shiftKey' in shortcut && shortcut.shiftKey) &&
+          !!e.metaKey === !!('metaKey' in shortcut && shortcut.metaKey) &&
+          !!e.ctrlKey === !!('ctrlKey' in shortcut && shortcut.ctrlKey) &&
+          !!e.altKey === !!('altKey' in shortcut && shortcut.altKey)
 
         if (isMatch) {
           e.preventDefault()

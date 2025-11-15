@@ -35,7 +35,7 @@ export function usePrefetch<T>(
     timestamp: 0,
   })
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const isFetchingRef = useRef(false)
 
   const prefetch = useCallback(async () => {

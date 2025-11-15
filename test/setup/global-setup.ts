@@ -51,7 +51,7 @@ async function globalSetup() {
     }
 
     // Set common test environment variables
-    process.env.NODE_ENV = 'test';
+    // Note: NODE_ENV is read-only and should be set by the test runner
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3001';
 
     console.log('✅ Test environment setup completed');

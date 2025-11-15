@@ -4,7 +4,7 @@ import { Page, Locator } from '@playwright/test'
  * Base Page Object with common functionality
  */
 export class BasePage {
-  constructor(protected page: Page) {}
+  constructor(public page: Page) {}
 
   /**
    * Navigate to the application

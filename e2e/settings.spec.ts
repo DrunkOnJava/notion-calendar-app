@@ -60,7 +60,7 @@ test.describe('Settings Management', () => {
     await settingsPage.save()
     await settingsPage.close()
 
-    await page.waitForTimeout(300)
+    await settingsPage.page.waitForTimeout(300)
   })
 
   test('should change default calendar view', async ({ page }) => {

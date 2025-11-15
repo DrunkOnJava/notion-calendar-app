@@ -96,26 +96,22 @@ export const AgendaView = dynamic(
 
 /**
  * Preload a component before it's needed
+ * TODO: Implement preloading with custom lazy wrapper
  */
-export function preloadComponent(componentName: keyof typeof componentMap) {
-  componentMap[componentName].preload()
-}
-
-const componentMap = {
-  EventCreateModal,
-  SettingsModal,
-  EventDetailModal,
-  CalendarImportExport,
-  FindTimeModal,
-  DatabaseBoardView,
-  AgendaView,
+export function preloadComponent(componentName: string) {
+  // React.lazy() doesn't support preload by default
+  // This is a placeholder for future implementation
+  console.debug(`Preload requested for: ${componentName}`)
 }
 
 /**
  * Preload multiple components
+ * TODO: Implement preloading with custom lazy wrapper
  */
-export function preloadComponents(components: Array<keyof typeof componentMap>) {
+export function preloadComponents(components: string[]) {
+  // React.lazy() doesn't support preload by default
+  // This is a placeholder for future implementation
   components.forEach((component) => {
-    componentMap[component].preload()
+    console.debug(`Preload requested for: ${component}`)
   })
 }
