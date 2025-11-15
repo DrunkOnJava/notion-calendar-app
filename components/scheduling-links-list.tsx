@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Link2, Copy, Edit, Trash2, MoreVertical, Check, Calendar } from "lucide-react"
+import { useState } from 'react'
+import { Link2, Copy, Edit, Trash2, MoreVertical, Check, Calendar } from 'lucide-react'
 
 interface SchedulingLink {
   id: string
@@ -24,7 +24,12 @@ interface SchedulingLinksListProps {
   onViewBookings: (link: SchedulingLink) => void
 }
 
-export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }: SchedulingLinksListProps) {
+export function SchedulingLinksList({
+  links,
+  onEdit,
+  onDelete,
+  onViewBookings,
+}: SchedulingLinksListProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState<string | null>(null)
 
@@ -39,32 +44,34 @@ export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }:
       {links.map((link) => (
         <div
           key={link.id}
-          className="bg-surface border border-border rounded-lg p-4 hover:border-info/50 transition-colors"
+          className="bg-surface border-border hover:border-info/50 rounded-lg border p-4 transition-colors"
         >
           <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3 flex-1">
+            <div className="flex flex-1 items-start gap-3">
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                 style={{ backgroundColor: `${link.color}20` }}
               >
-                <Calendar className="w-5 h-5" style={{ color: link.color }} />
+                <Calendar className="h-5 w-5" style={{ color: link.color }} />
               </div>
 
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground">{link.name}</h3>
+                  <h3 className="text-foreground text-sm font-semibold">{link.name}</h3>
                   {link.requireApproval && (
-                    <span className="px-2 py-0.5 bg-warning/20 text-warning text-xs rounded-full">
+                    <span className="bg-warning/20 text-warning rounded-full px-2 py-0.5 text-xs">
                       Approval Required
                     </span>
                   )}
                 </div>
 
                 {link.description && (
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{link.description}</p>
+                  <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                    {link.description}
+                  </p>
                 )}
 
-                <div className="flex items-center gap-4 mt-2 text-xs text-secondary">
+                <div className="text-secondary mt-2 flex items-center gap-4 text-xs">
                   <span>{link.duration} min</span>
                   {link.location && <span>{link.location}</span>}
                   {(link.bufferBefore > 0 || link.bufferAfter > 0) && (
@@ -73,25 +80,25 @@ export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }:
                   <span>Max: {link.maxBookingsPerDay}/day</span>
                 </div>
 
-                <div className="flex items-center gap-2 mt-3">
+                <div className="mt-3 flex items-center gap-2">
                   <input
                     type="text"
                     value={link.link}
                     readOnly
-                    className="flex-1 px-2 py-1 bg-input border border-border rounded text-xs text-secondary focus:outline-none"
+                    className="bg-input border-border text-secondary flex-1 rounded border px-2 py-1 text-xs focus:outline-none"
                   />
                   <button
                     onClick={() => copyLink(link)}
-                    className="px-3 py-1 bg-info/10 hover:bg-info/20 text-info rounded text-xs font-medium transition-colors flex items-center gap-1"
+                    className="bg-info/10 hover:bg-info/20 text-info flex items-center gap-1 rounded px-3 py-1 text-xs font-medium transition-colors"
                   >
                     {copiedId === link.id ? (
                       <>
-                        <Check className="w-3 h-3" />
+                        <Check className="h-3 w-3" />
                         Copied
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3 h-3" />
+                        <Copy className="h-3 w-3" />
                         Copy
                       </>
                     )}
@@ -103,23 +110,23 @@ export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }:
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(menuOpen === link.id ? null : link.id)}
-                className="p-1 hover:bg-surface-hover rounded"
+                className="hover:bg-surface-hover rounded p-1"
               >
-                <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                <MoreVertical className="text-muted-foreground h-4 w-4" />
               </button>
 
               {menuOpen === link.id && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(null)} />
-                  <div className="absolute right-0 top-8 z-50 bg-card border border-border rounded-lg shadow-lg py-1 w-48">
+                  <div className="bg-card border-border absolute top-8 right-0 z-50 w-48 rounded-lg border py-1 shadow-lg">
                     <button
                       onClick={() => {
                         onViewBookings(link)
                         setMenuOpen(null)
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-surface-hover flex items-center gap-2"
+                      className="text-foreground hover:bg-surface-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
                     >
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="h-4 w-4" />
                       View Bookings
                     </button>
                     <button
@@ -127,9 +134,9 @@ export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }:
                         onEdit(link)
                         setMenuOpen(null)
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-surface-hover flex items-center gap-2"
+                      className="text-foreground hover:bg-surface-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="h-4 w-4" />
                       Edit
                     </button>
                     <button
@@ -137,9 +144,9 @@ export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }:
                         onDelete(link.id)
                         setMenuOpen(null)
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-destructive hover:bg-destructive/10 flex items-center gap-2"
+                      className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="h-4 w-4" />
                       Delete
                     </button>
                   </div>
@@ -151,10 +158,12 @@ export function SchedulingLinksList({ links, onEdit, onDelete, onViewBookings }:
       ))}
 
       {links.length === 0 && (
-        <div className="text-center py-12">
-          <Link2 className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No scheduling links yet</p>
-          <p className="text-xs text-secondary mt-1">Create your first link to start accepting bookings</p>
+        <div className="py-12 text-center">
+          <Link2 className="text-muted-foreground mx-auto mb-3 h-12 w-12" />
+          <p className="text-muted-foreground text-sm">No scheduling links yet</p>
+          <p className="text-secondary mt-1 text-xs">
+            Create your first link to start accepting bookings
+          </p>
         </div>
       )}
     </div>

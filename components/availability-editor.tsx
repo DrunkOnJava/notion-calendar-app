@@ -1,6 +1,6 @@
-"use client"
-import { Clock, Plus, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+'use client'
+import { Clock, Plus, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface TimeSlot {
   start: string
@@ -21,7 +21,7 @@ interface AvailabilityEditorProps {
   onChange: (availability: WeekAvailability) => void
 }
 
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 export function AvailabilityEditor({ availability, onChange }: AvailabilityEditorProps) {
   const toggleDay = (day: string) => {
@@ -39,7 +39,7 @@ export function AvailabilityEditor({ availability, onChange }: AvailabilityEdito
       ...availability,
       [day]: {
         ...availability[day],
-        slots: [...availability[day].slots, { start: "09:00", end: "17:00" }],
+        slots: [...availability[day].slots, { start: '09:00', end: '17:00' }],
       },
     })
   }
@@ -54,45 +54,52 @@ export function AvailabilityEditor({ availability, onChange }: AvailabilityEdito
     })
   }
 
-  const updateTimeSlot = (day: string, index: number, field: "start" | "end", value: string) => {
+  const updateTimeSlot = (day: string, index: number, field: 'start' | 'end', value: string) => {
     onChange({
       ...availability,
       [day]: {
         ...availability[day],
-        slots: availability[day].slots.map((slot, i) => (i === index ? { ...slot, [field]: value } : slot)),
+        slots: availability[day].slots.map((slot, i) =>
+          i === index ? { ...slot, [field]: value } : slot
+        ),
       },
     })
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Clock className="w-4 h-4 text-info" />
-        <h3 className="text-sm font-semibold text-foreground">Weekly Availability</h3>
+      <div className="mb-4 flex items-center gap-2">
+        <Clock className="text-info h-4 w-4" />
+        <h3 className="text-foreground text-sm font-semibold">Weekly Availability</h3>
       </div>
 
       {DAYS.map((day) => (
-        <div key={day} className="border border-border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
+        <div key={day} className="border-border rounded-lg border p-4">
+          <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => toggleDay(day)}
-                className={`relative w-11 h-6 rounded-full transition-colors ${
-                  availability[day]?.enabled ? "bg-info" : "bg-muted"
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  availability[day]?.enabled ? 'bg-info' : 'bg-muted'
                 }`}
               >
                 <div
-                  className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                    availability[day]?.enabled ? "translate-x-5" : ""
+                  className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-transform ${
+                    availability[day]?.enabled ? 'translate-x-5' : ''
                   }`}
                 />
               </button>
-              <span className="text-sm font-medium text-foreground">{day}</span>
+              <span className="text-foreground text-sm font-medium">{day}</span>
             </div>
 
             {availability[day]?.enabled && (
-              <Button onClick={() => addTimeSlot(day)} variant="outline" size="sm" className="text-xs">
-                <Plus className="w-3 h-3 mr-1" />
+              <Button
+                onClick={() => addTimeSlot(day)}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+              >
+                <Plus className="mr-1 h-3 w-3" />
                 Add Hours
               </Button>
             )}
@@ -105,32 +112,36 @@ export function AvailabilityEditor({ availability, onChange }: AvailabilityEdito
                   <input
                     type="time"
                     value={slot.start}
-                    onChange={(e) => updateTimeSlot(day, index, "start", e.target.value)}
-                    className="px-3 py-2 bg-input border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-info"
+                    onChange={(e) => updateTimeSlot(day, index, 'start', e.target.value)}
+                    className="bg-input border-border text-foreground focus:ring-info rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                   />
                   <span className="text-muted-foreground">to</span>
                   <input
                     type="time"
                     value={slot.end}
-                    onChange={(e) => updateTimeSlot(day, index, "end", e.target.value)}
-                    className="px-3 py-2 bg-input border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-info"
+                    onChange={(e) => updateTimeSlot(day, index, 'end', e.target.value)}
+                    className="bg-input border-border text-foreground focus:ring-info rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                   />
                   <button
                     onClick={() => removeTimeSlot(day, index)}
-                    className="p-2 text-destructive hover:bg-destructive/10 rounded transition-colors"
+                    className="text-destructive hover:bg-destructive/10 rounded p-2 transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               ))}
 
               {availability[day].slots.length === 0 && (
-                <p className="text-sm text-muted-foreground italic">Click "Add Hours" to set available times</p>
+                <p className="text-muted-foreground text-sm italic">
+                  Click "Add Hours" to set available times
+                </p>
               )}
             </div>
           )}
 
-          {!availability[day]?.enabled && <p className="text-sm text-muted-foreground italic">Unavailable</p>}
+          {!availability[day]?.enabled && (
+            <p className="text-muted-foreground text-sm italic">Unavailable</p>
+          )}
         </div>
       ))}
     </div>

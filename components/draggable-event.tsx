@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import type React from "react"
-import type { Event } from "@/types/event"
+import type React from 'react'
+import type { Event } from '@/types/event'
 
-import { cn } from "@/lib/utils"
-import { useState } from "react"
+import { cn } from '@/lib/utils'
+import { useState } from 'react'
 
 interface DraggableEventProps {
   event: Event
@@ -33,9 +33,9 @@ export function DraggableEvent({
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true)
     setIsDuplicating(e.altKey)
-    e.dataTransfer.effectAllowed = e.altKey ? "copy" : "move"
-    e.dataTransfer.setData("application/json", JSON.stringify(event))
-    e.dataTransfer.setData("isDuplicate", e.altKey.toString())
+    e.dataTransfer.effectAllowed = e.altKey ? 'copy' : 'move'
+    e.dataTransfer.setData('application/json', JSON.stringify(event))
+    e.dataTransfer.setData('isDuplicate', e.altKey.toString())
     onDragStart(event)
   }
 
@@ -53,7 +53,12 @@ export function DraggableEvent({
         e.stopPropagation()
         onClick(event)
       }}
-      className={cn("cursor-move", isDragging && "opacity-50", isDuplicating && "cursor-copy", className)}
+      className={cn(
+        'cursor-move',
+        isDragging && 'opacity-50',
+        isDuplicating && 'cursor-copy',
+        className
+      )}
       style={style}
     >
       {children}

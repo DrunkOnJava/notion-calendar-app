@@ -51,6 +51,7 @@ We follow conventional commit format:
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -61,6 +62,7 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
+
 ```
 feat: add recurring event support
 fix: resolve date picker timezone issue
@@ -80,6 +82,7 @@ docs: update README installation steps
 ## Reporting Bugs
 
 Use the [Bug Report template](.github/ISSUE_TEMPLATE/bug_report.yml) and include:
+
 - Clear description of the issue
 - Steps to reproduce
 - Expected vs actual behavior
@@ -89,6 +92,7 @@ Use the [Bug Report template](.github/ISSUE_TEMPLATE/bug_report.yml) and include
 ## Suggesting Features
 
 Use the [Feature Request template](.github/ISSUE_TEMPLATE/feature_request.yml) and include:
+
 - Problem you're trying to solve
 - Proposed solution
 - Alternative solutions considered

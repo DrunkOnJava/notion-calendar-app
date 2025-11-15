@@ -32,7 +32,7 @@ A modern, feature-rich calendar application built with Next.js 16, React 19, and
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recommended) or npm
 
 ### Installation
@@ -97,6 +97,7 @@ All scripts default to launching their own isolated Chrome profile. If you need 
 ### VS Code Setup
 
 This project includes VS Code workspace configuration with:
+
 - Auto-formatting on save
 - ESLint auto-fix
 - TypeScript auto-imports
@@ -109,6 +110,7 @@ See `.vscode/README.md` for details.
 ## 🎨 Component Library
 
 Built with [shadcn/ui](https://ui.shadcn.com/) for a consistent, accessible component system:
+
 - Buttons, Cards, Dialogs
 - Forms with validation
 - Date pickers and calendars

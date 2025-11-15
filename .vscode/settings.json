@@ -44,12 +44,7 @@
   "javascript.suggest.autoImports": true,
 
   // ESLint settings
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "eslint.workingDirectories": [
     {
       "mode": "auto"
@@ -127,10 +122,7 @@
   },
   "chat.mcp.serverSampling": {
     "notionCalendar/.vscode/mcp.json: chromedevtools/chrome-devtools-mcp": {
-      "allowedModels": [
-        "copilot/claude-sonnet-4.5",
-        "copilot/gpt-5.1-codex"
-      ]
+      "allowedModels": ["copilot/claude-sonnet-4.5", "copilot/gpt-5.1-codex"]
     }
   }
 }

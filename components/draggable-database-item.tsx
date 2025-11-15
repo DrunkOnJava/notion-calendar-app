@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { GripVertical } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from 'react'
+import { GripVertical } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface DraggableDatabaseItemProps {
   item: any
@@ -14,14 +14,20 @@ interface DraggableDatabaseItemProps {
   className?: string
 }
 
-export function DraggableDatabaseItem({ item, index, onReorder, children, className }: DraggableDatabaseItemProps) {
+export function DraggableDatabaseItem({
+  item,
+  index,
+  onReorder,
+  children,
+  className,
+}: DraggableDatabaseItemProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [isDragOver, setIsDragOver] = useState(false)
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true)
-    e.dataTransfer.effectAllowed = "move"
-    e.dataTransfer.setData("databaseItemIndex", index.toString())
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('databaseItemIndex', index.toString())
   }
 
   const handleDragEnd = () => {
@@ -41,7 +47,7 @@ export function DraggableDatabaseItem({ item, index, onReorder, children, classN
     e.preventDefault()
     setIsDragOver(false)
 
-    const fromIndex = Number.parseInt(e.dataTransfer.getData("databaseItemIndex"))
+    const fromIndex = Number.parseInt(e.dataTransfer.getData('databaseItemIndex'))
     if (!Number.isNaN(fromIndex) && fromIndex !== index) {
       onReorder(fromIndex, index)
     }
@@ -56,15 +62,15 @@ export function DraggableDatabaseItem({ item, index, onReorder, children, classN
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        "group transition-all",
-        isDragging && "opacity-50",
-        isDragOver && "border-t-2 border-info",
-        className,
+        'group transition-all',
+        isDragging && 'opacity-50',
+        isDragOver && 'border-info border-t-2',
+        className
       )}
     >
       <div className="flex items-center gap-2">
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
-          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        <div className="cursor-grab opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing">
+          <GripVertical className="text-muted-foreground h-4 w-4" />
         </div>
         <div className="flex-1">{children}</div>
       </div>

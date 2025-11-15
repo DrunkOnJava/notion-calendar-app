@@ -16,7 +16,7 @@ export interface Event {
 }
 
 export interface RecurrenceRule {
-  frequency: "daily" | "weekly" | "monthly" | "yearly"
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
   interval?: number
   endDate?: string
   count?: number

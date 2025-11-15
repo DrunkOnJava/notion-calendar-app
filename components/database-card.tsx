@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { cn } from "@/lib/utils"
-import { ChevronDown } from "lucide-react"
+import { cn } from '@/lib/utils'
+import { ChevronDown } from 'lucide-react'
 
 interface DatabaseCardProps {
   person: {
@@ -15,12 +15,18 @@ interface DatabaseCardProps {
   onSelect: () => void
 }
 
-export function DatabaseCard({ person, position, isExpanded, onToggle, onSelect }: DatabaseCardProps) {
+export function DatabaseCard({
+  person,
+  position,
+  isExpanded,
+  onToggle,
+  onSelect,
+}: DatabaseCardProps) {
   return (
     <div
       className={cn(
-        "hover:bg-surface-hover transition-colors border-b border-surface-border/30 last:border-b-0",
-        position % 2 === 0 && "bg-surface"
+        'hover:bg-surface-hover border-surface-border/30 border-b transition-colors last:border-b-0',
+        position % 2 === 0 && 'bg-surface'
       )}
       style={{
         containerType: 'inline-size',
@@ -31,31 +37,29 @@ export function DatabaseCard({ person, position, isExpanded, onToggle, onSelect 
           onToggle()
           onSelect()
         }}
-        className="w-full text-left cursor-pointer"
+        className="w-full cursor-pointer text-left"
       >
         {/* Single-line row with position and name */}
         <div
-          className="grid items-center py-1 pr-2 pl-2 gap-md"
+          className="gap-md grid items-center py-1 pr-2 pl-2"
           style={{
             gridTemplateColumns: 'auto 1fr',
             lineHeight: 1.3,
           }}
         >
           {/* Position number */}
-          <div className="text-text-tertiary font-mono tabular-nums text-fluid-md">
-            {position}
-          </div>
+          <div className="text-text-tertiary text-fluid-md font-mono tabular-nums">{position}</div>
 
           {/* Name column */}
           <div
-            className="font-medium text-text-primary truncate flex items-center justify-between text-fluid-base"
+            className="text-text-primary text-fluid-base flex items-center justify-between truncate font-medium"
             title={person.name}
           >
             <span className="truncate">{person.name}</span>
             <ChevronDown
               className={cn(
-                "shrink-0 text-text-tertiary transition-transform icon-md",
-                isExpanded && "rotate-180"
+                'text-text-tertiary icon-md shrink-0 transition-transform',
+                isExpanded && 'rotate-180'
               )}
             />
           </div>
@@ -63,41 +67,32 @@ export function DatabaseCard({ person, position, isExpanded, onToggle, onSelect 
       </div>
 
       {isExpanded && (
-        <div
-          className="pb-2 px-3 pt-1.5 space-y-1.5 bg-surface border-t border-surface-border/50 text-fluid-sm"
-        >
+        <div className="bg-surface border-surface-border/50 text-fluid-sm space-y-1.5 border-t px-3 pt-1.5 pb-2">
           {Object.entries(person.properties).map(([key, value]) => (
-            <div
-              key={key}
-              className="flex items-center whitespace-nowrap gap-sm text-fluid-sm"
-            >
-              {typeof value === "boolean" ? (
+            <div key={key} className="gap-sm text-fluid-sm flex items-center whitespace-nowrap">
+              {typeof value === 'boolean' ? (
                 <>
                   <div
                     className={cn(
-                      "rounded border flex items-center justify-center shrink-0 icon-md",
-                      value ? "bg-info border-info" : "border-muted",
+                      'icon-md flex shrink-0 items-center justify-center rounded border',
+                      value ? 'bg-info border-info' : 'border-muted'
                     )}
                   >
-                    {value && <span className="font-bold text-fluid-xs">✓</span>}
+                    {value && <span className="text-fluid-xs font-bold">✓</span>}
                   </div>
                   <span className="text-text-secondary">{key}</span>
                 </>
-              ) : key === "Certification Level" ? (
+              ) : key === 'Certification Level' ? (
                 <>
                   <span className="text-text-secondary">{key}</span>
-                  <span
-                    className="ml-auto bg-success/50 text-success-foreground rounded font-medium whitespace-nowrap badge-responsive"
-                  >
+                  <span className="bg-success/50 text-success-foreground badge-responsive ml-auto rounded font-medium whitespace-nowrap">
                     {value}
                   </span>
                 </>
-              ) : key === "Shift" ? (
+              ) : key === 'Shift' ? (
                 <>
                   <span className="text-text-secondary">{key}</span>
-                  <span
-                    className="ml-auto bg-badge-pink text-badge-pink-foreground rounded font-medium whitespace-nowrap badge-responsive"
-                  >
+                  <span className="bg-badge-pink text-badge-pink-foreground badge-responsive ml-auto rounded font-medium whitespace-nowrap">
                     {value}
                   </span>
                 </>

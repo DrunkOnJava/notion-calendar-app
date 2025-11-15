@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Upload, X, Paperclip } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from 'react'
+import { Upload, X, Paperclip } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface FileDropZoneProps {
   onFilesAdded: (files: File[]) => void
@@ -19,7 +19,7 @@ export function FileDropZone({
   existingFiles = [],
   onRemoveFile,
   maxFiles = 5,
-  acceptedTypes = ["image/*", "application/pdf", ".doc", ".docx", ".txt"],
+  acceptedTypes = ['image/*', 'application/pdf', '.doc', '.docx', '.txt'],
 }: FileDropZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false)
 
@@ -70,45 +70,50 @@ export function FileDropZone({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
-          isDragOver ? "border-info bg-info/10" : "border-border hover:border-muted-foreground",
+          'rounded-lg border-2 border-dashed p-6 text-center transition-colors',
+          isDragOver ? 'border-info bg-info/10' : 'border-border hover:border-muted-foreground'
         )}
       >
         <div className="flex flex-col items-center gap-2">
-          <Upload className="w-8 h-8 text-muted-foreground" />
-          <div className="text-sm text-foreground">
+          <Upload className="text-muted-foreground h-8 w-8" />
+          <div className="text-foreground text-sm">
             <label className="text-info hover:text-info/80 cursor-pointer">
               Choose files
               <input
                 type="file"
                 multiple
-                accept={acceptedTypes.join(",")}
+                accept={acceptedTypes.join(',')}
                 onChange={handleFileSelect}
                 className="hidden"
               />
             </label>
-            {" or drag and drop"}
+            {' or drag and drop'}
           </div>
-          <div className="text-xs text-muted-foreground">Up to {maxFiles} files (images, PDFs, documents)</div>
+          <div className="text-muted-foreground text-xs">
+            Up to {maxFiles} files (images, PDFs, documents)
+          </div>
         </div>
       </div>
 
       {existingFiles.length > 0 && (
         <div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Attachments ({existingFiles.length})</div>
+          <div className="text-muted-foreground text-xs">Attachments ({existingFiles.length})</div>
           {existingFiles.map((file, index) => (
-            <div key={index} className="flex items-center gap-2 bg-surface border border-border rounded-lg p-2">
-              <Paperclip className="w-4 h-4 text-muted-foreground" />
-              <div className="flex-1 min-w-0">
-                <div className="text-sm text-foreground truncate">{file.name}</div>
-                <div className="text-xs text-muted-foreground">{formatFileSize(file.size)}</div>
+            <div
+              key={index}
+              className="bg-surface border-border flex items-center gap-2 rounded-lg border p-2"
+            >
+              <Paperclip className="text-muted-foreground h-4 w-4" />
+              <div className="min-w-0 flex-1">
+                <div className="text-foreground truncate text-sm">{file.name}</div>
+                <div className="text-muted-foreground text-xs">{formatFileSize(file.size)}</div>
               </div>
               {onRemoveFile && (
                 <button
                   onClick={() => onRemoveFile(index)}
                   className="text-muted-foreground hover:text-destructive p-1"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </button>
               )}
             </div>

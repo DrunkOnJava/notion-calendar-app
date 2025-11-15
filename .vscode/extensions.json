@@ -3,22 +3,22 @@
     // GitHub Copilot
     "github.copilot",
     "github.copilot-chat",
-    
+
     // Essential Next.js/React development
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
-    
+
     // TypeScript & JavaScript
     "usernamehw.errorlens",
     "streetsidesoftware.code-spell-checker",
-    
+
     // Utilities
     "christian-kohler.path-intellisense",
     "formulahendry.auto-rename-tag",
     "yoavbls.pretty-ts-errors",
     "eamodio.gitlens",
-    
+
     // Optional but helpful
     "ms-vscode.vscode-typescript-next",
     "prisma.prisma",

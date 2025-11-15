@@ -2,9 +2,9 @@
  * Recurrence rule for recurring events
  */
 export interface RecurrenceRule {
-  frequency: "daily" | "weekly" | "monthly" | "yearly"
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
   interval: number
-  endType: "never" | "count" | "until"
+  endType: 'never' | 'count' | 'until'
   count?: number
   until?: string // YYYY-MM-DD format
   byWeekday?: number[] // 0-6 for Sun-Sat
@@ -33,7 +33,7 @@ export interface Event {
   calendar?: string
   color?: string // Hex code
   tags?: string[]
-  type?: "holiday" | "info"
+  type?: 'holiday' | 'info'
 
   // Event Details (Optional)
   description?: string
@@ -43,9 +43,9 @@ export interface Event {
   reminders?: string[]
 
   // Status & Priority (Optional)
-  status?: "confirmed" | "tentative" | "cancelled"
-  priority?: "low" | "medium" | "high"
-  visibility?: "public" | "private" | "confidential"
+  status?: 'confirmed' | 'tentative' | 'cancelled'
+  priority?: 'low' | 'medium' | 'high'
+  visibility?: 'public' | 'private' | 'confidential'
 
   // Recurrence & Metadata (Optional)
   recurrence?: RecurrenceRule | null

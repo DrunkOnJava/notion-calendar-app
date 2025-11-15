@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Check } from "lucide-react"
-import type { DatabaseItem } from "@/types/calendar"
+import { useState } from 'react'
+import { Check } from 'lucide-react'
+import type { DatabaseItem } from '@/types/calendar'
 
 interface DatabaseTableViewProps {
   items: DatabaseItem[]
@@ -31,12 +31,12 @@ export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps
   return (
     <div className="overflow-auto">
       <table className="w-full text-sm">
-        <thead className="sticky top-0 bg-[#1c1c1c] border-b border-[#2a2a2a]">
+        <thead className="sticky top-0 border-b border-[#2a2a2a] bg-[#1c1c1c]">
           <tr>
             <th className="w-8 p-2">
               <input
                 type="checkbox"
-                className="w-4 h-4"
+                className="h-4 w-4"
                 checked={selectedItems.size === items.length}
                 onChange={(e) => {
                   if (e.target.checked) {
@@ -47,9 +47,9 @@ export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps
                 }}
               />
             </th>
-            <th className="text-left p-2 text-[#9a9a9a] font-medium">Name</th>
+            <th className="p-2 text-left font-medium text-[#9a9a9a]">Name</th>
             {properties.slice(0, 5).map((prop) => (
-              <th key={prop} className="text-left p-2 text-[#9a9a9a] font-medium">
+              <th key={prop} className="p-2 text-left font-medium text-[#9a9a9a]">
                 {prop}
               </th>
             ))}
@@ -59,13 +59,13 @@ export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps
           {items.map((item, idx) => (
             <tr
               key={idx}
-              className="border-b border-[#2a2a2a] hover:bg-[#202020] cursor-pointer"
+              className="cursor-pointer border-b border-[#2a2a2a] hover:bg-[#202020]"
               onClick={() => onItemClick(item)}
             >
               <td className="p-2">
                 <input
                   type="checkbox"
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                   checked={selectedItems.has(item.name)}
                   onChange={(e) => {
                     e.stopPropagation()
@@ -78,22 +78,24 @@ export function DatabaseTableView({ items, onItemClick }: DatabaseTableViewProps
                 const value = item.properties[prop]
                 return (
                   <td key={prop} className="p-2 text-[#9a9a9a]">
-                    {typeof value === "boolean" ? (
+                    {typeof value === 'boolean' ? (
                       value ? (
-                        <div className="flex items-center justify-center w-5 h-5 bg-info rounded">
-                          <Check className="w-3 h-3" />
+                        <div className="bg-info flex h-5 w-5 items-center justify-center rounded">
+                          <Check className="h-3 w-3" />
                         </div>
                       ) : (
-                        <div className="w-5 h-5 border border-[#4a4a4a] rounded"></div>
+                        <div className="h-5 w-5 rounded border border-[#4a4a4a]"></div>
                       )
-                    ) : prop === "Certification Level" ? (
-                      <span className="bg-success/50 text-success-foreground px-2 py-0.5 rounded text-xs">{value}</span>
-                    ) : prop === "Shift" ? (
-                      <span className="bg-badge-pink text-badge-pink-foreground px-2 py-0.5 rounded-full text-xs">
+                    ) : prop === 'Certification Level' ? (
+                      <span className="bg-success/50 text-success-foreground rounded px-2 py-0.5 text-xs">
+                        {value}
+                      </span>
+                    ) : prop === 'Shift' ? (
+                      <span className="bg-badge-pink text-badge-pink-foreground rounded-full px-2 py-0.5 text-xs">
                         {value}
                       </span>
                     ) : value === null ? (
-                      <span className="text-[#6b6b6b] italic text-xs">Empty</span>
+                      <span className="text-xs text-[#6b6b6b] italic">Empty</span>
                     ) : (
                       String(value)
                     )}

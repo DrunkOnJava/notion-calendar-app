@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { cn } from "@/lib/utils"
-import { ResizableEvent } from "@/components/resizable-event"
-import type { Event } from "@/types/calendar"
+import { cn } from '@/lib/utils'
+import { ResizableEvent } from '@/components/resizable-event'
+import type { Event } from '@/types/calendar'
 
 interface WeekViewProps {
   currentDate: Date
@@ -34,26 +34,26 @@ export function WeekView({
   })
 
   const getEventsForDateTime = (date: Date, hour: number) => {
-    const dateStr = date.toISOString().split("T")[0]
+    const dateStr = date.toISOString().split('T')[0]
     return events.filter((event) => {
       if (event.date !== dateStr) return false
       if (event.isAllDay) return hour === 0
-      const eventHour = Number.parseInt(event.startTime?.split(":")[0] || "0")
+      const eventHour = Number.parseInt(event.startTime?.split(':')[0] || '0')
       return eventHour === hour
     })
   }
 
   const getEventDuration = (event: Event) => {
     if (!event.startTime || !event.endTime) return 1
-    const [startHour, startMin] = event.startTime.split(":").map(Number)
-    const [endHour, endMin] = event.endTime.split(":").map(Number)
+    const [startHour, startMin] = event.startTime.split(':').map(Number)
+    const [endHour, endMin] = event.endTime.split(':').map(Number)
     const durationMinutes = endHour * 60 + endMin - (startHour * 60 + startMin)
     return durationMinutes / 60
   }
 
   const getEventTopOffset = (event: Event) => {
     if (!event.startTime) return 0
-    const [_hour, minutes] = event.startTime.split(":").map(Number)
+    const [_hour, minutes] = event.startTime.split(':').map(Number)
     return (minutes / 60) * 100
   }
 
@@ -61,19 +61,19 @@ export function WeekView({
     <div className="flex-1 overflow-auto">
       <div className="min-w-[1200px]">
         {/* Header */}
-        <div className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-[#2a2a2a] sticky top-0 bg-[#1a1a1a] z-10">
+        <div className="sticky top-0 z-10 grid grid-cols-[60px_repeat(7,1fr)] border-b border-[#2a2a2a] bg-[#1a1a1a]">
           <div className="p-2"></div>
           {weekDays.map((day, idx) => (
-            <div key={idx} className="p-2 text-center border-l border-[#2a2a2a]">
-              <div className="text-xs text-[#6b6b6b] font-medium">
-                {day.toLocaleDateString("en-US", { weekday: "short" })}
+            <div key={idx} className="border-l border-[#2a2a2a] p-2 text-center">
+              <div className="text-xs font-medium text-[#6b6b6b]">
+                {day.toLocaleDateString('en-US', { weekday: 'short' })}
               </div>
               <div
                 className={cn(
-                  "text-xl font-semibold mt-1",
+                  'mt-1 text-xl font-semibold',
                   day.toDateString() === new Date().toDateString()
-                    ? "bg-today text-today-foreground w-10 h-10 rounded-full flex items-center justify-center mx-auto"
-                    : "text-[#d0d0d0]",
+                    ? 'bg-today text-today-foreground mx-auto flex h-10 w-10 items-center justify-center rounded-full'
+                    : 'text-[#d0d0d0]'
                 )}
               >
                 {day.getDate()}
@@ -87,8 +87,14 @@ export function WeekView({
           {hours.map((hour) => (
             <div key={hour} className="contents">
               {/* Time Label */}
-              <div className="p-2 text-xs text-[#6b6b6b] text-right border-r border-[#2a2a2a] h-16 flex items-start justify-end">
-                {hour === 0 ? "12 AM" : hour < 12 ? `${hour} AM` : hour === 12 ? "12 PM" : `${hour - 12} PM`}
+              <div className="flex h-16 items-start justify-end border-r border-[#2a2a2a] p-2 text-right text-xs text-[#6b6b6b]">
+                {hour === 0
+                  ? '12 AM'
+                  : hour < 12
+                    ? `${hour} AM`
+                    : hour === 12
+                      ? '12 PM'
+                      : `${hour - 12} PM`}
               </div>
 
               {/* Day Columns */}
@@ -97,8 +103,8 @@ export function WeekView({
                 return (
                   <div
                     key={dayIdx}
-                    onClick={() => onTimeSlotClick(day, `${hour.toString().padStart(2, "0")}:00`)}
-                    className="border-l border-b border-[#2a2a2a] h-16 hover:bg-[#202020] cursor-pointer relative p-1"
+                    onClick={() => onTimeSlotClick(day, `${hour.toString().padStart(2, '0')}:00`)}
+                    className="relative h-16 cursor-pointer border-b border-l border-[#2a2a2a] p-1 hover:bg-[#202020]"
                   >
                     {dayEvents.map((event, eventIdx) => {
                       const _duration = getEventDuration(event)
@@ -114,22 +120,28 @@ export function WeekView({
                           onClick={onEventClick}
                           onContextMenu={onEventRightClick}
                           timeSlotHeight={64}
-                          className="absolute left-1 right-1"
+                          className="absolute right-1 left-1"
                         >
                           <div
                             className={cn(
-                              "h-full px-2 py-1 text-xs rounded cursor-pointer",
+                              'h-full cursor-pointer rounded px-2 py-1 text-xs',
                               event.color && `bg-[${event.color}]/60`,
-                              !event.color && event.type === "holiday" && "bg-event-holiday/40 text-success-foreground",
-                              !event.color && event.type === "info" && "bg-muted text-muted-foreground",
-                              !event.color && !event.type && "bg-event-default/80 text-foreground",
+                              !event.color &&
+                                event.type === 'holiday' &&
+                                'bg-event-holiday/40 text-success-foreground',
+                              !event.color &&
+                                event.type === 'info' &&
+                                'bg-muted text-muted-foreground',
+                              !event.color && !event.type && 'bg-event-default/80 text-foreground'
                             )}
-                            style={event.color ? { backgroundColor: `${event.color}99` } : undefined}
+                            style={
+                              event.color ? { backgroundColor: `${event.color}99` } : undefined
+                            }
                           >
-                            <div className="font-medium truncate">{event.title}</div>
+                            <div className="truncate font-medium">{event.title}</div>
                             {event.startTime && (
                               <div className="text-[10px] opacity-80">
-                                {event.startTime} - {event.endTime || "No end"}
+                                {event.startTime} - {event.endTime || 'No end'}
                               </div>
                             )}
                           </div>

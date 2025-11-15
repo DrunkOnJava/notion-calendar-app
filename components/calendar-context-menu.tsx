@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
-import { Edit2, Trash2, Share2, Eye, EyeOff, Star, Download } from "lucide-react"
+import { useEffect, useState } from 'react'
+import { Edit2, Trash2, Share2, Eye, EyeOff, Star, Download } from 'lucide-react'
 
 interface CalendarContextMenuProps {
   calendar: any
@@ -17,14 +17,14 @@ interface CalendarContextMenuProps {
 }
 
 const COLORS = [
-  { name: "Red", value: "#ef4444" },
-  { name: "Orange", value: "#f97316" },
-  { name: "Yellow", value: "#eab308" },
-  { name: "Green", value: "#22c55e" },
-  { name: "Blue", value: "#3b82f6" },
-  { name: "Purple", value: "#a855f7" },
-  { name: "Pink", value: "#ec4899" },
-  { name: "Gray", value: "#6b7280" },
+  { name: 'Red', value: '#ef4444' },
+  { name: 'Orange', value: '#f97316' },
+  { name: 'Yellow', value: '#eab308' },
+  { name: 'Green', value: '#22c55e' },
+  { name: 'Blue', value: '#3b82f6' },
+  { name: 'Purple', value: '#a855f7' },
+  { name: 'Pink', value: '#ec4899' },
+  { name: 'Gray', value: '#6b7280' },
 ]
 
 export function CalendarContextMenu({
@@ -44,15 +44,15 @@ export function CalendarContextMenu({
   useEffect(() => {
     const handleClickOutside = () => onClose()
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+      if (e.key === 'Escape') onClose()
     }
 
-    document.addEventListener("click", handleClickOutside)
-    document.addEventListener("keydown", handleEscape)
+    document.addEventListener('click', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
 
     return () => {
-      document.removeEventListener("click", handleClickOutside)
-      document.removeEventListener("keydown", handleEscape)
+      document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
     }
   }, [onClose])
 
@@ -68,31 +68,34 @@ export function CalendarContextMenu({
 
   return (
     <div
-      className="fixed z-50 bg-surface border border-border rounded-lg shadow-xl py-1 min-w-[220px]"
+      className="bg-surface border-border fixed z-50 min-w-[220px] rounded-lg border py-1 shadow-xl"
       style={{
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="px-3 py-2 text-xs text-muted-foreground border-b border-border flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: calendar.color }}></div>
+      <div className="text-muted-foreground border-border flex items-center gap-2 border-b px-3 py-2 text-xs">
+        <div
+          className="h-3 w-3 shrink-0 rounded-full"
+          style={{ backgroundColor: calendar.color }}
+        ></div>
         <span className="truncate">{calendar.name}</span>
       </div>
 
       <div className="py-1">
         <button
           onClick={() => handleAction(() => onToggleVisibility(calendar.id))}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+          className="text-foreground hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
         >
           {calendar.visible ? (
             <>
-              <EyeOff className="w-4 h-4 text-muted-foreground" />
+              <EyeOff className="text-muted-foreground h-4 w-4" />
               <span className="flex-1 text-left">Hide calendar</span>
             </>
           ) : (
             <>
-              <Eye className="w-4 h-4 text-muted-foreground" />
+              <Eye className="text-muted-foreground h-4 w-4" />
               <span className="flex-1 text-left">Show calendar</span>
             </>
           )}
@@ -101,18 +104,18 @@ export function CalendarContextMenu({
         {!calendar.isDefault && (
           <button
             onClick={() => handleAction(() => onSetDefault(calendar.id))}
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+            className="text-foreground hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
           >
-            <Star className="w-4 h-4 text-muted-foreground" />
+            <Star className="text-muted-foreground h-4 w-4" />
             <span className="flex-1 text-left">Set as default</span>
           </button>
         )}
 
         <button
           onClick={() => handleAction(() => onEdit(calendar))}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+          className="text-foreground hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
         >
-          <Edit2 className="w-4 h-4 text-muted-foreground" />
+          <Edit2 className="text-muted-foreground h-4 w-4" />
           <span className="flex-1 text-left">Edit calendar</span>
         </button>
 
@@ -122,16 +125,19 @@ export function CalendarContextMenu({
               e.stopPropagation()
               setShowColorPicker(!showColorPicker)
             }}
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+            className="text-foreground hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
           >
-            <div className="w-4 h-4 rounded border border-border" style={{ backgroundColor: calendar.color }} />
+            <div
+              className="border-border h-4 w-4 rounded border"
+              style={{ backgroundColor: calendar.color }}
+            />
             <span className="flex-1 text-left">Change color</span>
             <span className="text-muted-foreground">›</span>
           </button>
 
           {showColorPicker && (
             <div
-              className="absolute left-full top-0 ml-1 bg-surface border border-border rounded-lg shadow-xl p-2 min-w-[160px]"
+              className="bg-surface border-border absolute top-0 left-full ml-1 min-w-[160px] rounded-lg border p-2 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="grid grid-cols-4 gap-2">
@@ -139,7 +145,7 @@ export function CalendarContextMenu({
                   <button
                     key={color.value}
                     onClick={() => handleAction(() => onChangeColor(calendar, color.value))}
-                    className="w-8 h-8 rounded hover:scale-110 transition-transform border border-border"
+                    className="border-border h-8 w-8 rounded border transition-transform hover:scale-110"
                     style={{ backgroundColor: color.value }}
                     title={color.name}
                   />
@@ -151,28 +157,28 @@ export function CalendarContextMenu({
 
         <button
           onClick={() => handleAction(() => onShare(calendar))}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+          className="text-foreground hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
         >
-          <Share2 className="w-4 h-4 text-muted-foreground" />
+          <Share2 className="text-muted-foreground h-4 w-4" />
           <span className="flex-1 text-left">Share calendar</span>
         </button>
 
         <button
           onClick={() => handleAction(() => onExport(calendar))}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+          className="text-foreground hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
         >
-          <Download className="w-4 h-4 text-muted-foreground" />
+          <Download className="text-muted-foreground h-4 w-4" />
           <span className="flex-1 text-left">Export calendar</span>
         </button>
       </div>
 
       {!calendar.isDefault && (
-        <div className="border-t border-border py-1">
+        <div className="border-border border-t py-1">
           <button
             onClick={() => handleAction(() => onDelete(calendar.id))}
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-destructive hover:bg-destructive/20 transition-colors"
+            className="text-destructive hover:bg-destructive/20 flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="h-4 w-4" />
             <span className="flex-1 text-left">Delete calendar</span>
           </button>
         </div>

@@ -11,6 +11,7 @@ The commands should work now! If you're seeing "Unknown slash command", refresh 
 ## 🎯 Three Ways to Launch Tasks
 
 ### Option 1: Clipboard Helper (Recommended)
+
 Most reliable - uses your clipboard:
 
 ```bash
@@ -18,6 +19,7 @@ Most reliable - uses your clipboard:
 ```
 
 **How it works:**
+
 1. Script copies first command to clipboard
 2. You press Cmd+V in Chrome tab
 3. Press Enter in terminal
@@ -28,11 +30,13 @@ Most reliable - uses your clipboard:
 ---
 
 ### Option 2: AppleScript (If Chrome is focused)
+
 ```bash
 ./.claude/scripts/paste-commands.scpt
 ```
 
 **Requirements:**
+
 - Chrome must be frontmost
 - Active tab must be on claude.ai/code
 - Don't touch keyboard for 30 seconds
@@ -40,6 +44,7 @@ Most reliable - uses your clipboard:
 ---
 
 ### Option 3: Fully Manual (Always Works)
+
 Go to each Chrome tab and type:
 
 1. `/fix-metadata`
@@ -60,6 +65,7 @@ Go to each Chrome tab and type:
 Press Cmd+R in each Claude.ai tab to reload
 
 **Solution 2: Verify GitHub Push**
+
 ```bash
 git log --oneline -1
 # Should show: "feat: add robust AppleScript automation"

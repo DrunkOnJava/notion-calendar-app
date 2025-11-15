@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { CalendarIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
-import { useState } from "react"
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { useState } from 'react'
 
 interface DatePickerModalProps {
   isOpen: boolean
@@ -12,9 +12,14 @@ interface DatePickerModalProps {
   initialDate?: Date
 }
 
-export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: DatePickerModalProps) {
+export function DatePickerModal({
+  isOpen,
+  onClose,
+  onSelectDate,
+  initialDate,
+}: DatePickerModalProps) {
   const [currentMonth, setCurrentMonth] = useState(initialDate || new Date())
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState('')
 
   if (!isOpen) return null
 
@@ -22,24 +27,26 @@ export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: 
     const lower = text.toLowerCase().trim()
     const today = new Date()
 
-    if (lower === "today") {
+    if (lower === 'today') {
       return today
     }
-    if (lower === "tomorrow") {
+    if (lower === 'tomorrow') {
       const tomorrow = new Date(today)
       tomorrow.setDate(tomorrow.getDate() + 1)
       return tomorrow
     }
-    if (lower === "yesterday") {
+    if (lower === 'yesterday') {
       const yesterday = new Date(today)
       yesterday.setDate(yesterday.getDate() - 1)
       return yesterday
     }
 
     // next monday, next tuesday, etc.
-    const nextDayMatch = lower.match(/^next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/)
+    const nextDayMatch = lower.match(
+      /^next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/
+    )
     if (nextDayMatch) {
-      const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+      const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
       const targetDay = days.indexOf(nextDayMatch[1])
       const result = new Date(today)
       const currentDay = result.getDay()
@@ -143,15 +150,15 @@ export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: 
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-[#1c1c1c] rounded-lg w-[400px] p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="w-[400px] rounded-lg bg-[#1c1c1c] p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <CalendarIcon className="h-5 w-5" />
             Jump to date
           </h2>
-          <button onClick={onClose} className="hover:bg-[#2a2a2a] p-1.5 rounded">
-            <X className="w-5 h-5 text-[#6b6b6b]" />
+          <button onClick={onClose} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+            <X className="h-5 w-5 text-[#6b6b6b]" />
           </button>
         </div>
 
@@ -161,29 +168,31 @@ export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: 
             placeholder='Try "tomorrow", "next monday", "dec 25"...'
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleInputSubmit()}
-            className="w-full bg-[#2a2a2a] border border-[#3a3a3a] rounded px-3 py-2 text-sm outline-none focus:border-blue-500 placeholder:text-[#6b6b6b]"
+            onKeyDown={(e) => e.key === 'Enter' && handleInputSubmit()}
+            className="w-full rounded border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b6b] focus:border-blue-500"
             autoFocus
           />
-          <div className="text-xs text-[#6b6b6b] mt-1">Examples: today, tomorrow, next friday, in 3 days, dec 25</div>
+          <div className="mt-1 text-xs text-[#6b6b6b]">
+            Examples: today, tomorrow, next friday, in 3 days, dec 25
+          </div>
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <button onClick={previousMonth} className="hover:bg-[#2a2a2a] p-1.5 rounded">
-              <ChevronLeft className="w-4 h-4" />
+          <div className="mb-3 flex items-center justify-between">
+            <button onClick={previousMonth} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+              <ChevronLeft className="h-4 w-4" />
             </button>
             <h3 className="text-sm font-medium">
-              {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+              {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </h3>
-            <button onClick={nextMonth} className="hover:bg-[#2a2a2a] p-1.5 rounded">
-              <ChevronRight className="w-4 h-4" />
+            <button onClick={nextMonth} className="rounded p-1.5 hover:bg-[#2a2a2a]">
+              <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
           <div className="grid grid-cols-7 gap-1">
-            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-              <div key={day} className="text-center text-xs text-[#6b6b6b] font-medium mb-1">
+            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+              <div key={day} className="mb-1 text-center text-xs font-medium text-[#6b6b6b]">
                 {day}
               </div>
             ))}
@@ -195,10 +204,10 @@ export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: 
                   onClose()
                 }}
                 className={cn(
-                  "aspect-square flex items-center justify-center rounded text-sm hover:bg-[#2a2a2a]",
-                  !day.isCurrentMonth && "text-[#4a4a4a]",
-                  day.isCurrentMonth && "text-[#d0d0d0]",
-                  isToday(day.date) && "bg-info text-info-foreground font-semibold hover:bg-info/90",
+                  'flex aspect-square items-center justify-center rounded text-sm hover:bg-[#2a2a2a]',
+                  !day.isCurrentMonth && 'text-[#4a4a4a]',
+                  day.isCurrentMonth && 'text-[#d0d0d0]',
+                  isToday(day.date) && 'bg-info text-info-foreground hover:bg-info/90 font-semibold'
                 )}
               >
                 {day.day}
@@ -207,7 +216,7 @@ export function DatePickerModal({ isOpen, onClose, onSelectDate, initialDate }: 
           </div>
         </div>
 
-        <div className="flex gap-2 mt-4">
+        <div className="mt-4 flex gap-2">
           <Button
             onClick={() => {
               onSelectDate(new Date())

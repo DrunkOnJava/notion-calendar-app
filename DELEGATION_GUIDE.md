@@ -21,12 +21,15 @@ I've created the following configuration files:
 Tasks are organized into logical groups that can run in **parallel** for maximum efficiency:
 
 ### Phase 1: Critical Fixes (Run First)
+
 These must complete before other tasks to ensure a stable foundation.
 
 ### Phase 2: Parallel Execution
+
 Multiple independent tasks that can run simultaneously.
 
 ### Phase 3: Advanced Features
+
 Can be tackled after core fixes are complete.
 
 ---
@@ -42,26 +45,31 @@ Can be tackled after core fixes are complete.
 3. **Run tasks in parallel** by starting multiple sessions:
 
    **Session 1 - Critical Config:**
+
    ```
    /fix-critical-config
    ```
 
    **Session 2 - Metadata:**
+
    ```
    /fix-metadata
    ```
 
    **Session 3 - Color System:**
+
    ```
    /fix-color-system
    ```
 
    **Session 4 - Environment Setup:**
+
    ```
    /setup-environment
    ```
 
    **Session 5 - Error Boundaries:**
+
    ```
    /add-error-boundaries
    ```
@@ -117,7 +125,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ## Task Breakdown
 
 ### 1. `/fix-critical-config` (PRIORITY 1)
+
 **Fixes:**
+
 - TypeScript JSX configuration
 - Next.js build errors setting
 - Font loading and application
@@ -128,7 +138,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 2. `/fix-metadata`
+
 **Fixes:**
+
 - Application title and description
 - SEO metadata
 - Author information
@@ -139,7 +151,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 3. `/fix-color-system`
+
 **Fixes:**
+
 - Destructive foreground color contrast
 - Accessibility improvements
 
@@ -149,7 +163,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 4. `/refactor-database-card`
+
 **Fixes:**
+
 - Replace inline styles with Tailwind
 - Use CSS variables instead of hard-coded colors
 - Fix overflow issue
@@ -160,7 +176,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 5. `/setup-environment`
+
 **Creates:**
+
 - `.env.example` file
 - Environment validation with Zod
 - Updated `.gitignore`
@@ -171,7 +189,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 6. `/add-error-boundaries`
+
 **Creates:**
+
 - Global error boundary (`app/error.tsx`)
 - 404 page (`app/not-found.tsx`)
 - Loading state (`app/loading.tsx`)
@@ -182,7 +202,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 7. `/add-prettier`
+
 **Sets up:**
+
 - Prettier configuration
 - Tailwind CSS plugin for Prettier
 - Format scripts in package.json
@@ -193,7 +215,9 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ---
 
 ### 8. `/setup-github-actions`
+
 **Creates:**
+
 - CI workflow for linting and building
 - PR title validation
 - Automated checks on every push
@@ -206,17 +230,21 @@ echo "All tasks started! Monitor progress at claude.ai/code"
 ## Monitoring Progress
 
 ### Web Interface
+
 - Visit [claude.ai/code](https://claude.ai/code)
 - View all active sessions
 - See real-time progress for each task
 
 ### iOS App
+
 - Download Claude iOS app
 - Monitor sessions on the go
 - Approve/steer work from your phone
 
 ### Moving to Local
+
 If you need to take over a web session locally:
+
 1. Click "Open in CLI" in the web interface
 2. Paste and run the provided command in your terminal
 3. Continue work locally
@@ -226,6 +254,7 @@ If you need to take over a web session locally:
 ## After Tasks Complete
 
 ### 1. Review Pull Requests
+
 Each task will create a separate PR. Review them in order:
 
 1. **Critical Config** - Merge first
@@ -240,6 +269,7 @@ Each task will create a separate PR. Review them in order:
 ### 2. Merge Strategy
 
 **Option A: Sequential Merge** (Safest)
+
 ```bash
 # Merge in order, testing between each
 git checkout main
@@ -252,12 +282,14 @@ git push
 ```
 
 **Option B: Merge All at Once** (Faster)
+
 ```bash
 # If all PRs pass CI/CD
 gh pr merge --auto --squash <PR-NUMBER>
 ```
 
 ### 3. Final Verification
+
 ```bash
 # Pull all merged changes
 git checkout main
@@ -277,29 +309,39 @@ pnpm dev  # Manual testing
 ## Troubleshooting
 
 ### Network Access Issues
+
 If tasks need external API access, update environment settings:
+
 1. Go to [claude.ai/code](https://claude.ai/code)
 2. Select environment settings
 3. Change network access from "Limited" to "Full"
 
 ### Dependency Installation Fails
+
 Check `.claude/settings.json` SessionStart hook:
+
 ```json
 {
   "hooks": {
-    "SessionStart": [{
-      "matcher": "startup",
-      "hooks": [{
-        "type": "command",
-        "command": "pnpm install"
-      }]
-    }]
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm install"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
 
 ### Tasks Conflict with Each Other
+
 This shouldn't happen as tasks are designed to be independent. If it does:
+
 1. Complete Phase 1 (critical config) first
 2. Then run other tasks in parallel
 
@@ -323,6 +365,7 @@ This shouldn't happen as tasks are designed to be independent. If it does:
 5. ✅ CI/CD pipeline running
 
 **Recommended Next Steps:**
+
 - Add Storybook for component documentation
 - Implement unit tests with Vitest
 - Add E2E tests with Playwright
