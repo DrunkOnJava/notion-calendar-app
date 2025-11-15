@@ -30,8 +30,9 @@ import { EventHoverPreview } from '@/components/event-hover-preview'
 import { EventSeriesModal } from '@/components/event-series-modal'
 import { MultiSelectToolbar } from '@/components/multi-select-toolbar'
 import { NotificationCenter, type Notification } from '@/components/notification-center'
-import { generateRecurringDates, type RecurrenceRule } from '@/components/recurrence-editor'
+import { generateRecurringDates } from '@/components/recurrence-editor'
 import { SearchBar } from '@/components/search-bar'
+import type { Event, RecurrenceRule } from '@/types/event'
 import { SelectionContextMenu } from '@/components/selection-context-menu'
 import { SettingsModal, type Settings } from '@/components/settings-modal'
 import { ToastContainer } from '@/components/toast-notification'
@@ -62,24 +63,6 @@ import { AvailabilityEditor } from '@/components/availability-editor'
 import { SchedulingLinkModal } from '@/components/scheduling-link-modal'
 import { SchedulingLinksList } from '@/components/scheduling-links-list'
 
-// Page-specific event type
-interface PageEvent {
-  id: string
-  date: string
-  title: string
-  type?: string
-  time?: string
-  startTime?: string
-  endTime?: string
-  location?: string
-  description?: string
-  color?: string
-  calendarId?: string
-  recurrence?: RecurrenceRule
-  reminders?: string[]
-  seriesId?: string
-}
-
 // Personnel/Database types
 interface PersonnelProperties {
   [key: string]: string | boolean | null | undefined
@@ -107,6 +90,7 @@ interface PersonnelItem {
   name: string
   time: string
   properties: PersonnelProperties
+  [key: string]: unknown
 }
 
 interface PersonnelDatabase {
@@ -114,7 +98,7 @@ interface PersonnelDatabase {
   items: PersonnelItem[]
 }
 
-const initialEvents: PageEvent[] = [
+const initialEvents: Event[] = [
   { id: '1', date: '2025-10-31', title: 'Halloween', type: 'holiday' },
   { id: '2', date: '2025-11-02', title: 'Daylight Saving Time ends', type: 'info' },
   { id: '3', date: '2025-11-03', title: 'Election Day', type: 'info' },
@@ -414,12 +398,12 @@ const personnelData: PersonnelDatabase[] = [
 ]
 
 export default function CalendarPage() {
-  const [events, setEvents] = useState<PageEvent[]>(initialEvents)
+  const [events, setEvents] = useState<Event[]>(initialEvents)
   const [showDatabaseModal, setShowDatabaseModal] = useState(false)
   const [showEventCreateModal, setShowEventCreateModal] = useState(false)
   const [showEventDetailModal, setShowEventDetailModal] = useState(false)
   const [showCommandPalette, setShowCommandPalette] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<PageEvent | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<'month' | 'week' | 'day' | 'agenda'>('month')

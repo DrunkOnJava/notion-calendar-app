@@ -4,23 +4,12 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
+import type { RecurrenceRule } from '@/types/event'
 
 interface RecurrenceEditorProps {
   value?: RecurrenceRule
   onChange: (rule: RecurrenceRule | null) => void
   onClose: () => void
-}
-
-export interface RecurrenceRule {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
-  interval: number
-  endType: 'never' | 'count' | 'until'
-  count?: number
-  until?: string
-  byWeekday?: number[] // 0-6 for Sun-Sat
-  byMonthDay?: number
-  byMonth?: number
-  exceptions?: string[] // dates to skip
 }
 
 export function RecurrenceEditor({ value, onChange, onClose }: RecurrenceEditorProps) {

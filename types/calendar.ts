@@ -1,27 +1,5 @@
-// Shared type definitions for the calendar application
-
-export interface Event {
-  id: string
-  date: string
-  title: string
-  type?: string
-  time?: string
-  startTime?: string
-  endTime?: string
-  seriesId?: string
-  recurrence?: RecurrenceRule
-  color?: string
-  calendar?: string
-  [key: string]: unknown
-}
-
-export interface RecurrenceRule {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
-  interval?: number
-  endDate?: string
-  count?: number
-  [key: string]: unknown
-}
+// Re-export types from event.ts for backwards compatibility
+export type { Event, RecurrenceRule } from './event'
 
 export interface DatabaseItem {
   id: string
