@@ -4,9 +4,11 @@
 /node_modules
 /.pnp
 .pnp.js
+.pnpm-store/
 
 # Testing
 /coverage
+.nyc_output/
 
 # Next.js
 /.next/
@@ -41,8 +43,10 @@ lerna-debug.log*
 # TypeScript
 *.tsbuildinfo
 
-# IDE - Keep workspace settings but ignore user settings
-.vscode/settings.json
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo
@@ -67,3 +71,9 @@ logs
 # Temporary files
 .tmp
 tmp/
+
+# Claude Code
+.claude/
+!.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/commands/

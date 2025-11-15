@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import type { Event } from "@/types/event"
 import {
   X,
   Edit2,
@@ -22,10 +23,13 @@ import { cn } from "@/lib/utils"
 interface EventDetailModalProps {
   isOpen: boolean
   onClose: () => void
-  event: any
-  onEdit: (event: any) => void
+  event: Event | null
+  onEdit: (event: Event) => void
   onDelete: (eventId: string) => void
-  onDuplicate: (event: any) => void
+  onDuplicate: (event: Event) => void
+  eventFiles?: File[]
+  onFilesAdded?: (files: File[]) => void
+  onRemoveFile?: (fileIndex: number) => void
 }
 
 export function EventDetailModal({ isOpen, onClose, event, onEdit, onDelete, onDuplicate }: EventDetailModalProps) {
