@@ -1,11 +1,11 @@
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
+import { AnalyticsProvider } from '@/components/analytics-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Notion Calendar - Modern Calendar & Event Management',
-  description: 'Feature-rich calendar application with multiple views, drag-and-drop events, recurring events, database views, scheduling links, and smart time finding',
+  description:
+    'Feature-rich calendar application with multiple views, drag-and-drop events, recurring events, database views, scheduling links, and smart time finding',
   keywords: ['calendar', 'scheduling', 'events', 'notion', 'productivity', 'time management'],
   authors: [{ name: 'Your Name' }],
   creator: 'Your Name',
@@ -35,10 +35,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased m-0 p-0 overflow-hidden" style={{ height: '100vh' }}>
+      <body className="m-0 overflow-hidden p-0 font-sans antialiased" style={{ height: '100vh' }}>
         {children}
-        <Analytics />
-        <SpeedInsights />
+        <AnalyticsProvider />
       </body>
     </html>
   )
