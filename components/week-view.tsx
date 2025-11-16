@@ -103,6 +103,8 @@ export function WeekView({
                 return (
                   <div
                     key={dayIdx}
+                    data-testid="time-slot"
+                    data-hour={hour}
                     onClick={() => onTimeSlotClick(day, `${hour.toString().padStart(2, '0')}:00`)}
                     className="relative h-16 cursor-pointer border-b border-l border-[#2a2a2a] p-1 hover:bg-[#202020]"
                   >

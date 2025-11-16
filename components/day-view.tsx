@@ -93,6 +93,8 @@ export function DayView({
 
                 {/* Time Slot */}
                 <div
+                  data-testid="time-slot"
+                  data-hour={hour}
                   onClick={() =>
                     onTimeSlotClick(currentDate, `${hour.toString().padStart(2, '0')}:00`)
                   }

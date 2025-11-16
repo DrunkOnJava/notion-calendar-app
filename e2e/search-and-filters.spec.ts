@@ -87,8 +87,9 @@ test.describe('Search and Filters', () => {
     await calendarPage.searchInput.fill('Cod')
     await calendarPage.page.waitForTimeout(400)
 
-    // Should show Code Review
-    const codeReview = calendarPage.page.getByText('Code Review')
+    // Should show Code Review in search results
+    const searchResults = calendarPage.page.locator('[data-testid="search-results"]')
+    const codeReview = searchResults.getByText('Code Review')
     await expect(codeReview).toBeVisible()
   })
 
@@ -135,11 +136,12 @@ test.describe('Search and Filters', () => {
 
   test('should search case-insensitively', async () => {
     await calendarPage.search('team meeting')
-    const lowerCase = await calendarPage.page.getByText('Team Meeting').isVisible()
+    const searchResults = calendarPage.page.locator('[data-testid="search-results"]')
+    const lowerCase = await searchResults.getByText('Team Meeting').isVisible()
 
     await calendarPage.searchInput.clear()
     await calendarPage.search('TEAM MEETING')
-    const upperCase = await calendarPage.page.getByText('Team Meeting').isVisible()
+    const upperCase = await searchResults.getByText('Team Meeting').isVisible()
 
     expect(lowerCase).toBe(true)
     expect(upperCase).toBe(true)
@@ -154,7 +156,8 @@ test.describe('Search and Filters', () => {
     })
 
     await calendarPage.search('Q4 Review (2024)')
-    const event = calendarPage.page.getByText('Q4 Review (2024)')
+    const searchResults = calendarPage.page.locator('[data-testid="search-results"]')
+    const event = searchResults.getByText('Q4 Review (2024)')
     await expect(event).toBeVisible()
   })
 
@@ -179,18 +182,20 @@ test.describe('Search and Filters', () => {
   })
 
   test('should search across all calendar views', async () => {
+    const searchResults = calendarPage.page.locator('[data-testid="search-results"]')
+
     // Day view
     await calendarPage.switchToDayView()
     await calendarPage.search('Team')
-    const inDay = await calendarPage.page.getByText('Team Meeting').isVisible()
+    const inDay = await searchResults.getByText('Team Meeting').isVisible()
 
     // Week view
     await calendarPage.switchToWeekView()
-    const inWeek = await calendarPage.page.getByText('Team Meeting').isVisible()
+    const inWeek = await searchResults.getByText('Team Meeting').isVisible()
 
     // Agenda view
     await calendarPage.switchToAgendaView()
-    const inAgenda = await calendarPage.page.getByText('Team Meeting').isVisible()
+    const inAgenda = await searchResults.getByText('Team Meeting').isVisible()
 
     expect(inDay || inWeek || inAgenda).toBe(true)
   })
